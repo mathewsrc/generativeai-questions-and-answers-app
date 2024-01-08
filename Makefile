@@ -23,7 +23,7 @@ test:
 
 run-app:
 	@echo "Running local app with uvicorn"
-	uvicorn webapp.main:app --host 0.0.0.0 
+	poetry run uvicorn src.app.main:app --reload --host 127.0.0.1 --port 8000
 
 docker-build:
 	@echo "Building Docker container"

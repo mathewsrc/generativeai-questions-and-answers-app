@@ -42,10 +42,10 @@ RUN poetry check
 RUN poetry install --no-interaction --no-cache 
 
 # Copy Application
-COPY src/app/* /app
+COPY src/* /app
 
 EXPOSE 8000
 
-CMD [ "poetry", "run", "uvicorn", "--host", "0.0.0.0","--port", "8000", "main:app"]
+CMD [ "poetry", "run", "uvicorn", "src.app.main:app", "--host", "127.0.0.1","--port", "8000"]
 
 
