@@ -1,3 +1,3 @@
 pipx install --force poetry &&\
 poetry completions bash >> ~/.bash_completion &&\
-poetry init 
+poetry new --src my-project
