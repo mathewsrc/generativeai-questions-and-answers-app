@@ -46,6 +46,6 @@ COPY src/app/* /app
 
 EXPOSE 8000
 
-CMD [ "poetry", "run", "uvicorn", "--host", "0.0.0.0", "main:app"]
+CMD [ "poetry", "run", "uvicorn", "--host", "0.0.0.0","--port", "8000", "main:app"]
 
 
