@@ -1,34 +1,16 @@
-import numpy as np
-import boto3
-import json
-from fastapi import FastAPI, Response
-from pydantic import BaseModel
-import uvicorn
+# create a hello world fastapi
 
-# boto_session = boto3.Session()
-# credentials = boto_session.get_credentials()
+from fastapi import FastAPI
 
-# bedrock_models = boto3.client('bedrock')
-
-# MODEL_ID = 'amazon.titan-embed-g1-text-v1'
-
-# Create FastAPI instance
 app = FastAPI()
 
-# Define Pydantic model
-class Item(BaseModel):
-    text: str
-    
-@app.get('/')
-def root():
-    return Response("<h1>API to Question and Answering</h1>")
-    
-# Define API route
-@app.post("/predict")
-def predict(item: Item):
-    return {"text": item.text}
+@app.get("/")
+async def root():
+    return {"message": "Hello World"}
 
-
+if __name__ == "__main__":
+    import uvicorn
+    uvicorn.run(app, host="127.0.0.1", port=8000)
 
 
 
