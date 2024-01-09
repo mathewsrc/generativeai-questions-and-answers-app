@@ -31,6 +31,6 @@ docker-build:
 
 docker-run:
 	@echo "Starting Docker container"
-	docker run app 
+	docker run -p 8000:8000 app 
 
 all: install format lint
