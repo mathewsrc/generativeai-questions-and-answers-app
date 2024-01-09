@@ -4,9 +4,11 @@
 Question and Answer application using Amazon Bedrock, Langchain and FastAPI
 
 ## Requirements
-- [Python pip](https://pip.pypa.io/en/stable/installation/)
+- [Python](https://www.python.org/downloads/)
+- [Poetry](https://python-poetry.org/docs/#installation)
 - [Docker](https://docs.docker.com/desktop/install/windows-install/)
 - [AWS Account](https://aws.amazon.com/resources/create-account/)
+- [Terraform](https://developer.hashicorp.com/terraform/install?product_intent=terraform)
 
 ## How to run this application
 
