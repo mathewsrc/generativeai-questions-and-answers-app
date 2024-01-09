@@ -11,6 +11,17 @@ Question and Answer application using Amazon Bedrock, Langchain, and FastAPI
 5. Build a question answer that answers questions about the documents
 
 
+## Tools used in this project
+
+Terraform
+
+Terraform is a tool designed for provisioning resources in the cloud known as Infrastructure as Code (IaC).
+Benefits of IaC:
+- IaC is a declarative which means that we can specify the desired state of infrastructure
+- It can be managed as source code, we can commit, collaborate, and easily use it inside our CI/CD pipeline
+
+
+
 ## Requirements
 - [Python](https://www.python.org/downloads/)
 - [Poetry](https://python-poetry.org/docs/#installation)
