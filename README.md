@@ -1,7 +1,15 @@
 [![CI](https://github.com/mathewsrc/GenerativeAI-Questions-and-Answers-app-with-Bedrock-Langchain-and-FastAPI/actions/workflows/ci.yml/badge.svg)](https://github.com/mathewsrc/GenerativeAI-Questions-and-Answers-app-with-Bedrock-Langchain-and-FastAPI/actions/workflows/ci.yml)
 
 # GenerativeAI-Questions-and-Answers-app-with-Bedrock-Langchain-and-FastAPI
-Question and Answer application using Amazon Bedrock, Langchain and FastAPI
+Question and Answer application using Amazon Bedrock, Langchain, and FastAPI
+
+
+1. Load PDF documents
+2. Chunk documents
+3. Embedding documents and store them in the Vector Store
+4. Build a retrieval-augmented generation pipeline for querying data
+5. Build a question answer that answers questions about the documents
+
 
 ## Requirements
 - [Python](https://www.python.org/downloads/)
