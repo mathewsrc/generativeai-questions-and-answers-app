@@ -1,51 +1,22 @@
-# Dockerfile inspired by https://gist.github.com/soof-golan/6ebb97a792ccd87816c0bda1e6e8b8c2
+FROM python:3.11.2-buster
 
-FROM python:3.10 as python-base
+ENV DEBIAN_FRONTEND='noninteractive'
 
-# https://python-poetry.org/docs#ci-recommendations
-ENV POETRY_VERSION=1.7.1
-ENV POETRY_HOME=/opt/poetry
-ENV POETRY_VENV=/opt/poetry-venv
+RUN apt-get update && apt install -y curl
+RUN curl -sSL https://install.python-poetry.org | python
 
-# Tell Poetry where to place its cache and virtual environment
-ENV POETRY_CACHE_DIR=/opt/.cache
+ENV PATH="${PATH}:/root/.local/bin"
+RUN poetry config virtualenvs.in-project true
 
-# Create stage for Poetry installation
-FROM python-base as poetry-base
+WORKDIR /code
 
-# Creating a virtual environment just for poetry and install it with pip
-RUN python3 -m venv $POETRY_VENV \
-	&& $POETRY_VENV/bin/pip install -U pip setuptools \
-	&& $POETRY_VENV/bin/pip install poetry==${POETRY_VERSION}
+COPY ./pyproject.toml /code/pyproject.toml
+COPY ./poetry.lock /code/poetry.lock
+COPY ./README.md /code/README.md
+COPY ./src/app /code/app
 
-# Create a new stage from the base python image
-FROM python-base as example-app
-
-# Copy Poetry to app image
-COPY --from=poetry-base ${POETRY_VENV} ${POETRY_VENV}
-
-# Add Poetry to PATH
-ENV PATH="${PATH}:${POETRY_VENV}/bin"
-
-WORKDIR /app
-
-# Copy Dependencies
-COPY poetry.lock pyproject.toml ./
-
-# Copy README
-COPY README.md ./
-
-# [OPTIONAL] Validate the project is properly configured
-RUN poetry check
-
-# Install Dependencies
-RUN poetry install --no-interaction --no-cache 
-
-# Copy Application
-COPY src/* /app
+RUN poetry install
 
 EXPOSE 8000
 
-CMD [ "poetry", "run", "uvicorn", "main:app", "--host", "127.0.0.1","--port", "8000"]
-
-
+CMD [ "poetry","run","uvicorn","--host","0.0.0.0","--port","8000","app.main:app","--reload"]
