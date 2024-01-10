@@ -20,6 +20,8 @@ Benefits of IaC:
 - IaC is a declarative which means that we can specify the desired state of infrastructure
 - It can be managed as source code, we can commit, collaborate, and easily use it inside our CI/CD pipeline
 - IaC is portable, we can build reusable modules across an organization
+- Can be used for multi-cloud deployments
+- Can automate changes and standardize configurations
 
 
 
