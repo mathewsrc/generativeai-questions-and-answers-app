@@ -53,4 +53,8 @@ tf-format:
 	@echo "Formating Terraform <Auto-format Terraform code>"
 	cd terraform && terraform fmt
 
+tf-deploy:
+	@echo "Deploying Terraform <Deploy infrastruture resources>"
+	cd terraform && terraform init && terraform apply -auto-approve
+
 all: install format lint
