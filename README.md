@@ -15,10 +15,11 @@ Question and Answer application using Amazon Bedrock, Langchain, and FastAPI
 
 Terraform
 
-Terraform is a tool designed for provisioning resources in the cloud known as Infrastructure as Code (IaC).
+Terraform is an open-source infrastructure as a code tool designed for provisioning and managing cloud resources in the cloud known as Infrastructure as Code (IaC).
 Benefits of IaC:
 - IaC is a declarative which means that we can specify the desired state of infrastructure
 - It can be managed as source code, we can commit, collaborate, and easily use it inside our CI/CD pipeline
+- IaC is portable, we can build reusable modules across an organization
 
 
 
