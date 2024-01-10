@@ -70,6 +70,9 @@ sudo apt update && sudo apt install terraform
 terraform --version
 ```
 
+4. Enable Bedrock Foundation Models
+ 
+Then go to AWS > Amazon Bedrock > Model access ([Link](https://us-east-1.console.aws.amazon.com/bedrock/home?region=us-east-1#/modelaccess)) and enable the foundation models you want to use. Notice that this project is going to create resources in 'us-east-1' so make sure that your AWS account region is the same.
 
 ## Costs
 
