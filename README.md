@@ -71,8 +71,8 @@ terraform --version
 ```
 
 4. Enable Bedrock Foundation Models
- 
-Then go to AWS > Amazon Bedrock > Model access ([Link](https://us-east-1.console.aws.amazon.com/bedrock/home?region=us-east-1#/modelaccess)) and enable the foundation models you want to use. Notice that this project is going to create resources in 'us-east-1' so make sure that your AWS account region is the same.
+
+Then go to AWS > Amazon Bedrock > Model access ([Link](https://us-east-1.console.aws.amazon.com/bedrock/home?region=us-east-1#/modelaccess)) and enable the foundation models you want to use. Notice that this project is going to create resources in the'us-east-1' region so make sure that your AWS account region is the same. Observation: some models require access grants and it can take some time until you can access it.
 
 ## Costs
 
