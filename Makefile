@@ -33,4 +33,24 @@ docker-run:
 	@echo "Starting Docker container"
 	docker run -p 8000:8000 app 
 
+tf-init:
+	@echo "Initializing Terraform <Initialize the provider with plugin>"
+	cd terraform && terraform init
+
+tf-plan:
+	@echo "Planning Terraform <Preview of resources to be created>"
+	cd terraform && terraform plan
+
+tf-apply:
+	@echo "Applying Terraform <Create infrastruture resources>"
+	cd terraform && terraform apply
+
+tf-destroy:
+	@echo "Destroying Terraform <Destroy infrastruture resources>"
+	cd terraform && terraform destroy
+
+tf-format:
+	@echo "Formating Terraform <Auto-format Terraform code>"
+	cd terraform && terraform fmt
+
 all: install format lint
