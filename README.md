@@ -53,6 +53,7 @@ pipx ensurepath
 Now open a new terminal to use pipx
 
 2. Install Poetry
+
 ```bash
 pipx install --force poetry &&\
 poetry completions bash >> ~/.bash_completion &&\
@@ -61,6 +62,7 @@ poetry install --no-root
 ```
 
 3. Install Terraform (Linux) for Windows see [Terraform-Windows](https://developer.hashicorp.com/terraform/install#Windows)
+
 ```bash
 wget -O- https://apt.releases.hashicorp.com/gpg | sudo gpg --dearmor -o /usr/share/keyrings/hashicorp-archive-keyring.gpg
 echo "deb [signed-by=/usr/share/keyrings/hashicorp-archive-keyring.gpg] https://apt.releases.hashicorp.com $(lsb_release -cs) main" | sudo tee /etc/apt/sources.list.d/hashicorp.list
@@ -73,6 +75,26 @@ terraform --version
 4. Enable Bedrock Foundation Models
 
 Then go to AWS > Amazon Bedrock > Model access ([Link](https://us-east-1.console.aws.amazon.com/bedrock/home?region=us-east-1#/modelaccess)) and enable the foundation models you want to use. Notice that this project is going to create resources in the'us-east-1' region so make sure that your AWS account region is the same. Observation: some models require access grants and it can take some time until you can access it.
+
+5. Install AWS CLI
+
+Finally, we need to install AWS CLI so Terraform can access your credentials. Use the following code to install it or execute
+the Bash script `install_aws_cli.sh` on terminal (see [link](https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html#cliv2-linux-install) for more information):
+
+```bash
+curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+unzip awscliv2.zip
+sudo ./aws/install
+rm -rf awscliv2.zip aws
+
+# Confirm installation
+aws --version
+```
+
+Now we need to create a Policy with access to Bedrock and set this policy to a new IAM user and create
+a Access Key for this user. Finally we can use `aws configure and pass the Access Key and the Secret access key`
+
+
 
 ## Costs
 
