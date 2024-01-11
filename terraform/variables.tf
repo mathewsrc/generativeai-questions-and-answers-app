@@ -11,7 +11,7 @@ variable "name" {
 
 variable "bucket_name" {
   description = "The name of the S3 bucket"
-  default     = "bedrock-qa"
+  default     = "bedrock-question-answer"
 }
 
 variable "environment" {
