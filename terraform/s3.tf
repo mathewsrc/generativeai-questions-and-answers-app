@@ -1,4 +1,4 @@
-resource "aws_s3_bucket" "s3-bucket" {
+resource "aws_s3_bucket" "bedrock-bucket-qa" {
   bucket = var.bucket_name
 
   tags = {
@@ -7,12 +7,14 @@ resource "aws_s3_bucket" "s3-bucket" {
   }
 }
 
-
 resource "aws_s3_object" "object" {
-  for_each     = fileset("documents/*.pdf", "**")
-  bucket       = aws_s3_bucket.s3-bucket.id
-  key          = each.value
-  source       = "documents/${each.value}"
-  content_type = each.value
-  etag         = filemd5("documents/${each.value}")
+  # Recursively look for pdf files inside documents/ 
+  bucket   = aws_s3_bucket.bedrock-bucket-qa.id
+  for_each = fileset("../documents/", "**/*.pdf")
+  key      = each.value
+  source   = "../documents/${each.value}"
+  etag     = filemd5("../documents/${each.value}")
+  depends_on = [
+    aws_s3_bucket.bedrock-bucket-qa
+  ]
 }
