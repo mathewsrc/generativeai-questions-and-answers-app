@@ -47,7 +47,8 @@ IAM create role policy
 				"iam:ListPolicyVersions",
 				"iam:DeletePolicy",
 				"iam:CreatePolicyVersion",
-				"iam:DeletePolicyVersion"
+				"iam:DeletePolicyVersion",
+				"kms:DescribeKey"
 			],
 			"Effect": "Allow",
 			"Resource": "*"
