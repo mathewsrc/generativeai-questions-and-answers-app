@@ -1,7 +1,7 @@
 data "aws_iam_policy_document" "bedrock" {
   statement {
     sid       = 1
-    actions   = ["bedrock:InvokeModel"]
+    actions   = ["bedrock:InvokeModel", "bedrock:ListCustomModels", "bedrock:ListFoundationModels"]
     resources = ["arn:aws:bedrock:*::foundation-model/*"]
   }
   statement {
@@ -10,6 +10,8 @@ data "aws_iam_policy_document" "bedrock" {
     resources = ["*"]
   }
 }
+
+data "aws_caller_identity" "current" {}
 
 resource "aws_iam_policy" "bedrock" {
   name   = "bedrock"
@@ -35,8 +37,5 @@ resource "aws_iam_role" "bedrock" {
   POLICY
 }
 
-resource "aws_iam_role_policy_attachment" "eks_cluster_autoscaling" {
-  policy_arn = aws_iam_policy.bedrock.arn
-  role       = aws_iam_role.bedrock.name
-}
+
 
