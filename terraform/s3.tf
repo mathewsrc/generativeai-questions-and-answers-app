@@ -7,7 +7,7 @@ resource "aws_s3_bucket" "bedrock" {
   }
 }
 
-resource "aws_s3_object" "bedrock-pdf" {
+resource "aws_s3_object" "pdf" {
   for_each = fileset("./documents/", "**")
   bucket = var.bucket_name
   key = each.value
