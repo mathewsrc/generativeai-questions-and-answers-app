@@ -6,6 +6,11 @@ data "aws_iam_policy_document" "bedrock" {
   }
   statement {
     sid       = 2
+    actions   = ["s3:ListBucket", "s3:GetObject"]
+    resources = ["arn:aws:s3:::${var.bucket_name}/*"]
+  }
+  statement {
+    sid       = 3
     actions   = ["sts:AssumeRole"]
     resources = ["*"]
   }
