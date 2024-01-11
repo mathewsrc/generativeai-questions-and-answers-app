@@ -113,8 +113,10 @@ Now we have everything setup and you can how this application.
 
 
 
-## Costs
+## Costs (EUA)
 
-Embeddings = US$ 0,10 per 1 million tokens (EUA)
+Observation: values can change any time.
+
+AWS Embeddings Titan = US$ 0,10 per 1 million tokens 
 
 Claude V2 =  US$ 0,01 per 1000 input tokens and US$ 0,03 output tokens 
