@@ -43,7 +43,7 @@ tf-plan:
 
 tf-apply:
 	@echo "Applying Terraform <Create infrastruture resources>"
-	cd terraform && terraform apply
+	cd terraform && terraform apply -auto-approve
 
 tf-destroy:
 	@echo "Destroying Terraform <Destroy infrastruture resources>"
