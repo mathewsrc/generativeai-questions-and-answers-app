@@ -8,3 +8,13 @@ variable "name" {
   default     = "rag"
   description = "the name for resource"
 }
+
+variable "bucket_name" {
+  description = "The name of the S3 bucket"
+  default     = "bedrock-qa"
+}
+
+variable "environment" {
+  description = "The environment the bucket is used in"
+  default     = "Dev"
+}
