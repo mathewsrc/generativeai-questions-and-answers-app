@@ -1,33 +1,50 @@
 import numpy as np
 import boto3
 import click
+import json
 import glob
 import joblib
 from pathlib import Path
-from langchain.embeddings import BedrockEmbeddings
+from langchain_community.embeddings import BedrockEmbeddings
 from langchain.llms.bedrock import Bedrock
 from langchain.text_splitter import RecursiveCharacterTextSplitter
-from langchain.document_loaders import PyPDFDirectoryLoader
-from langchain.vectorstores import FAISS
-from langchain.indexes.vectorestore import VectorstoreIndexerWrapper
+from langchain_community.document_loaders import PyPDFDirectoryLoader
+from langchain_community.vectorstores import FAISS
+from langchain.indexes.vectorstore import VectorStoreIndexWrapper
 
-boto_session = boto3.Session()
+
+boto_session = boto3.Session(region_name='us-east-1')
 credentials = boto_session.get_credentials()
 
-bedrock_models = boto3.client("bedrock")
-bedrock_runtime = boto3.client("bedrock-runtime")
+bedrock_models = boto3.client("bedrock", region_name='us-east-1')
+bedrock_runtime = boto3.client("bedrock-runtime", region_name='us-east-1')
 MODEL_ID = "amazon.titan-embed-g1-text-v1"
-
 
 @click.group()
 def cli():
     pass
 
-
 @cli.command("list-models")
-def list_models():
-    models = bedrock_models.list_foundations_models()
-    click.echo(click.style(f"Foundations Models: {models}", fg="green"))
+@click.option("--by-provider", help="Filter by provider")
+@click.option("--by-output-modality", help="Filter by output modality",
+              type=click.Choice(["TEXT", "IMAGE", "EMBEDDING"], case_sensitive=True))
+def list_foundation_models(by_provider=None, by_output_modality=None):
+    if by_provider is not None and by_output_modality is None:
+        models = bedrock_models.list_foundation_models(
+            byProvider=by_provider
+        )
+        click.echo(click.style(f"Models: {json.dumps(models, indent=4)}", fg="green"))
+    elif by_output_modality is not None and by_provider is None:
+        models = bedrock_models.list_foundation_models(
+            byOutputModality=by_output_modality
+        )
+        click.echo(click.style(f"Models: {json.dumps(models, indent=4)}", fg="green"))
+    elif by_provider is not None and by_output_modality is not None:
+        models = bedrock_models.list_foundation_models(byProvider=by_provider, byOutputModality=by_output_modality)
+        click.echo(click.style(f"Models: {json.dumps(models, indent=4)}", fg="green"))
+    else:
+        models = bedrock_models.list_foundation_models()
+        click.echo(click.style(f"Models: {json.dumps(models, indent=4)}", fg="green"))
 
 
 @cli.command("split-documents")
@@ -80,7 +97,7 @@ def create_vectorstore_in_memory(model_id, data_path):
             docs.append(f.read())
 
     vectorestore_faiss = FAISS.from_documents(docs, bedrock_embeddings)
-    wrapper_vectorestore_faiss = VectorstoreIndexerWrapper(vectorestore_faiss)
+    wrapper_vectorestore_faiss = VectorStoreIndexWrapper(vectorestore_faiss)
 
     # save vectorstore
     vectorstore_path = "../../datasets/vectorstore_faiss.pkl"
@@ -91,7 +108,7 @@ def create_vectorstore_in_memory(model_id, data_path):
 @cli.command("question-answering")
 @click.option("--question", prompt=True)
 @click.option(
-    "max_tokens", default=300, help="Maximum number of tokens to sample from the model"
+    "--max_tokens", default=100, help="Maximum number of tokens to sample from the model"
 )
 @click.option(
     "--model_id",
