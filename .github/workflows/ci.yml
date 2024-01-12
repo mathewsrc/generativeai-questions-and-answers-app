@@ -27,10 +27,10 @@ jobs:
           poetry install
         
       - name: Run format
-        run: poetry run make format
+        run: make format
 
       - name: Run lint
-        run: poetry run make lint
+        run:  make lint
       
       - name: Run tests
-        run: poetry run make test
+        run:  make test
