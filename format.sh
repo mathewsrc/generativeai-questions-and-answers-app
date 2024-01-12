@@ -3,7 +3,7 @@
 for DIR in */; do
     DIRNAME=$(basename "$DIR")
     echo "==> $DIRNAME <=="
-    (cd $DIR && ruff format *.py)
+    (cd $DIR && poetry run ruff format *.py)
 done
 
 echo "Format complete."
