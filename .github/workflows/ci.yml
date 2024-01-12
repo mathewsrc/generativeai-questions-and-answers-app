@@ -25,12 +25,12 @@ jobs:
         run: |
           pipx install poetry
           poetry install
-
-      - name: Run tests
-        run: make test
+        
+      - name: Run format
+        run: poetry run make format
 
       - name: Run lint
-        run: make lint
-
-      - name: Run format
-        run: make format
+        run: poetry run make lint
+      
+      - name: Run tests
+        run: poetry run make test
