@@ -6,16 +6,12 @@ data "aws_iam_policy_document" "bedrock" {
   }
   statement {
     sid       = 2
-    actions   = ["s3:ListBucket", "s3:GetObject"]
-    resources = ["arn:aws:s3:::${var.bucket_name}/*"]
-  }
-  statement {
-    sid       = 3
     actions   = ["sts:AssumeRole"]
     resources = ["*"]
   }
 }
 
+# Gets access to the effective Account ID in which Terraform is authorized
 data "aws_caller_identity" "current" {}
 
 resource "aws_iam_policy" "bedrock" {
@@ -43,4 +39,7 @@ resource "aws_iam_role" "bedrock" {
 }
 
 
-
+resource "aws_iam_role_policy_attachment" "bedrock-role" {
+  policy_arn = aws_iam_policy.bedrock.arn
+  role       = aws_iam_role.bedrock.name
+}
