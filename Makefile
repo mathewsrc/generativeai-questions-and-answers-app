@@ -49,9 +49,13 @@ tf-destroy:
 	@echo "Destroying Terraform <Destroy infrastruture resources>"
 	cd terraform && terraform destroy
 
-tf-format:
+tf-fmt:
 	@echo "Formating Terraform <Auto-format Terraform code>"
 	cd terraform && terraform fmt
+
+tf-val:
+	@echo "Validating Terraform <Validate Terraform code>"
+	cd terraform && terraform validate
 
 tf-deploy:
 	@echo "Deploying Terraform <Deploy infrastruture resources>"
