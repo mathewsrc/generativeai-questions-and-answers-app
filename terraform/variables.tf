@@ -39,6 +39,11 @@ variable "ecs_service_name" {
   default     = "bedrock-qa-service"
 }
 
+variable "ecs_execution_role_name" {
+  description = "The name of ecs execution role"
+  default     = "ecs_execution_role"
+}
+
 #variable "collection_name" {
 #  description = "Name of the OpenSearch Serverless collection."
 #  default     = "bedrock-qa-collection"
