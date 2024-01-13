@@ -20,10 +20,10 @@ variable "environment" {
 
 variable "ecr_name" {
   description = "The name of ECR repository"
-  default     = "bedrock/bedrock-qa-tf"
+  default     = "bedrock-qa-tf"
 }
 
-variable "ecs_task_name" {
+variable "ecs_task_family_name" {
   description = "The ECS task definition name"
   default     = "bedrock-qa-task-tf"
 }
@@ -40,22 +40,27 @@ variable "ecs_service_name" {
 
 variable "ecs_execution_role_name" {
   description = "The name of ECS execution role"
-  default     = "ecs-execution-role_tf"
+  default     = "bedrock-qa-ecs-execution-role_tf"
 }
 
 variable "ecs_security_group_name" {
   description = "The name of the ECS security group"
-  default     = "ecs-security-group-tf"
+  default     = "bedrock-qa-ecs-security-group-tf"
 }
 
 variable "load_balance_name" {
   description = "The name of Load Balance"
-  default     = "load-balance-tf"
+  default     = "bedrock-qa-load-balance-tf"
 }
 
 variable "load_balancer_target_group_name" {
   description = "The name of Load balancer target group"
-  default     = "target-group-tf"
+  default     = "bedrock-qa-target-group-tf"
+}
+
+variable "container_name" {
+  description = "The name of container"
+  default     = "bedrock-qa-container-tf"
 }
 
 
