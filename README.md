@@ -11,17 +11,6 @@ Question and Answer application using Amazon Bedrock, Langchain, and FastAPI
 5. Build a question answer that answers questions about the documents
 
 
-## Tools used in this project
-
-Terraform
-
-Terraform is an open-source infrastructure as a code tool designed for provisioning and managing cloud resources in the cloud known as Infrastructure as Code (IaC).
-Benefits of IaC:
-- IaC is a declarative which means that we can specify the desired state of infrastructure
-- It can be managed as source code, we can commit, collaborate, and easily use it inside our CI/CD pipeline
-- IaC is portable, we can build reusable modules across an organization
-- Can be used for multi-cloud deployments
-- Can automate changes and standardize configurations
 
 
 
@@ -120,3 +109,27 @@ Observation: values can change any time.
 AWS Embeddings Titan = US$ 0,10 per 1 million tokens 
 
 Claude V2 =  US$ 0,01 per 1000 input tokens and US$ 0,03 output tokens 
+
+
+## Tools used in this project
+
+Terraform
+
+Terraform is an open-source infrastructure as a code tool designed for provisioning and managing cloud resources in the cloud known as Infrastructure as Code (IaC).
+
+Benefits of IaC:
+- IaC is a declarative which means that we can specify the desired state of infrastructure
+- It can be managed as source code, we can commit, collaborate, and easily use it inside our CI/CD pipeline
+- IaC is portable, we can build reusable modules across an organization
+- Can be used for multi-cloud deployments
+- Can automate changes and standardize configurations
+
+
+Amazon ECS (Elastic Container Service)
+
+Amazon ECS (Elastic Container Service) is a fully managed container orchestration service that allows you to easily run and scale containerized applications on AWS. 
+
+Benefits of ECS:
+- No need to install or operate own container orchestration
+- Easily auto scaling configuration
+- Different type os instances such as EC2 and Fargate
