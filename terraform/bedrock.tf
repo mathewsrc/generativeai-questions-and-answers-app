@@ -11,7 +11,6 @@ data "aws_iam_policy_document" "bedrock" {
   }
 }
 
-# Gets access to the effective Account ID in which Terraform is authorized
 data "aws_caller_identity" "current" {}
 
 resource "aws_iam_policy" "bedrock" {
