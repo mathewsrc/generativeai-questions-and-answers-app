@@ -9,7 +9,7 @@ resource "aws_ecs_task_definition" "ecs_task_definition" {
   container_definitions = <<DEFINITION
   [
     {
-      "name": ${var.container_name},
+      "name": "${var.container_name}",
       "image": "${aws_ecr_repository.bedrock.repository_url}:latest",
       "essential": true,
       "portMappings": [
