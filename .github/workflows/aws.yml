@@ -34,7 +34,7 @@ on:
 #   branches: [ "main" ]
 
 env:
-  AWS_REGION: us-east-1                  # set this to your preferred AWS region, e.g. us-west-1
+  AWS_REGION: env.AWS_REGION                  # set this to your preferred AWS region, e.g. us-west-1
   ECR_REPOSITORY: bedrock-qa-tf           # set this to your Amazon ECR repository name
   ECS_SERVICE: bedrock-qa-service-tf                 # set this to your Amazon ECS service name
   ECS_CLUSTER: bedrock-qa-cluster-tf                 # set this to your Amazon ECS cluster name
