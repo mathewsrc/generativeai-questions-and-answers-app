@@ -18,9 +18,11 @@ COPY ./poetry.lock /code/poetry.lock
 COPY ./README.md /code/README.md
 COPY ./src/app /code/app
 
-# Configure poetry to create virtualenvs inside the project and install dependencies
-RUN poetry config virtualenvs.in-project true && \
-  poetry install
+# Configure poetry to create virtualenvs inside the project
+RUN poetry config virtualenvs.in-project true
+
+# Install dependencies using poetry
+RUN poetry install
 
 # Defines the port that the application listens on
 EXPOSE 8000
