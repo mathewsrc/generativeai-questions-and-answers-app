@@ -3,7 +3,7 @@
 #}
 
 resource "aws_ecr_repository" "bedrock" {
-  name                 = "bedrock/bedrock_qa"
+  name                 = "bedrock_qa"
   image_tag_mutability = "MUTABLE"
 
   image_scanning_configuration {
