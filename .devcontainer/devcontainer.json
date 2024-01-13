@@ -12,7 +12,8 @@
 				"ms-azuretools.vscode-docker",
 				"ms-python.vscode-pylance",
 				"ms-python.python",
-				"ms-python.isort"
+				"ms-python.isort",
+				"hashicorp.terraform"
 			]
 		}
 	}
