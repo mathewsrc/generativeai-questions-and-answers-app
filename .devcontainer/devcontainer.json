@@ -13,7 +13,8 @@
 				"ms-python.vscode-pylance",
 				"ms-python.python",
 				"ms-python.isort",
-				"hashicorp.terraform"
+				"hashicorp.terraform",
+				"github.vscode-github-actions"
 			]
 		}
 	},
