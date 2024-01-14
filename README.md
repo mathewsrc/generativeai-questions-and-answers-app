@@ -113,7 +113,7 @@ Claude V2 =  US$ 0,01 per 1000 input tokens and US$ 0,03 output tokens
 
 ## Tools used in this project
 
-Terraform
+### Terraform
 
 Terraform is an open-source infrastructure as a code tool designed for provisioning and managing cloud resources in the cloud known as Infrastructure as Code (IaC).
 
@@ -125,11 +125,19 @@ Benefits of IaC:
 - Can automate changes and standardize configurations
 
 
-Amazon ECS (Elastic Container Service)
+### Amazon ECS (Elastic Container Service)
 
-Amazon ECS (Elastic Container Service) is a fully managed container orchestration service that allows you to easily run and scale containerized applications on AWS. 
+Amazon ECS (Elastic Container Service) is a fully managed container orchestration service that allows you to run and scale containerized applications on AWS easily. 
 
 Benefits of ECS:
-- No need to install or operate own container orchestration
-- Easily auto scaling configuration
-- Different type os instances such as EC2 and Fargate
+- No need to install or operate your container orchestration
+- Easily auto-scaling configuration
+- Different types of instances such as EC2 and Fargate
+
+### Amazon ECR (Elastic Container Register)
+
+
+### Vector Search 
+
+Open Search can search semantically similar or semantically related items and it can be used for recommendation engines, search engines, chatbots, and text classification. First, PDFs (or any kind of data such as videos, audio, and images) are converted into embedding representation, second, the embeddings are uploaded to OpenSearch or any other Vector Store. Then we can create an index to run queries to get recommendations or results. 
+
