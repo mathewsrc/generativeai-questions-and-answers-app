@@ -41,6 +41,10 @@ tf-plan:
 	@echo "Planning Terraform <Preview of resources to be created>"
 	cd terraform && terraform plan
 
+tf-outp:
+	@echo "Output Terraform <Output of resources to be created>"
+	cd terraform && terraform output
+
 tf-apply:
 	@echo "Applying Terraform <Create infrastruture resources>"
 	cd terraform && terraform apply -auto-approve
