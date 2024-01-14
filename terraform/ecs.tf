@@ -1,7 +1,12 @@
 resource "aws_ecs_cluster" "ecs_cluster" {
   name = var.ecs_cluster_name
-}
 
+  tags = {
+    Environment = var.environment
+    Application = var.name
+    Name        = var.ecs_cluster_name
+  }
+}
 
 resource "aws_ecs_task_definition" "ecs_task_definition" {
   family = var.ecs_task_family_name
@@ -17,9 +22,7 @@ resource "aws_ecs_task_definition" "ecs_task_definition" {
           "containerPort": 8000,
           "hostPort": 8000
         }
-      ],
-      "memory": 512,
-      "cpu": 256
+      ]
     }
   ]
   DEFINITION
@@ -31,9 +34,15 @@ resource "aws_ecs_task_definition" "ecs_task_definition" {
 
   requires_compatibilities = ["FARGATE"] # use Fargate as the launch type
   network_mode             = "awsvpc"    # add the AWS VPN network mode as this is required for Fargate
-  memory                   = 512         # Specify the memory the container requires
-  cpu                      = 256         # Specify the CPU the container requires
+  memory                   = var.memory  # Specify the memory the container requires
+  cpu                      = var.cpu     # Specify the CPU the container requires
   execution_role_arn       = aws_iam_role.ecs_task_execution_role.arn
+
+  tags = {
+    Environment = var.environment
+    Application = var.name
+    FamilyName  = var.ecs_task_family_name
+  }
 }
 
 resource "aws_security_group" "ecs_service_security_group" {
@@ -50,6 +59,12 @@ resource "aws_security_group" "ecs_service_security_group" {
     to_port     = 0
     protocol    = "-1"
     cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  tags = {
+    Environment = var.environment
+    Application = var.name
+    Name        = var.ecs_security_group_name
   }
 }
 
@@ -75,6 +90,12 @@ resource "aws_ecs_service" "ecs_service" {
     security_groups = [
       "${aws_security_group.ecs_service_security_group.id}"
     ]
+  }
+
+  tags = {
+    Environment = var.environment
+    Application = var.name
+    Name        = var.ecs_service_name
   }
 }
 
