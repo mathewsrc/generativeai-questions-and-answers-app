@@ -1,4 +1,4 @@
-resource "aws_ecr_repository" "bedrock" {
+resource "aws_ecr_repository" "ecr_repo" {
   name                 = var.ecr_name
   image_tag_mutability = "MUTABLE"
 
