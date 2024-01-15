@@ -15,7 +15,7 @@ resource "aws_ecs_task_definition" "ecs_task_definition" {
   [
     {
       "name": "${var.container_name}",
-      "image": "${aws_ecr_repository.bedrock.repository_url}:latest",
+      "image": "${var.ecr_repository_url}:latest",
       "essential": true,
       "portMappings": [
         {
@@ -36,7 +36,7 @@ resource "aws_ecs_task_definition" "ecs_task_definition" {
   network_mode             = "awsvpc"    # add the AWS VPN network mode as this is required for Fargate
   memory                   = var.memory  # Specify the memory the container requires
   cpu                      = var.cpu     # Specify the CPU the container requires
-  execution_role_arn       = aws_iam_role.ecs_task_execution_role.arn
+  execution_role_arn       = var.ecs_task_execution_role_arn
 
   tags = {
     Environment = var.environment
@@ -45,28 +45,7 @@ resource "aws_ecs_task_definition" "ecs_task_definition" {
   }
 }
 
-resource "aws_security_group" "ecs_service_security_group" {
-  ingress {
-    from_port = 0
-    to_port   = 0
-    protocol  = "-1"
-    # Only allowing traffic in from the load balancer security group
-    security_groups = ["${aws_security_group.ecs_load_balancer_security_group.id}"]
-  }
 
-  egress {
-    from_port   = 0
-    to_port     = 0
-    protocol    = "-1"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-
-  tags = {
-    Environment = var.environment
-    Application = var.name
-    Name        = var.ecs_security_group_name
-  }
-}
 
 resource "aws_ecs_service" "ecs_service" {
   name            = var.ecs_service_name
@@ -76,20 +55,15 @@ resource "aws_ecs_service" "ecs_service" {
   desired_count   = 2
 
   load_balancer {
-    target_group_arn = aws_lb_target_group.lb_target_group.arn
+    target_group_arn = var.target_group_arn
     container_name   = aws_ecs_task_definition.ecs_task_definition.family
     container_port   = 8000
   }
 
   network_configuration {
-    subnets = [
-      "${aws_default_subnet.default_subnet_a.id}",
-      "${aws_default_subnet.default_subnet_b.id}"
-    ]
+    subnets = var.subnets
     assign_public_ip = true
-    security_groups = [
-      "${aws_security_group.ecs_service_security_group.id}"
-    ]
+    security_groups = var.ecs_service_security_groups_id
   }
 
   tags = {
