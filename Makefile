@@ -60,6 +60,14 @@ tf-fmt:
 tf-val:
 	@echo "Validating Terraform <Validate Terraform code>"
 	cd terraform && terraform validate
+	
+tf-graph:
+	@echo "Graph Terraform <Graph Terraform code>"
+	cd terraform && mkdir -p visualize && terraform graph | dot -Tsvg > visualize/graph.svg
+
+tf-plan-json:
+	@echo "Graph Terraform <Graph Terraform code>"
+	cd terraform && mkdir -p visualize && terraform plan -out=plan.out && terraform show -json plan.out > visualize/plan.json
 
 tf-deploy:
 	@echo "Deploying Terraform <Deploy infrastruture resources>"
