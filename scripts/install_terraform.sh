@@ -1,5 +1,7 @@
 #!/bin/bash
 
+# This script is used to install Terraform
+
 # Install Terraform by HashiCorp
 wget -O- https://apt.releases.hashicorp.com/gpg | sudo gpg --dearmor -o /usr/share/keyrings/hashicorp-archive-keyring.gpg
 
