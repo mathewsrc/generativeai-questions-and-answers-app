@@ -44,7 +44,7 @@ tf-init:
 
 tf-plan:
 	@echo "Planning Terraform <Preview of resources to be created>"
-	cd terraform && terraform plan
+	cd terraform/ && terraform plan -input=false
 
 tf-outp:
 	@echo "Output Terraform <Output of resources to be created>"
@@ -52,7 +52,7 @@ tf-outp:
 
 tf-apply:
 	@echo "Applying Terraform <Create infrastruture resources>"
-	cd terraform && terraform apply -auto-approve
+	cd terraform && terraform apply -auto-approve -input=false
 
 tf-destroy:
 	@echo "Destroying Terraform <Destroy infrastruture resources>"
@@ -60,7 +60,7 @@ tf-destroy:
 
 tf-fmt:
 	@echo "Formating Terraform <Auto-format Terraform code>"
-	cd terraform && terraform fmt
+	cd terraform && terraform fmt -check
 
 tf-val:
 	@echo "Validating Terraform <Validate Terraform code>"
