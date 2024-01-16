@@ -19,8 +19,8 @@ resource "aws_ecs_task_definition" "ecs_task_definition" {
       "essential": true,
       "portMappings": [
         {
-          "containerPort": 8000,
-          "hostPort": 8000
+          "containerPort": 80,
+          "hostPort": 80
         }
       ]
     }
@@ -55,7 +55,7 @@ resource "aws_ecs_service" "ecs_service" {
   load_balancer {
     target_group_arn = var.target_group_arn
     container_name   = var.container_name
-    container_port   = 8000
+    container_port   = 80
   }
 
   network_configuration {
