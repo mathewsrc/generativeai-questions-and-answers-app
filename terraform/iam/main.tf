@@ -2,12 +2,24 @@ data "aws_caller_identity" "current" {}
 
 data "aws_iam_policy_document" "ecs_task_exec_role_policy" {
   statement {
-    actions = ["sts:AssumeRole"]
+    sid       = 1
+    actions = ["sts:AssumeRole", "logs:CreateLogGroup"]
 
     principals {
       type        = "Service"
       identifiers = ["ecs-tasks.amazonaws.com"]
     }
+  }
+
+  statement {
+      sid       = 2
+      actions = [
+        "logs:CreateLogGroup",
+        "logs:CreateLogStream",
+        "logs:PutLogEvents",
+        "logs:DescribeLogStreams"
+      ]
+      resources = ["arn:aws:logs:*:*:*"]
   }
 }
 
