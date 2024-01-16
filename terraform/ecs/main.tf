@@ -17,6 +17,7 @@ resource "aws_ecs_task_definition" "ecs_task_definition" {
     operating_system_family = "LINUX"
     cpu_architecture        = "X86_64"
   }
+ 
 
   requires_compatibilities = ["FARGATE"] # use Fargate as the launch type
   network_mode             = "awsvpc"    # add the AWS VPN network mode as this is required for Fargate
