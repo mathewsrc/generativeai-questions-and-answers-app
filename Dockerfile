@@ -25,7 +25,7 @@ RUN poetry config virtualenvs.in-project true
 RUN poetry install --no-root
 
 # Defines the port that the application listens on
-EXPOSE 8000
+EXPOSE 80
 
 # Run the application using unicorn on port 8000
-CMD ["poetry", "run", "uvicorn", "--host", "0.0.0.0", "--port", "8000", "app.main:app", "--reload"]
+CMD ["poetry", "run", "uvicorn", "--host", "0.0.0.0", "--port", "80", "app.main:app", "--reload"]
