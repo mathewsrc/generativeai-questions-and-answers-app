@@ -16,12 +16,6 @@ provider "aws" {
   }
 }
 
-terraform {
-  backend "local" {
-    path = "terraform.tfstate"
-  }
-}
-
 module "network" {
   source      = "./network"
   region      = var.region
@@ -63,14 +57,16 @@ module "iam" {
   environment = var.environment
 }
 
-#terraform {
-# backend "remote" {
-#    # The name of your Terraform Cloud organization.
-#    organization = "mlops-terraform"
-#
-#    # The name of the Terraform Cloud workspace to store Terraform state files in.
-#    workspaces {
-#      name = "bedrock-qa-tf"
-#    }
-#  }
-#}
+# terraform {
+#   backend "local" {
+#     path = "terraform.tfstate"
+#   }
+# }
+
+terraform {
+  backend "s3" {
+    bucket = "terraform-bucket-state-tf"
+    key    = "./terraform.tfstate"
+    region = "us-east-1"
+  }
+}
