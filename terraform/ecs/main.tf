@@ -11,21 +11,7 @@ resource "aws_ecs_cluster" "ecs_cluster" {
 resource "aws_ecs_task_definition" "ecs_task_definition" {
   family = var.ecs_task_family_name
 
-  container_definitions = <<DEFINITION
-  [
-    {
-      "name": "${var.container_name}",
-      "image": "${var.ecr_repository_url}",
-      "essential": true,
-      "portMappings": [
-        {
-          "containerPort": 80,
-          "hostPort": 80
-        }
-      ]
-    }
-  ]
-  DEFINITION
+  container_definitions = file("../.aws/task-definition.json")
 
   runtime_platform {
     operating_system_family = "LINUX"
