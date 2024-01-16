@@ -32,11 +32,9 @@ credentials = boto_session.get_credentials()
 bedrock_models = boto3.client("bedrock", region_name=AWS_REGION)
 bedrock_runtime = boto3.client("bedrock-runtime", region_name=AWS_REGION)
 
-
 @click.group()
 def cli():
     pass
-
 
 @cli.command("download-docs")
 def download_files():

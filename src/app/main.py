@@ -26,16 +26,12 @@ async def root():
 
 @app.get("/question", response_class=HTMLResponse)
 async def question(question: Question):
-    try:
-        wrapper_vectorestore_faiss = joblib.load("../../datasets/vectorstore_faiss.pkl")
-    except:
-        return HTMLResponse("<h1>Error loading VectorStore</h1>")
     llm = Bedrock(
         client=bedrock_runtime,
         model_id="anthropic.claude-v2",
     )
     try:
-        answer = wrapper_vectorestore_faiss.query(question=question, llm=llm)
+        answer = "Hello from FastAPI"
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
     return HTMLResponse(f"<h1>Question: {question.content}</h1><p>Answer: {answer}</p>")
