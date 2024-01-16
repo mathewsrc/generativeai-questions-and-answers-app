@@ -12,10 +12,10 @@ TAG=$(git rev-parse --short HEAD) # Get the short commit hash
 aws ecr get-login-password --region $AWS_REGION | docker login --username AWS --password-stdin $AWS_ECR_REPOSITORY_URL
 
 # Build the Docker image
-docker build -t $AWS_ECR_REPOSITORY:$TAG .
+docker build -t $AWS_ECR_REPOSITORY . 
 
 # Tag the Docker image
-docker tag $AWS_ECR_REPOSITORY:$TAG $AWS_ECR_REPOSITORY_URL:$TAG
+docker tag $AWS_ECR_REPOSITORY:latest $AWS_ECR_REPOSITORY_URL:$TAG
 
 # Push the Docker image
 docker push $AWS_ECR_REPOSITORY_URL:$TAG
