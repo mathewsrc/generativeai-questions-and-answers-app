@@ -69,5 +69,8 @@ terraform {
     bucket = "terraform-bucket-state-tf"
     key    = "./terraform.tfstate"
     region = "us-east-1"
+    assume_role = {
+      role_arn = "arn:aws:iam::078090784717:policy/terraform_state_role"
+    }
   }
 }

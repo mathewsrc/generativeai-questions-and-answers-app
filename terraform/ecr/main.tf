@@ -6,6 +6,8 @@ resource "aws_ecr_repository" "ecr_repo" {
     scan_on_push = true
   }
 
+  force_delete = true
+
   tags = {
     Environment = var.environment
     Application = var.name
