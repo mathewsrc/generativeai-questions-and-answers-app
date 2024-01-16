@@ -44,7 +44,7 @@ tf-init:
 
 tf-plan:
 	@echo "Planning Terraform <Preview of resources to be created>"
-	cd terraform/ && terraform plan -input=false
+	cd terraform/ && terraform plan -input=false 
 
 tf-outp:
 	@echo "Output Terraform <Output of resources to be created>"
@@ -60,7 +60,7 @@ tf-destroy:
 
 tf-fmt:
 	@echo "Formating Terraform <Auto-format Terraform code>"
-	cd terraform && terraform fmt -check
+	cd terraform && terraform fmt 
 
 tf-val:
 	@echo "Validating Terraform <Validate Terraform code>"
