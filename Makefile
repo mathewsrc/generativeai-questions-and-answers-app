@@ -50,10 +50,6 @@ tf-outp:
 	@echo "Output Terraform <Output of resources to be created>"
 	cd terraform && terraform output
 
-tf-migrate:
-	@echo "Migrating Terraform state to remote backend"
-	cd terraform && terraform init -migrate-state
-
 tf-apply:
 	@echo "Applying Terraform <Create infrastruture resources>"
 	cd terraform && terraform apply -auto-approve
