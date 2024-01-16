@@ -30,3 +30,4 @@ variable "bedrock_role_name" {
   description = "The name of bedrock role"
   default     = "bedrock-qa-rag-bedrock-role-tf"
 }
+

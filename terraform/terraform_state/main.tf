@@ -1,8 +1,11 @@
 data "aws_iam_policy_document" "terraform_state_policy" {
   statement {
     sid       = 1
-    actions   = [ "s3:GetObject", "s3:PutObject", "s3:DeleteObject"]
-    resources = ["arn:aws:s3:::terraform-bucket-state-tf/terraform.tfstate"]
+    actions   = [ "s3:*"]
+    resources = [
+				"arn:aws:s3:::terraform-bucket-state-tf",
+				"arn:aws:s3:::terraform-bucket-state-tf/*/*"
+			]
   }
    statement {
     sid       = 2
