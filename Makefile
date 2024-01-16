@@ -73,4 +73,17 @@ tf-deploy:
 	@echo "Deploying Terraform <Deploy infrastruture resources>"
 	cd terraform && terraform init && terraform apply -auto-approve
 
+tf-upload:
+	@echo "Uploading Terraform <Upload infrastruture resources>"
+	cd terraform && terraform init 
+	chmod +x ./scripts/upload_state.sh
+	./scripts/upload_state.sh 
+	cd terraform && terraform init -migrate-state
+	cd terraform && terraform refresh
+
+tf-mgt:
+	@echo "Migrating Terraform <Migrate infrastruture resources>"
+	cd terraform && terraform init -migrate-state
+	cd terraform && terraform refresh
+
 all: install format lint
