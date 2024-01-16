@@ -7,3 +7,4 @@ unzip awscliv2.zip
 sudo ./aws/install
 rm -rf awscliv2.zip aws
 aws --version
+aws configure
