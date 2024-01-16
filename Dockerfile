@@ -22,7 +22,7 @@ COPY ./src/app /code/app
 RUN poetry config virtualenvs.in-project true
 
 # Install dependencies using poetry
-RUN poetry install
+RUN poetry install --no-root
 
 # Defines the port that the application listens on
 EXPOSE 8000
