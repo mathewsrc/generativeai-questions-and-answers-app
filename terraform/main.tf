@@ -44,6 +44,7 @@ module "ecs" {
   name                           = var.name
   environment                    = var.environment
   ecr_repository_url             = module.ecr.ecr_repository_url
+  ecr_repository_name            = module.ecr.ecr_repository_name
   target_group_arn               = module.network.target_group_arn
   subnets                        = module.network.subnets
   ecs_service_security_groups_id = module.network.ecs_service_security_groups_id

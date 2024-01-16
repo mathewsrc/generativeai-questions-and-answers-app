@@ -90,7 +90,7 @@ resource "aws_lb_target_group" "lb_target_group" {
   port     = 80
   protocol = "HTTP"
   vpc_id   = aws_default_vpc.default_vpc.id
-
+  target_type = "ip"
   tags = {
     Environment = var.environment
     Application = var.name
@@ -104,7 +104,7 @@ resource "aws_lb_listener" "lb_listener" {
   protocol          = "HTTP"
   default_action {
     type             = "forward"
-    target_group_arn = aws_lb_target_group.lb_target_group.arn 
+    target_group_arn = aws_lb_target_group.lb_target_group.arn
   }
 
   tags = {

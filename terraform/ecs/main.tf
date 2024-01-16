@@ -15,7 +15,7 @@ resource "aws_ecs_task_definition" "ecs_task_definition" {
   [
     {
       "name": "${var.container_name}",
-      "image": "${var.ecr_repository_url}:latest",
+      "image": "${var.ecr_repository_url}",
       "essential": true,
       "portMappings": [
         {
@@ -44,8 +44,6 @@ resource "aws_ecs_task_definition" "ecs_task_definition" {
     FamilyName  = var.ecs_task_family_name
   }
 }
-
-
 
 resource "aws_ecs_service" "ecs_service" {
   name            = var.ecs_service_name

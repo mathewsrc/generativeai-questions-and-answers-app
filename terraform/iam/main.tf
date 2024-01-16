@@ -36,12 +36,12 @@ data "aws_iam_policy_document" "bedrock" {
 }
 
 resource "aws_iam_policy" "bedrock" {
-  name   = "bedrock"
+  name   = var.bedrock_policy_name
   policy = data.aws_iam_policy_document.bedrock.json
 }
 
 resource "aws_iam_role" "bedrock" {
-  name               = "bedrock"
+  name               = var.bedrock_role_name
   assume_role_policy = <<POLICY
 {
     "Version": "2012-10-17",

@@ -38,7 +38,7 @@ variable "ecs_security_group_name" {
 
 variable "container_name" {
   description = "The name of container"
-  default     = "bedrock-qa-rag-container-tf"
+  default     = "bedrock-qa-rag-task-tf"
 }
 
 variable "container_port" {
@@ -61,6 +61,10 @@ variable "memory" {
 
 variable "ecr_repository_url" {
   description = "The url of ECR repository"
+}
+
+variable "ecr_repository_name" {
+  description = "The name of ECR repository"
 }
 
 variable "target_group_arn" {

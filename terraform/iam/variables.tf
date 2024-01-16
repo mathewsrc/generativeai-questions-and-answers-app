@@ -20,3 +20,13 @@ variable "ecs_execution_role_name" {
   description = "The name of ECS execution role"
   default     = "bedrock-qa-rag-ecs-execution-role_tf"
 }
+
+variable "bedrock_policy_name" {
+  description = "The name of bedrock policy"
+  default     = "bedrock-qa-rag-bedrock-policy-tf"
+}
+
+variable "bedrock_role_name" {
+  description = "The name of bedrock role"
+  default     = "bedrock-qa-rag-bedrock-role-tf"
+}
