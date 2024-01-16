@@ -18,7 +18,7 @@ variable "environment" {
 
 variable "ecs_execution_role_name" {
   description = "The name of ECS execution role"
-  default     = "bedrock-qa-rag-ecs-execution-role_tf"
+  default     = "bedrock-qa-rag-ecs-execution-role-tf"
 }
 
 variable "bedrock_policy_name" {
