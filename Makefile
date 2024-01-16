@@ -33,6 +33,11 @@ docker-run:
 	@echo "Starting Docker container"
 	docker run -p 8000:8000 app 
 
+aws-deploy:
+	@echo "Deploying to AWS"
+	chmod +x ./scripts/deploy.sh
+	./scripts/deploy.sh
+
 tf-init:
 	@echo "Initializing Terraform <Initialize the provider with plugin>"
 	cd terraform && terraform init
