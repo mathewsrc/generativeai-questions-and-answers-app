@@ -13,3 +13,7 @@ output "ecs_service_security_groups_id" {
 output "subnets" {
   value = tolist([aws_default_subnet.default_subnet_a.id, aws_default_subnet.default_subnet_b.id])
 }
+
+output "app_url" {
+  value = aws_lb.ecs_load_balancer.dns_name
+}
