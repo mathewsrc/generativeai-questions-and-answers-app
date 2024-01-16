@@ -10,12 +10,13 @@ class Question(BaseModel):
     content: str
 
 app = FastAPI()
-bedrock_runtime = boto3.client("bedrock-runtime")
-boto_session = boto3.Session()
-credentials = boto_session.get_credentials()
 
-bedrock_models = boto3.client("bedrock")
-bedrock_runtime = boto3.client("bedrock-runtime")
+AWS_REGION = "us-east-1"
+
+boto_session = boto3.Session(region_name=AWS_REGION)
+credentials = boto_session.get_credentials()
+bedrock_models = boto3.client("bedrock", region_name=AWS_REGION)
+bedrock_runtime = boto3.client("bedrock-runtime", region_name=AWS_REGION)
 
 @app.get("/", response_class=HTMLResponse)
 async def root():
