@@ -31,7 +31,7 @@ docker-build:
 
 docker-run:
 	@echo "Starting Docker container"
-	docker run -p 8000:8000 app 
+	docker run -p 80:80 app 
 
 aws-deploy:
 	@echo "Deploying to AWS"
@@ -94,5 +94,9 @@ tf-mgt:
 tf-refresh:
 	@echo "Refreshing Terraform <Refresh infrastruture resources>"
 	cd terraform && terraform refresh
+
+json-fmt:
+	@echo "Formating JSON <Auto-format JSON code>"
+	jq . .aws/task-definition.json > temp.json && mv temp.json .aws/task-definition.json
 	
 all: install format lint
