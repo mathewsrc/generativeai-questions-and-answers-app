@@ -9,6 +9,7 @@ resource "aws_default_subnet" "default_subnet_a" {
   tags = {
     Name = "Default subnet for us-east-1a"
   }
+  depends_on = [ aws_default_vpc.default_vpc ]
 }
 
 resource "aws_default_subnet" "default_subnet_b" {
@@ -16,6 +17,7 @@ resource "aws_default_subnet" "default_subnet_b" {
   tags = {
     Name = "Default subnet for us-east-1b"
   }
+  depends_on = [ aws_default_vpc.default_vpc ]
 }
 
 resource "aws_security_group" "ecs_load_balancer_security_group" {
