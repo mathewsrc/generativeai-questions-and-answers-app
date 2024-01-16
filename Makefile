@@ -86,4 +86,8 @@ tf-mgt:
 	cd terraform && terraform init -migrate-state
 	cd terraform && terraform refresh
 
+tf-refresh:
+	@echo "Refreshing Terraform <Refresh infrastruture resources>"
+	cd terraform && terraform refresh
+	
 all: install format lint
