@@ -1,4 +1,4 @@
-FROM python:3.11.2-buster
+FROM python:3.11.2-slim-buster
 
 # Install curl and curl the poetry installer
 RUN apt-get update && \
