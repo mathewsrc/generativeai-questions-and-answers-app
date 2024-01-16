@@ -54,7 +54,7 @@ resource "aws_ecs_service" "ecs_service" {
 
   load_balancer {
     target_group_arn = var.target_group_arn
-    container_name   = aws_ecs_task_definition.ecs_task_definition.family
+    container_name   = var.container_name
     container_port   = 8000
   }
 
