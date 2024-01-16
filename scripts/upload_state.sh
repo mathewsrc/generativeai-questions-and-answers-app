@@ -11,4 +11,4 @@ AWS_REGION="us-east-1"
 aws s3api create-bucket --bucket $BUCKET_NAME --region $AWS_REGION 
 
 # Upload the state file to the S3 bucket
-aws s3 cp $STATE_FILE s3://$BUCKET_NAME
+aws s3 cp $STATE_FILE s3://$BUCKET_NAME/state/
