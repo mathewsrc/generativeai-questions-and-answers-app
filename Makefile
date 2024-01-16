@@ -98,5 +98,7 @@ tf-refresh:
 json-fmt:
 	@echo "Formating JSON <Auto-format JSON code>"
 	jq . .aws/task-definition.json > temp.json && mv temp.json .aws/task-definition.json
+	jq . .aws/task-definition-actions.json > temp.json && mv temp.json .aws/task-definition-actions.json
+
 	
 all: install format lint
