@@ -88,6 +88,7 @@ jobs:
     - name: Pass values to task definition
       env:
         account_id: ${{ secrets.AWS_ACCOUNT_ID }}
+        IMAGE_TAG: ${{ github.sha }}
       run: |
         sed -i "s/${{ env.CONTAINER_NAME }}/$service_name/g" .aws/task-definition.json
         sed -i "s/${{ env.ECR_REPOSITORY }}/$ecr/g" .aws/task-definition.json
