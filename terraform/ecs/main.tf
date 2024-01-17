@@ -12,11 +12,10 @@ resource "aws_ecs_cluster" "ecs_cluster" {
 
 # Get the latest git commit hash
 data "external" "git" {
-  program = [
-    "git",
-    "rev-list",
-    "HEAD",
-    "| head -1"
+  program = ["sh", "-c", <<-EOSCRIPT
+    jq -n '{ "sha": $SHA }' \
+      --arg SHA "$(git rev-list HEAD | head -1)" \
+  EOSCRIPT
   ]
 }
 
@@ -24,14 +23,17 @@ data "external" "git" {
 resource "aws_ecs_task_definition" "ecs_task_definition" {
 
   #container_definitions = file("../.aws/task-definition.json")
-  container_definitions = templatefile("${path.module}/../../.aws/task-definition.json", { tag = data.external.git })
+  container_definitions = templatefile("${path.module}/../../.aws/task-definition.json",
+    { tag = data.external.git.result.sha,
+      ecr = var.ecr_repository_url,
+      service_name = var.ecs_service_name })
 
   runtime_platform {
     operating_system_family = "LINUX"
     cpu_architecture        = "X86_64"
   }
 
-  family = var.ecs_task_family_name
+  family                   = var.ecs_task_family_name
   requires_compatibilities = ["FARGATE"] # use Fargate as the launch type
   network_mode             = "awsvpc"    # add the AWS VPN network mode as this is required for Fargate
   memory                   = var.memory  # Specify the memory the container requires
