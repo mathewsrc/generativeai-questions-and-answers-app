@@ -88,12 +88,15 @@ jobs:
     - name: Pass values to task definition
       env:
         account_id: ${{ secrets.AWS_ACCOUNT_ID }}
-        IMAGE_TAG: ${{ github.sha }}
+        tag: ${{ steps.build-image.outputs.image }}
+        name: ${{ env.CONTAINER_NAME }}
+        ecr: ${{ env.ECR_REPOSITORY }}
+        region: ${{ env.AWS_REGION }}
       run: |
-        sed -i "s/${{ env.CONTAINER_NAME }}/$name/g" .aws/task-definition.json
-        sed -i "s/${{ env.ECR_REPOSITORY }}/$ecr/g" .aws/task-definition.json
-        sed -i "s/${{ IMAGE_TAG }}/$tag/g" .aws/task-definition.json
-        sed -i "s/${{ env.AWS_REGION }}/$region/g" .aws/task-definition.json
+        sed -i "s/{name}}/$name/g" .aws/task-definition.json
+        sed -i "s/{ecr}/$ecr/g" .aws/task-definition.json
+        sed -i "s/{tag}/$tag/g" .aws/task-definition.json
+        sed -i "s/region/$region/g" .aws/task-definition.json
         sed -i "s/{account_id}/$account_id/g" .aws/task-definition.json
 
     - name: Fill in the new image ID in the Amazon ECS task definition
