@@ -36,11 +36,6 @@ variable "ecs_security_group_name" {
   default     = "bedrock-qa-rag-ecs-security-group-tf"
 }
 
-variable "ecs_service_name" {
-  description = "The name of container"
-  default     = "bedrock-qa-service"
-}
-
 variable "container_port" {
   description = "The port of container"
   default     = 80
