@@ -14,7 +14,7 @@ resource "aws_ecs_cluster" "ecs_cluster" {
 data "external" "envs" {
   program = ["sh", "-c", <<-EOSCRIPT
     jq -n '{ "sha": $SHA }' \
-      --arg SHA "$(git rev-parse --short HEAD)" \
+      --arg SHA "$(git rev-parse HEAD)" \
   EOSCRIPT
   ]
 }

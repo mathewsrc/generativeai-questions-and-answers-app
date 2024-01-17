@@ -6,7 +6,7 @@ AWS_REGION=us-east-1 # Replace with your AWS region
 AWS_ACCOUNT_ID=078090784717 # Replace with your AWS account ID
 AWS_ECR_REPOSITORY=bedrock-qa-rag-ecr-tf # Replace with your ECR repository name
 AWS_ECR_REPOSITORY_URL=$AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$AWS_ECR_REPOSITORY
-TAG=$(git rev-parse --short HEAD) # Get the short commit hash
+TAG=$(git rev-parse HEAD) # Get the short commit hash
 
 # Login to AWS ECR
 aws ecr get-login-password --region $AWS_REGION | docker login --username AWS --password-stdin $AWS_ECR_REPOSITORY_URL
