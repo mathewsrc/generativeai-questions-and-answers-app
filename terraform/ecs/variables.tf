@@ -73,7 +73,7 @@ variable "target_group_arn" {
 
 variable "ecs_service_security_groups_id" {
   description = "The id of ECS service security group"
-  type = list(string)
+  type        = list(string)
 }
 
 variable "subnets" {
