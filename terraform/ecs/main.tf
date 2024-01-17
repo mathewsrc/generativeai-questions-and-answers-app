@@ -1,3 +1,5 @@
+
+# Create an ECS cluster
 resource "aws_ecs_cluster" "ecs_cluster" {
   name = var.ecs_cluster_name
 
@@ -8,6 +10,7 @@ resource "aws_ecs_cluster" "ecs_cluster" {
   }
 }
 
+# Create an ECS task definition
 resource "aws_ecs_task_definition" "ecs_task_definition" {
   family = var.ecs_task_family_name
 
@@ -17,7 +20,7 @@ resource "aws_ecs_task_definition" "ecs_task_definition" {
     operating_system_family = "LINUX"
     cpu_architecture        = "X86_64"
   }
- 
+
 
   requires_compatibilities = ["FARGATE"] # use Fargate as the launch type
   network_mode             = "awsvpc"    # add the AWS VPN network mode as this is required for Fargate
@@ -32,6 +35,7 @@ resource "aws_ecs_task_definition" "ecs_task_definition" {
   }
 }
 
+# Create an ECS service
 resource "aws_ecs_service" "ecs_service" {
   name            = var.ecs_service_name
   cluster         = aws_ecs_cluster.ecs_cluster.id
@@ -46,9 +50,9 @@ resource "aws_ecs_service" "ecs_service" {
   }
 
   network_configuration {
-    subnets = var.subnets
+    subnets          = var.subnets
     assign_public_ip = true
-    security_groups = var.ecs_service_security_groups_id
+    security_groups  = var.ecs_service_security_groups_id
   }
 
   tags = {
