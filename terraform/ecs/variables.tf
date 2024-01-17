@@ -50,7 +50,7 @@ variable "cpu" {
 
 variable "memory" {
   description = "The memory of container"
-  default     = 512
+  default     = 1024
   type        = number
 }
 
