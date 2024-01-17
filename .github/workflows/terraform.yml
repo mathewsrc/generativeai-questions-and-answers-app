@@ -54,13 +54,12 @@ on:
     workflows: ["CI"]
     types:
       - completed
+      condition: ${{ github.event.workflow_run.conclusion == 'success' }}
 
 permissions:
   contents: read
 
 jobs:
-  on-success:
-    if: ${{ github.event.workflow_run.conclusion == 'success' }}
     terraform:
       name: 'Terraform'
       runs-on: ubuntu-latest
@@ -107,8 +106,3 @@ jobs:
       - name: Terraform Apply
         # if: github.ref == 'refs/heads/"main"' && github.event_name == 'push'
         run: make tf-apply
-  on-failure:
-    runs-on: ubuntu-latest
-    if: ${{ github.event.workflow_run.conclusion == 'failure' }}
-    steps:
-      - run: echo "CI failure"
