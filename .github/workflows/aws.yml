@@ -90,7 +90,7 @@ jobs:
         account_id: ${{ secrets.AWS_ACCOUNT_ID }}
         IMAGE_TAG: ${{ github.sha }}
       run: |
-        sed -i "s/${{ env.CONTAINER_NAME }}/$service_name/g" .aws/task-definition.json
+        sed -i "s/${{ env.CONTAINER_NAME }}/$name/g" .aws/task-definition.json
         sed -i "s/${{ env.ECR_REPOSITORY }}/$ecr/g" .aws/task-definition.json
         sed -i "s/${{ IMAGE_TAG }}/$tag/g" .aws/task-definition.json
         sed -i "s/${{ env.AWS_REGION }}/$region/g" .aws/task-definition.json
