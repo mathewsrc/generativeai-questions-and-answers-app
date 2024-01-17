@@ -42,7 +42,7 @@ env:
   ECR_REPOSITORY: bedrock-qa-rag-ecr-tf           # set this to your Amazon ECR repository name
   ECS_SERVICE: bedrock-qa-rag-service-tf                 # set this to your Amazon ECS service name
   ECS_CLUSTER: bedrock-qa-rag-cluster-tf                 # set this to your Amazon ECS cluster name
-  ECS_TASK_DEFINITION: .aws/task-definition.json # set this to the path to your Amazon ECS task definition
+  ECS_TASK_DEFINITION: .aws/task-definition-actions.json # set this to the path to your Amazon ECS task definition
                                                # file, e.g. .aws/task-definition.json
   CONTAINER_NAME: bedrock-qa-rag-service-tf           # set this to the name of the container in the
                                                # containerDefinitions section of your task definition
