@@ -32,7 +32,7 @@ name: Deploy (Amazon ECS)
 
 on:
   workflow_run:
-    workflows: ["Terraform"]
+    workflows: ["Terraform (IaC)"]
     types:
       - completed
    
