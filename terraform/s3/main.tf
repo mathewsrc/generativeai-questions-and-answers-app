@@ -1,3 +1,4 @@
+# Create an S3 bucket
 resource "aws_s3_bucket" "bucket" {
   bucket = var.bucket_name
 
@@ -7,6 +8,7 @@ resource "aws_s3_bucket" "bucket" {
   }
 }
 
+# Create an S3 bucket object for each PDF file in the documents directory
 resource "aws_s3_object" "object" {
   # Recursively look for pdf files inside documents/ 
   bucket   = aws_s3_bucket.bucket.id

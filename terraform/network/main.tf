@@ -1,15 +1,17 @@
+# Create a default VPC
 resource "aws_default_vpc" "default_vpc" {
   tags = {
     Name = "Default VPC"
   }
 }
 
+# Create a default subnet for us-east-1a and us-east-1b
 resource "aws_default_subnet" "default_subnet_a" {
   availability_zone = "us-east-1a"
   tags = {
     Name = "Default subnet for us-east-1a"
   }
-  depends_on = [ aws_default_vpc.default_vpc ]
+  depends_on = [aws_default_vpc.default_vpc]
 }
 
 resource "aws_default_subnet" "default_subnet_b" {
@@ -17,9 +19,10 @@ resource "aws_default_subnet" "default_subnet_b" {
   tags = {
     Name = "Default subnet for us-east-1b"
   }
-  depends_on = [ aws_default_vpc.default_vpc ]
+  depends_on = [aws_default_vpc.default_vpc]
 }
 
+# Create a ECS security group
 resource "aws_security_group" "ecs_load_balancer_security_group" {
   vpc_id = aws_default_vpc.default_vpc.id
   name   = var.ecs_security_group_name
@@ -43,6 +46,7 @@ resource "aws_security_group" "ecs_load_balancer_security_group" {
   }
 }
 
+# Create a load balancer
 resource "aws_lb" "ecs_load_balancer" {
   name               = var.load_balance_name
   internal           = false
@@ -62,6 +66,7 @@ resource "aws_lb" "ecs_load_balancer" {
   }
 }
 
+# Create a ECS service security group
 resource "aws_security_group" "ecs_service_security_group" {
   ingress {
     from_port = 0
@@ -85,11 +90,12 @@ resource "aws_security_group" "ecs_service_security_group" {
   }
 }
 
+# Create a ECS load balancer target group
 resource "aws_lb_target_group" "lb_target_group" {
-  name     = var.load_balancer_target_group_name
-  port     = 80
-  protocol = "HTTP"
-  vpc_id   = aws_default_vpc.default_vpc.id
+  name        = var.load_balancer_target_group_name
+  port        = 80
+  protocol    = "HTTP"
+  vpc_id      = aws_default_vpc.default_vpc.id
   target_type = "ip"
   tags = {
     Environment = var.environment
@@ -98,6 +104,7 @@ resource "aws_lb_target_group" "lb_target_group" {
   }
 }
 
+# Create a ECS load balancer listener
 resource "aws_lb_listener" "lb_listener" {
   load_balancer_arn = aws_lb.ecs_load_balancer.arn
   port              = "80"
