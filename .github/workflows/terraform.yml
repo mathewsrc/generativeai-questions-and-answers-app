@@ -53,8 +53,7 @@ on:
   workflow_run:
     workflows: ["CI"]
     types:
-      - completed
-      condition: ${{ github.event.workflow_run.conclusion == 'success' }}
+      - success
 
 permissions:
   contents: read

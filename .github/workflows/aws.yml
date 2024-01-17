@@ -34,8 +34,8 @@ on:
   workflow_run:
     workflows: ["Terraform"]
     types:
-      - completed
-    condition: ${{ github.event.workflow_run.conclusion == 'success' }}
+      - success
+   
 
 env:
   AWS_REGION: us-east-1                  # set this to your preferred AWS region, e.g. us-west-1
