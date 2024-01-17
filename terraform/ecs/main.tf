@@ -10,10 +10,21 @@ resource "aws_ecs_cluster" "ecs_cluster" {
   }
 }
 
+data "external" "git" {
+  program = [
+    "git",
+    "log",
+    "--pretty=format:{ \"sha\": \"%H\" }",
+    "-1",
+    "HEAD"
+  ]
+}
+
 # Create an ECS task definition
 resource "aws_ecs_task_definition" "ecs_task_definition" {
 
-  container_definitions = file("../.aws/task-definition.json")
+  #container_definitions = file("../.aws/task-definition.json")
+  container_definitions = templatefile("${path.module}/../../.aws/task-definition.json", { docker_image = external.git.result.sha })
 
   runtime_platform {
     operating_system_family = "LINUX"
