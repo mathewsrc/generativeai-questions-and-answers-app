@@ -8,9 +8,9 @@ data "aws_caller_identity" "current" {}
 data "aws_iam_policy_document" "ecs_task_executor_policy" {
   statement {
     sid     = 1
-    actions = ["logs:CreateLogStream", "logs:PutLogEvents"]
+    actions = ["logs:CreateLogStream", "logs:PutLogEvents", "logs:CreateLogGroup"]
     resources = [
-      "arn:aws:logs:us-east-1:${data.aws_caller_identity.current.account_id}:log-group:bedrock:log-stream:ecs/bedrock-qa-service/*"]
+    "arn:aws:logs:us-east-1:${data.aws_caller_identity.current.account_id}:log-group:bedrock:log-stream:*"]
   }
   statement {
     sid       = 2
