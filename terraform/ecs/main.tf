@@ -12,7 +12,6 @@ resource "aws_ecs_cluster" "ecs_cluster" {
 
 # Create an ECS task definition
 resource "aws_ecs_task_definition" "ecs_task_definition" {
-  family = var.ecs_task_family_name
 
   container_definitions = file("../.aws/task-definition.json")
 
@@ -21,7 +20,7 @@ resource "aws_ecs_task_definition" "ecs_task_definition" {
     cpu_architecture        = "X86_64"
   }
 
-
+  family = var.ecs_task_family_name
   requires_compatibilities = ["FARGATE"] # use Fargate as the launch type
   network_mode             = "awsvpc"    # add the AWS VPN network mode as this is required for Fargate
   memory                   = var.memory  # Specify the memory the container requires
@@ -39,13 +38,13 @@ resource "aws_ecs_task_definition" "ecs_task_definition" {
 resource "aws_ecs_service" "ecs_service" {
   name            = var.ecs_service_name
   cluster         = aws_ecs_cluster.ecs_cluster.id
-  task_definition = aws_ecs_task_definition.ecs_task_definition.arn
+  #task_definition = aws_ecs_task_definition.ecs_task_definition.arn
   launch_type     = "FARGATE"
   desired_count   = 2 # Number of containers 
 
   load_balancer {
     target_group_arn = var.target_group_arn
-    container_name   = var.container_name
+    container_name   = var.ecs_service_name
     container_port   = 80
   }
 
