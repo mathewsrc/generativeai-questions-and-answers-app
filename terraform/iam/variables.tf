@@ -31,3 +31,9 @@ variable "bedrock_role_name" {
   default     = "bedrock-qa-rag-bedrock-role-tf"
 }
 
+
+variable "ecs_policy_name" {
+  description = "The name of ecs policy"
+  default     = "bedrock-qa-rag-ecs-policy-tf"
+
+}
