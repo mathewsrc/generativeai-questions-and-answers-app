@@ -27,7 +27,8 @@ resource "aws_ecs_task_definition" "ecs_task_definition" {
     { tag = data.external.envs.result.sha,
       ecr = var.ecr_repository_url,
       service_name = var.ecs_service_name,
-      region = var.region 
+      region = var.region,
+      logs_group_name = var.logs_group_name
     })
 
   runtime_platform {

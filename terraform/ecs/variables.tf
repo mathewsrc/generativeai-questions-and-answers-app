@@ -21,6 +21,11 @@ variable "ecs_task_family_name" {
   default     = "bedrock-qa-rag-task-tf"
 }
 
+variable "logs_group_name" {
+  description = "The name of the logs group"
+  default     = "bedrock"
+}
+
 variable "ecs_cluster_name" {
   description = "The name of the ECS cluster"
   default     = "bedrock-qa-rag-cluster-tf"
