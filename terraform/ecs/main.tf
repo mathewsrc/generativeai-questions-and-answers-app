@@ -10,11 +10,11 @@ resource "aws_ecs_cluster" "ecs_cluster" {
   }
 }
 
-# Get the latest git commit hash
-data "external" "git" {
+# Get the latest git commit hash (feel free to add more variables)
+data "external" "envs" {
   program = ["sh", "-c", <<-EOSCRIPT
     jq -n '{ "sha": $SHA }' \
-      --arg SHA "$(git rev-list HEAD | head -1)" \
+      --arg SHA "$(git rev-parse --short HEAD)" \
   EOSCRIPT
   ]
 }
@@ -24,9 +24,11 @@ resource "aws_ecs_task_definition" "ecs_task_definition" {
 
   #container_definitions = file("../.aws/task-definition.json")
   container_definitions = templatefile("${path.module}/../../.aws/task-definition.json",
-    { tag = data.external.git.result.sha,
+    { tag = data.external.envs.result.sha,
       ecr = var.ecr_repository_url,
-      service_name = var.ecs_service_name })
+      service_name = var.ecs_service_name,
+      region = var.region 
+    })
 
   runtime_platform {
     operating_system_family = "LINUX"
