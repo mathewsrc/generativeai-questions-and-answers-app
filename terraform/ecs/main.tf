@@ -10,13 +10,13 @@ resource "aws_ecs_cluster" "ecs_cluster" {
   }
 }
 
+# Get the latest git commit hash
 data "external" "git" {
   program = [
     "git",
-    "log",
-    "--pretty=format:{ \"sha\": \"%H\" }",
-    "-1",
-    "HEAD"
+    "rev-list",
+    "HEAD",
+    "| head -1"
   ]
 }
 
@@ -24,7 +24,7 @@ data "external" "git" {
 resource "aws_ecs_task_definition" "ecs_task_definition" {
 
   #container_definitions = file("../.aws/task-definition.json")
-  container_definitions = templatefile("${path.module}/../../.aws/task-definition.json", { docker_image = external.git })
+  container_definitions = templatefile("${path.module}/../../.aws/task-definition.json", { tag = data.external.git })
 
   runtime_platform {
     operating_system_family = "LINUX"
