@@ -91,12 +91,14 @@ jobs:
         comtainer_name: ${{ env.CONTAINER_NAME }}
         region: ${{ env.AWS_REGION }}
         ecr_repository: ${{ env.ECR_REPOSITORY }}
+        account_id: ${{ secrets.AWS_ACCOUNT_ID }}
       run: |
         sed -i "s|{tag}|$image|g" .aws/task-definition-actions.json
         sed -i "s|{name}|$comtainer_name|g" .aws/task-definition-actions.json
         sed -i "s|{region}|$region|g" .aws/task-definition-actions.json
         sed -i "s|{ecr}|$ecr_repository|g" .aws/task-definition-actions.json
-     
+        sed -i "s|{account_id}|$account_id|g" .aws/task-definition-actions.json
+
     - name: Fill in the new image ID in the Amazon ECS task definition
       id: task-def
       uses: aws-actions/amazon-ecs-render-task-definition@v1
