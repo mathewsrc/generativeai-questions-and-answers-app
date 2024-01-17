@@ -60,7 +60,7 @@ tf-destroy:
 
 tf-fmt:
 	@echo "Formating Terraform <Auto-format Terraform code>"
-	cd terraform && terraform fmt 
+	cd terraform && terraform fmt -recursive
 
 tf-val:
 	@echo "Validating Terraform <Validate Terraform code>"
