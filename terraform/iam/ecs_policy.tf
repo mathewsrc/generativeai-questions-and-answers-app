@@ -14,6 +14,7 @@ data "aws_iam_policy_document" "ecs" {
       "ec2:ModifyVpcAttribute",
       "ec2:DeleteVpc",
       "ec2:CreateSubnet",
+      "ec2:CreateDefaultSubnet",
       "ec2:ModifySubnetAttribute"
     ]
     resources = ["*"]
