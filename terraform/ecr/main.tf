@@ -1,3 +1,9 @@
+# Get the current AWS account ID
+data "aws_caller_identity" "current" {}
+
+# Get the current AWS region
+data "aws_region" "current" {}
+
 # Create an ECR repository
 resource "aws_ecr_repository" "ecr_repo" {
   name                 = var.ecr_name
