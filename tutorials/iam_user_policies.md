@@ -1,8 +1,8 @@
 # Creating a user in AWS IAM
 
-The following instructions are designed to help you create a user with restricted permissions for the purpose of recreating this project. AWS recommends the establishment of a user or role with only the essential permissions necessary, emphasizing this as a best practice for both security and overall safety.
+You should create a user with restricted permissions for the purpose of recreating this project. AWS recommends the establishment of a user or role with only the essential permissions necessary, emphasizing this as a best practice for both security and overall safety.
 
-
+Below are all policies needed for your new AWS user
 
 ## Policies
 
@@ -78,7 +78,7 @@ ECR (Elastic Container Repository)
 }
 ```
 
-ECS
+ECS (Elastic Container Service)
 
 ```json
 {
@@ -277,7 +277,7 @@ IAM
 }
 ```
 
-Terraform s3 state
+S3 policy for Terraform state file
 
 ```json
 {
@@ -301,7 +301,7 @@ Terraform s3 state
 }
 ```
 
-S3 with documents
+S3 policy for documents
 
 ```json
 {
