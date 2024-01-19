@@ -16,6 +16,13 @@ provider "aws" {
   }
 }
 
+module "iam" {
+  source      = "./iam"
+  region      = var.region
+  name        = var.name
+  environment = var.environment
+}
+
 module "network" {
   source      = "./network"
   region      = var.region
@@ -29,6 +36,16 @@ module "s3" {
   name        = var.name
   bucket_name = "bedrock-qa-bucket-tf"
   environment = var.environment
+  subfolder = "cnu"
+}
+
+module "s3" {
+  source      = "./s3"
+  region      = var.region
+  name        = var.name
+  bucket_name = "bedrock-qa-bucket-tf"
+  environment = var.environment
+  subfolder = "immigration"
 }
 
 module "ecr" {
@@ -46,16 +63,9 @@ module "ecs" {
   ecr_repository_url             = module.ecr.ecr_repository_url
   ecr_repository_name            = module.ecr.ecr_repository_name
   target_group_arn               = module.network.target_group_arn
-  subnets                        = module.network.subnets
+ subnets                        = module.network.subnets
   ecs_service_security_groups_id = module.network.ecs_service_security_groups_id
   ecs_task_execution_role_arn    = module.iam.ecs_task_execution_role_arn
-}
-
-module "iam" {
-  source      = "./iam"
-  region      = var.region
-  name        = var.name
-  environment = var.environment
 }
 
 # terraform {
