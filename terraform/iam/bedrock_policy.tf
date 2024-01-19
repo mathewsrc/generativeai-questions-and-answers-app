@@ -16,6 +16,6 @@ data "aws_iam_policy_document" "bedrock" {
 
 # IAM policy for Bedrock role
 resource "aws_iam_policy" "bedrock" {
-  name   = "bedrock-policy"
+  name   = "bedrock-policy-tf"
   policy = data.aws_iam_policy_document.bedrock.json
 }

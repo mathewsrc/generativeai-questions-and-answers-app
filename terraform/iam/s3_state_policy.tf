@@ -16,6 +16,6 @@ data "aws_iam_policy_document" "s3_state" {
 }
 
 resource "aws_iam_policy" "s3_state" {
-  name   = "s3_state_policy"
+  name   = "s3-state-policy-tf"
   policy = data.aws_iam_policy_document.s3_state.json
 }

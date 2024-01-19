@@ -24,7 +24,7 @@ data "aws_iam_policy_document" "ecs_task_executor_policy" {
 
 # IAM policy for ECS task executor role
 resource "aws_iam_policy" "ecs_task_executor_policy" {
-  name        = "ecs_task_executor_policy"
+  name        = "ecs-task-executor-policy-tf"
   description = "Policy for ECS task executor role"
 
   policy = data.aws_iam_policy_document.ecs_task_executor_policy.json

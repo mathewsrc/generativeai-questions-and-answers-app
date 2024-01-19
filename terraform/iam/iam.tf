@@ -46,6 +46,6 @@ data "aws_iam_policy_document" "iam" {
 }
 
 resource "aws_iam_policy" "iam" {
-  name   = "iam_policy"
+  name   = "iam-policy-tf"
   policy = data.aws_iam_policy_document.iam.json
 }

@@ -142,6 +142,6 @@ data "aws_iam_policy_document" "ecs" {
 }
 
 resource "aws_iam_policy" "ecs" {
-  name   = "ecs_policy"
+  name   = "ecs-policy-tf"
   policy = data.aws_iam_policy_document.ecs.json
 }

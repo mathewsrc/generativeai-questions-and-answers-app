@@ -74,6 +74,6 @@ data "aws_iam_policy_document" "opensearch" {
 }
 
 resource "aws_iam_policy" "opensearch" {
-  name   = "opensearch_policy"
+  name   = "opensearch-policy-tf"
   policy = data.aws_iam_policy_document.opensearch.json
 }

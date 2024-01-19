@@ -41,7 +41,7 @@ data "aws_iam_policy_document" "ecr" {
 }
 
 resource "aws_iam_policy" "ecr" {
-  name   = "ecr_policy"
+  name   = "ecr-policy-tf"
   policy = data.aws_iam_policy_document.ecr.json
 }
 
