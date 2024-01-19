@@ -1,41 +1,66 @@
-# <<< ECS >>>
-
 # Get the current AWS account ID
 data "aws_caller_identity" "current" {}
 
+# Get the current AWS region
+data "aws_region" "current" {}
 
-# Generates an IAM policy document in JSON format
-data "aws_iam_policy_document" "ecs_task_executor_policy" {
-  statement {
-    sid = 1
-    actions = [
-      "logs:CreateLogStream",
-      "logs:PutLogEvents",
-    "logs:CreateLogGroup"]
-    resources = [
-    "arn:aws:logs:us-east-1:${data.aws_caller_identity.current.account_id}:log-group:bedrock:log-stream:*"]
-  }
-  statement {
-    sid = 2
-    actions = [
-      "ecr:GetAuthorizationToken",
-      "ecr:BatchCheckLayerAvailability",
-      "ecr:GetDownloadUrlForLayer",
-      "ecr:BatchGetImage"
+# IAM role for Bedrock
+resource "aws_iam_role" "bedrock" {
+  name               = var.bedrock_role_name
+  assume_role_policy = <<POLICY
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Sid": "Statement1",
+            "Effect": "Allow",
+            "Principal": {
+                "AWS": "arn:aws:iam::${data.aws_caller_identity.current.account_id}:root"
+            },
+            "Action": "sts:AssumeRole"
+        }
     ]
-    resources = ["*"]
-  }
+}
+  POLICY
 }
 
-# IAM policy for ECS task executor role
-resource "aws_iam_policy" "ecs_task_executor_policy" {
-  name        = var.ecs_policy_name
-  description = "Policy for ECS task executor role"
-
-  policy = data.aws_iam_policy_document.ecs_task_executor_policy.json
+resource "aws_iam_role_policy_attachment" "bedrock-ecs" {
+  policy_arn = aws_iam_policy.ecs.arn
+  role       = aws_iam_role.bedrock.name
 }
 
-# IAM role for ECS task executor
+resource "aws_iam_role_policy_attachment" "bedrock-iam" {
+  policy_arn = aws_iam_policy.iam.arn
+  role       = aws_iam_role.bedrock.name
+}
+
+resource "aws_iam_role_policy_attachment" "bedrock-s3" {
+  policy_arn = aws_iam_policy.s3.arn
+  role       = aws_iam_role.bedrock.name
+}
+
+resource "aws_iam_role_policy_attachment" "bedrock-opensearch" {
+  policy_arn = aws_iam_policy.opensearch.arn
+  role       = aws_iam_role.bedrock.name
+}
+
+resource "aws_iam_role_policy_attachment" "bedrock-ecr" {
+  policy_arn = aws_iam_policy.ecr.arn
+  role       = aws_iam_role.bedrock.name
+}
+
+resource "aws_iam_role_policy_attachment" "bedrock-s3-state" {
+  policy_arn = aws_iam_policy.s3_state.arn
+  role       = aws_iam_role.bedrock.name
+}
+
+resource "aws_iam_role_policy_attachment" "bedrock-role" {
+  policy_arn = aws_iam_policy.bedrock.arn
+  role       = aws_iam_role.bedrock.name
+}
+
+# <<< IAM role for ECS task executor >>>
+
 resource "aws_iam_role" "ecs_task_executor_role" {
   name               = var.ecs_execution_role_name
   assume_role_policy = <<POLICY
@@ -59,52 +84,4 @@ resource "aws_iam_role" "ecs_task_executor_role" {
 resource "aws_iam_role_policy_attachment" "ecs_task_executor_attachment" {
   policy_arn = aws_iam_policy.ecs_task_executor_policy.arn
   role       = aws_iam_role.ecs_task_executor_role.name
-}
-
-# <<< Bedrock >>>
-
-# Generates an IAM policy document in JSON format
-data "aws_iam_policy_document" "bedrock" {
-  statement {
-    sid       = 1
-    actions   = ["sts:AssumeRole"]
-    resources = ["*"]
-  }
-  statement {
-    sid       = 2
-    actions   = ["bedrock:InvokeModel", "bedrock:ListCustomModels", "bedrock:ListFoundationModels"]
-    resources = ["arn:aws:bedrock:*::foundation-model/*"]
-  }
-}
-
-# IAM policy for Bedrock role
-resource "aws_iam_policy" "bedrock" {
-  name   = var.bedrock_policy_name
-  policy = data.aws_iam_policy_document.bedrock.json
-}
-
-# IAM role for Bedrock
-resource "aws_iam_role" "bedrock" {
-  name               = var.bedrock_role_name
-  assume_role_policy = <<POLICY
-{
-    "Version": "2012-10-17",
-    "Statement": [
-        {
-            "Sid": "Statement1",
-            "Effect": "Allow",
-            "Principal": {
-                "AWS": "arn:aws:iam::${data.aws_caller_identity.current.account_id}:root"
-            },
-            "Action": "sts:AssumeRole"
-        }
-    ]
-}
-  POLICY
-}
-
-# Attach the policy to the Bedrock role
-resource "aws_iam_role_policy_attachment" "bedrock-role" {
-  policy_arn = aws_iam_policy.bedrock.arn
-  role       = aws_iam_role.bedrock.name
 }
