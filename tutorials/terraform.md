@@ -9,7 +9,7 @@ This tutorial shows how to create a Terraform API Token for GitHub Actions
 
 ![image](https://github.com/mathewsrc/GenerativeAI-Questions-and-Answers-app-with-Bedrock-Langchain-and-FastAPI/assets/94936606/b76db7d4-3ebf-40d4-97c6-86110813f6db)
 
-4. Go to GitHub -> project (this project cloned) -> Settings -> Secrets and variables -> actions -> `New repository secret`
+4. Go to GitHub -> this project -> Settings -> Secrets and variables -> actions -> `New repository secret`
 
 ![image](https://github.com/mathewsrc/GenerativeAI-Questions-and-Answers-app-with-Bedrock-Langchain-and-FastAPI/assets/94936606/1c4fe6cc-1f71-4476-b7c9-23e2e24b3670)
 
