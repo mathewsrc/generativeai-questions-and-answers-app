@@ -1,3 +1,9 @@
+# Get the current AWS account ID
+data "aws_caller_identity" "current" {}
+
+# Get the current AWS region
+data "aws_region" "current" {}
+
 # Create an S3 bucket
 resource "aws_s3_bucket" "bucket" {
   bucket = var.bucket_name
