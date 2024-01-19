@@ -23,9 +23,9 @@ resource "aws_default_subnet" "default_subnet_b" {
 }
 
 # Create a ECS security group
-resource "aws_security_group" "ecs_load_balancer_security_group" {
+resource "aws_security_group" "security_group" {
   vpc_id = aws_default_vpc.default_vpc.id
-  name   = var.ecs_security_group_name
+  name   = var.security_group_name
   ingress {
     from_port   = 80
     to_port     = 80
@@ -42,16 +42,16 @@ resource "aws_security_group" "ecs_load_balancer_security_group" {
   tags = {
     Environment = var.environment
     Application = var.name
-    Name        = var.ecs_security_group_name
+    Name        = var.security_group_name
   }
 }
 
 # Create a load balancer
-resource "aws_lb" "ecs_load_balancer" {
+resource "aws_lb" "load_balancer" {
   name               = var.load_balance_name
   internal           = false
   load_balancer_type = "application"
-  security_groups    = [aws_security_group.ecs_load_balancer_security_group.id]
+  security_groups    = [aws_security_group.security_group.id]
   subnets = [
     "${aws_default_subnet.default_subnet_a.id}",
     "${aws_default_subnet.default_subnet_b.id}"
@@ -66,14 +66,14 @@ resource "aws_lb" "ecs_load_balancer" {
   }
 }
 
-# Create a ECS service security group
-resource "aws_security_group" "ecs_service_security_group" {
+# Create a service security group
+resource "aws_security_group" "service_security_group" {
   ingress {
     from_port = 0
     to_port   = 0
     protocol  = "-1"
     # Only allowing traffic in from the load balancer security group
-    security_groups = [aws_security_group.ecs_load_balancer_security_group.id]
+    security_groups = [aws_security_group.security_group.id]
   }
 
   egress {
@@ -86,7 +86,7 @@ resource "aws_security_group" "ecs_service_security_group" {
   tags = {
     Environment = var.environment
     Application = var.name
-    Name        = var.ecs_security_group_name
+    Name        = var.security_group_name
   }
 }
 
@@ -106,7 +106,7 @@ resource "aws_lb_target_group" "lb_target_group" {
 
 # Create a ECS load balancer listener
 resource "aws_lb_listener" "lb_listener" {
-  load_balancer_arn = aws_lb.ecs_load_balancer.arn
+  load_balancer_arn = aws_lb.load_balancer.arn
   port              = "80"
   protocol          = "HTTP"
   default_action {
