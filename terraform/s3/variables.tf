@@ -13,6 +13,10 @@ variable "bucket_name" {
   default     = "$bedrock-qa-rag-bucket-tf"
 }
 
+variable "subfolder" {
+  description = "The name of the S3 bucket"
+}
+
 variable "environment" {
   description = "The environment the bucket is used in [DEV, STAG, PROD]"
   validation {

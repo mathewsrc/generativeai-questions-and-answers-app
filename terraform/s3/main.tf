@@ -12,10 +12,10 @@ resource "aws_s3_bucket" "bucket" {
 resource "aws_s3_object" "object" {
   # Recursively look for pdf files inside documents/ 
   bucket   = aws_s3_bucket.bucket.id
-  for_each = fileset("../documents/", "**/*.pdf")
+  for_each = fileset("../documents/${var.subfolder}/", "**/*.pdf")
   key      = each.value
-  source   = "../documents/${each.value}"
-  etag     = filemd5("../documents/${each.value}")
+  source   = "../documents/${var.subfolder}/${each.value}"
+  etag     = filemd5("../documents/${var.subfolder}/${each.value}")
   depends_on = [
     aws_s3_bucket.bucket
   ]
