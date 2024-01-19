@@ -147,13 +147,17 @@ If you want to deploy this application to AWS ECS using GitHub actions you will 
 
 Now we have everything setup and you can how this application.
 
-## Costs (EUA)
+## Costs 
 
-Observation: values can change any time.
+https://aws.amazon.com/bedrock/pricing/
 
-AWS Embeddings Titan = US$ 0,10 per 1 million tokens 
+https://aws.amazon.com/fargate/pricing/
 
-Claude V2 =  US$ 0,01 per 1000 input tokens and US$ 0,03 output tokens 
+https://aws.amazon.com/ecr/pricing/
+
+https://aws.amazon.com/s3/pricing/
+
+https://aws.amazon.com/opensearch-service/pricing/
 
 
 ## Tools used in this project
