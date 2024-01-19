@@ -181,22 +181,7 @@ If you want to deploy this application to AWS ECS using GitHub actions you will 
 2. Create secret keys passing your AWS credentials. See [Github Actions Secret Keys](tutorials/aws_secret_keys.md)
 3. Well done! Now you can deploy this application using CI/CD
 
-
-
 Now we have everything setup and you can how this application.
-
-## Costs 
-
-https://aws.amazon.com/bedrock/pricing/
-
-https://aws.amazon.com/fargate/pricing/
-
-https://aws.amazon.com/ecr/pricing/
-
-https://aws.amazon.com/s3/pricing/
-
-https://aws.amazon.com/opensearch-service/pricing/
-
 
 ## Tools used in this project
 
@@ -211,7 +196,6 @@ Benefits of IaC:
 - Can be used for multi-cloud deployments
 - Can automate changes and standardize configurations
 
-
 ### Amazon ECS (Elastic Container Service)
 
 Amazon ECS (Elastic Container Service) is a fully managed container orchestration service that allows you to run and scale containerized applications on AWS easily. 
@@ -223,6 +207,12 @@ Benefits of ECS:
 
 ### Amazon ECR (Elastic Container Register)
 
+Amazon ECR is a managed container register service to store Docker images that supports public and private repositories
+
+Benefits of ECR:
+- Image scanning helps in identifying software vulnerabilities in your container images
+- Lifecycle policies for managing the lifecycle of the images
+- Cross-Region and cross-account replication 
 
 ### Amazon OpenSearch Service
 
@@ -233,3 +223,35 @@ Benefits:
 - Auto-scaling configuration
 - High-performing vector search
 
+### GitHub Actions
+
+GitHub Actions is a continuous integration and continuous delivery (CI/CD) platform for build, test, and deploy pipelines.
+
+Benefits:
+- Automatic, manual, schedule and event triggered workflow support 
+- Linux, Windows, and macOS virtual machines to run workflows
+- Visual workflow for debug and error fix
+- Can easily be used with AWS ECS and Terraform
+
+### Docker
+
+Docker is a platform that use OS-level virtualization to deliver software in packages called containers.
+We can use Docker to create microservices applications using FastAPI and run it locally or on cloud services as ECS.
+
+Benefits:
+- Isolation
+- Easy setup using Dockerfile
+- Portability (run on on-premises servers and in the cloud)
+
+
+## Costs 
+
+https://aws.amazon.com/bedrock/pricing/
+
+https://aws.amazon.com/fargate/pricing/
+
+https://aws.amazon.com/ecr/pricing/
+
+https://aws.amazon.com/s3/pricing/
+
+https://aws.amazon.com/opensearch-service/pricing/
