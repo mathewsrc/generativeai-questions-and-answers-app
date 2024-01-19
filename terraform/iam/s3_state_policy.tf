@@ -2,7 +2,7 @@
 # <<< S3 >>>
 data "aws_iam_policy_document" "s3_state" {
   statement {
-    sid    = "s3_state"
+    sid    = "bucket_state"
     effect = "Allow"
     actions = [
       "s3:ListBucket",
@@ -16,6 +16,6 @@ data "aws_iam_policy_document" "s3_state" {
 }
 
 resource "aws_iam_policy" "s3_state" {
-  name   = "bucket-state-policy-tf"
+  name   = "s3-state-policy-tf"
   policy = data.aws_iam_policy_document.s3_state.json
 }
