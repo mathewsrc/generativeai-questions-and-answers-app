@@ -1,5 +1,5 @@
 variable "region" {
-  default     = "us-east-1"
+  default     = "${data.aws_region.current.name}"
   description = "The region of deploy"
 }
 
