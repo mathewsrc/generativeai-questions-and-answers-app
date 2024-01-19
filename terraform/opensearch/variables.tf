@@ -8,42 +8,12 @@ variable "name" {
   description = "The name for resource"
 }
 
-variable "bucket_name" {
-  description = "The name of the S3 bucket"
-  default     = "$bedrock-qa-rag-bucket-tf"
-}
-
 variable "environment" {
   description = "The environment the bucket is used in [DEV, STAG, PROD]"
   validation {
     condition     = contains(["DEV", "STAG", "PROD"], var.environment)
     error_message = "Environment must be one of DEV, STAG, PROD"
   }
-}
-
-variable "ecr_name" {
-  description = "The name of ECR repository"
-  default     = "bedrock-qa-rag-ecr-tf"
-}
-
-variable "ecs_task_family_name" {
-  description = "The ECS task definition name"
-  default     = "bedrock-qa-rag-task-tf"
-}
-
-variable "ecs_cluster_name" {
-  description = "The name of the ECS cluster"
-  default     = "bedrock-qa-rag-cluster-tf"
-}
-
-variable "ecs_service_name" {
-  description = "Name of the ECS service"
-  default     = "bedrock-qa-rag-service-tf"
-}
-
-variable "ecs_execution_role_name" {
-  description = "The name of ECS execution role"
-  default     = "bedrock-qa-rag-ecs-execution-role_tf"
 }
 
 variable "ecs_security_group_name" {
@@ -62,31 +32,68 @@ variable "load_balancer_target_group_name" {
 }
 
 
-variable "container_name" {
-  description = "The name of container"
-  default     = "bedrock-qa-rag-container-tf"
+
+variable "collection_name" {
+  description = "Name of the OpenSearch Serverless collection."
+  default     = "bedrock-qa-collection-tf"
 }
 
-variable "container_port" {
-  description = "The port of container"
-  default     = 80
-  type        = number
+variable "collection_type" {
+  description = "The type of the OpenSearch Serverless collection."
+  default     = "VECTORSEARCH"
 }
 
-variable "cpu" {
-  description = "The cpu of container"
-  default     = 256
-  type        = number
+variable "subnet_ids" {
+  description = "The subnet IDs"
+  type        = list(string)
 }
 
-variable "memory" {
-  description = "The memory of container"
-  default     = 512
-  type        = number
+variable "security_group_ids" {
+  description = "The security group ids"
+  type        = list(string)
 }
 
+variable "vpc_id" {
+  description = "The VPC ID"
+  type        = string
+}
 
-#variable "collection_name" {
-#  description = "Name of the OpenSearch Serverless collection."
-#  default     = "bedrock-qa-collection-tf"
-#}
+variable "vpc_endpoint_name" {
+  description = "The name of the VPC endpoint"
+  default     = "opensearch-vpc-endpoint"
+}
+
+variable "vpc_endpoint_type" {
+  description = "The type of the VPC endpoint"
+  default     = "Interface"
+}
+
+variable "encryption_policy_name" {
+  description = "The name of the encryption policy"
+  default     = "opensearch-encryption-policy"
+}
+
+variable "security_policy_type" {
+  description = "The encryption type"
+  default     = "encryption"
+}
+
+variable "network_policy_name" {
+  description = "The name of the network policy"
+  default     = "opensearch-network-policy"
+}
+
+variable "network_policy_type" {
+  description = "The type of the network policy"
+  default     = "network"
+}
+
+variable "data_access_policy_name" {
+  description = "The name of the data access policy"
+  default     = "opensearch-data-access-policy"
+}
+
+variable "data_acess_policy_type" {
+  description = "The type of the data access policy"
+  default     = "data"
+}
