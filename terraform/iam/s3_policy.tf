@@ -2,7 +2,7 @@
 
 data "aws_iam_policy_document" "s3" {
   statement {
-    sid    = "s3"
+    sid    = "bucket"
     effect = "Allow"
     actions = [
       "s3:*Object",

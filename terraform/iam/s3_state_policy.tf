@@ -2,7 +2,7 @@
 # <<< S3 >>>
 data "aws_iam_policy_document" "s3_state" {
   statement {
-    sid    = "bucket_state"
+    sid    = "bucket"
     effect = "Allow"
     actions = [
       "s3:ListBucket",
@@ -10,12 +10,13 @@ data "aws_iam_policy_document" "s3_state" {
       "s3:PutObject",
       "s3:DeleteObject"
     ]
-    resources = ["arn:aws:s3:::terraform-bucket-state-tf",
+    resources = [
+    "arn:aws:s3:::terraform-bucket-state-tf",
     "arn:aws:s3:::terraform-bucket-state-tf/*/*"]
   }
 }
 
 resource "aws_iam_policy" "s3_state" {
-  name   = "s3-state-policy-tf"
+  name   = "bucket-state-policy-tf"
   policy = data.aws_iam_policy_document.s3_state.json
 }
