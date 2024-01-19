@@ -13,9 +13,6 @@ Question and Answer application using Amazon Bedrock, Langchain, and FastAPI
 5. Build a question answer that answers questions about the documents
 
 
-
-
-
 ## Requirements
 - [Python](https://www.python.org/downloads/)
 - [Poetry](https://python-poetry.org/docs/#installation)
@@ -46,17 +43,32 @@ Now open a new terminal to use pipx
 2. Install Poetry
 
 ```bash
-pipx install --force poetry &&\
-poetry completions bash >> ~/.bash_completion &&\
-poetry shell
-poetry install --no-root
+# Install Poetry
+pipx install --force poetry
+
+# Enable tab completion for Bash
+poetry completions bash >> ~/.bash_completion
+
+# Init Poetry
+poetry init
+
+# Install Poetry dependencies
+poetry install
+
+# Check Poetry version
+poetry --version
 ```
 
 3. Install Terraform (Linux). More information see [Terraform](https://developer.hashicorp.com/terraform/install#Linux)
 
 ```bash
+# Install Terraform by HashiCorp
 wget -O- https://apt.releases.hashicorp.com/gpg | sudo gpg --dearmor -o /usr/share/keyrings/hashicorp-archive-keyring.gpg
+
+# Add the official HashiCorp Linux repository
 echo "deb [signed-by=/usr/share/keyrings/hashicorp-archive-keyring.gpg] https://apt.releases.hashicorp.com $(lsb_release -cs) main" | sudo tee /etc/apt/sources.list.d/hashicorp.list
+
+# Update and install
 sudo apt update && sudo apt install terraform
 
 # Verify the installation
@@ -77,13 +89,23 @@ Finally, we need to install AWS CLI so Terraform can access your credentials. Se
 Execute the following code to install AWS CLI: 
 
 ```bash
+# Install the AWS CLI
 curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+
+# Unzip the AWS CLI
 unzip awscliv2.zip
+
+# Install the AWS CLI
 sudo ./aws/install
+
+# Clean up the files
 rm -rf awscliv2.zip aws
 
-# Confirm installation
+# Verify the AWS CLI
 aws --version
+
+# Configure the AWS CLI
+aws configure
 ```
 
 Alternatively, run the provided Bash script `install_aws_cli.sh` in the terminal. 
@@ -95,10 +117,27 @@ We currently have two alternatives for setting up the AWS Command Line Interface
 - Configure as an Administrator (less secure)
 - Create a new user with restricted permissions.
 
-For this project, I opted to created a new user in AWS Identity and Access Management (IAM) and define policies with minimal permissions. To learn the steps for creating a new user with the necessary permissions to execute this project, please refer to the [bedrock_tutorial]()
+For this project, I opted to created a new user in AWS Identity and Access Management (IAM) and define policies with minimal permissions. To learn the steps for creating a new user with the necessary permissions to execute this project, please refer to the []()
 
 
 Finally we can use the command `aws configure` in the terminal and pass the Access Key and the Secret access key that we just created.
+
+You can check your credentials using one of the following command in the Terminal
+```bash
+aws sts get-caller-identity
+
+make aws-user
+```
+
+This command will return details about the user such as user id and account id.
+```
+{
+    "UserId": "##############",
+    "Account": "############",
+    "Arn": "arn:aws:iam::###########:user/##########"
+}
+```
+
 
 Now we have everything setup and you can how this application.
 
