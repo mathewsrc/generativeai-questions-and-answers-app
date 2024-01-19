@@ -97,7 +97,8 @@ ECS (Elastic Container Service)
                 "ec2:ModifyVpcAttribute",
                 "ec2:DeleteVpc",
                 "ec2:CreateSubnet",
-                "ec2:ModifySubnetAttribute"
+                "ec2:ModifySubnetAttribute",
+                "ec2:CreateDefaultSubnet"
             ],
             "Resource": "*"
         },
