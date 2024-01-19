@@ -16,17 +16,17 @@ variable "environment" {
   }
 }
 
-variable "ecs_security_group_name" {
+variable "security_group_name" {
   description = "The name of the ECS security group"
-  default     = "bedrock-qa-rag-ecs-security-group-tf"
+  default     = "bedrock-qa-rag-tf"
 }
 
 variable "load_balance_name" {
   description = "The name of Load Balance"
-  default     = "bedrock-qa-rag-load-balance-tf"
+  default     = "bedrock-qa-rag-tf"
 }
 
 variable "load_balancer_target_group_name" {
   description = "The name of Load balancer target group"
-  default     = "bedrock-qa-rag-target-group-tf"
+  default     = "bedrock-qa-rag-tf"
 }
