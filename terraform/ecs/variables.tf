@@ -71,8 +71,8 @@ variable "target_group_arn" {
   description = "The arn of target group"
 }
 
-variable "ecs_service_security_groups_id" {
-  description = "The id of ECS service security group"
+variable "service_security_group_ids" {
+  description = "The id of service security group"
   type        = list(string)
 }
 
