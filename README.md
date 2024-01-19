@@ -19,6 +19,8 @@ Question and Answer application using Amazon Bedrock, Langchain, and FastAPI
 - [Docker](https://docs.docker.com/desktop/install/windows-install/)
 - [AWS Account](https://aws.amazon.com/resources/create-account/)
 - [Terraform](https://developer.hashicorp.com/terraform/install?product_intent=terraform)
+- [Terraform API token](tutorials/terraform.md)
+- [GitHub Actions](https://docs.github.com/en/actions)
 
 ## How to run this application
 
@@ -80,11 +82,11 @@ Alternatively, run the provided Bash script `install_terraform.sh` in the termin
 
 4. Enable Bedrock Foundation Models
 
-Then go to AWS > Amazon Bedrock > Model access ([Link](https://us-east-1.console.aws.amazon.com/bedrock/home?region=us-east-1#/modelaccess)) and enable the foundation models you want to use. Notice that this project is going to create resources in the'us-east-1' region so make sure that your AWS account region is the same. Observation: some models require access grants and it can take some time until you can access it. I created a follow up instruction [bedrock_tutorial]() for you on how to require models access.
+Then go to the AWS console > Amazon Bedrock > Template Access and enable the base templates you want to use. I created a [bedrock_tutorial](tutorials/bedrock_tutorial.md) tutorial for you on how to request model access.
 
 5. Install AWS CLI
 
-Finally, we need to install AWS CLI so Terraform can access your credentials. See [link](https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html#cliv2-linux-install) for more information:
+Finally, we need to install AWS CLI to use Terraform with aws provider. See [link](https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html#cliv2-linux-install) for more information:
 
 Execute the following code to install AWS CLI: 
 
@@ -117,8 +119,7 @@ We currently have two alternatives for setting up the AWS Command Line Interface
 - Configure as an Administrator (less secure)
 - Create a new user with restricted permissions.
 
-For this project, I opted to created a new user in AWS Identity and Access Management (IAM) and define policies with minimal permissions. To learn the steps for creating a new user with the necessary permissions to execute this project, please refer to the []()
-
+For this project, I opted to create a new user in AWS Identity and Access Management (IAM) and define policies with minimal permissions. You can check the policies needed in [policies](tutorials/iam_user_policies.md).
 
 Finally we can use the command `aws configure` in the terminal and pass the Access Key and the Secret access key that we just created.
 
@@ -138,10 +139,13 @@ This command will return details about the user such as user id and account id.
 }
 ```
 
+If you want to deploy this application to AWS ECS using GitHub actions you will need to follow some more steps:
+
+1. Create a Terraform API Token and a secret key in GitHub. See [Terraform API token](tutorials/terraform.md) inside this project
+2. Create secret keys passing your AWS credentials. See [Github Actions Secret Keys](tutorials/aws_secret_keys.md)
+3. Well done! Now you can deploy this application using CI/CD
 
 Now we have everything setup and you can how this application.
-
-
 
 ## Costs (EUA)
 
