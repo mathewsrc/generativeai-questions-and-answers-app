@@ -5,7 +5,7 @@
 # Set the variables
 BUCKET_NAME="terraform-bucket-state-tf"
 STATE_FILE="terraform/terraform.tfstate"
-AWS_REGION="us-east-1"
+AWS_REGION=$(aws configure get region)
 
 # Create the S3 bucket if it doesn't exist
 aws s3api create-bucket --bucket $BUCKET_NAME --region $AWS_REGION 
