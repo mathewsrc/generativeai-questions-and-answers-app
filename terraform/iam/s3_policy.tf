@@ -20,6 +20,6 @@ data "aws_iam_policy_document" "s3" {
 }
 
 resource "aws_iam_policy" "s3" {
-  name   = "s3-policy-tf"
+  name   = "bucket-documents-policy-tf"
   policy = data.aws_iam_policy_document.s3.json
 }
