@@ -100,5 +100,8 @@ json-fmt:
 	jq . .aws/task-definition.json > temp.json && mv temp.json .aws/task-definition.json
 	jq . .aws/task-definition-actions.json > temp.json && mv temp.json .aws/task-definition-actions.json
 
-	
+aws-user:
+	@echo "Check current AWS user signed in to AWS CLI"
+	aws sts get-caller-identity
+
 all: install format lint
