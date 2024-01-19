@@ -326,3 +326,82 @@ S3 policy for documents
     ]
 }
 ```
+
+Open Search Serveless
+```json
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Sid": "Statement1",
+            "Effect": "Allow",
+            "Action": [
+                "aoss:CreateSecurityPolicy",
+                "aoss:CreateAccessPolicy",
+                "aoss:ListCollections",
+                "aoss:BatchGetCollection",
+                "aoss:BatchGetVpcEndpoint",
+                "aoss:CreateCollection",
+                "aoss:DeleteAccessPolicy",
+                "aoss:CreateSecurityConfig",
+                "aoss:DeleteCollection",
+                "aoss:DeleteSecurityConfig",
+                "aoss:DeleteSecurityPolicy",
+                "aoss:UpdateAccessPolicy",
+                "aoss:UpdateCollection",
+                "aoss:UpdateSecurityConfig",
+                "aoss:UpdateSecurityPolicy",
+                "aoss:ListVpcEndpoints",
+                "aoss:CreateVpcEndpoint",
+                "aoss:DeleteVpcEndpoint",
+                "aoss:UpdateVpcEndpoint",
+                "aoss:TagResource",
+                "aoss:ListTagsForResource",
+                "aoss:UntagResource"
+            ],
+            "Resource": [
+                "*"
+            ]
+        },
+        {
+            "Sid": "Statement2",
+            "Effect": "Allow",
+            "Action": [
+                "ec2:CreateVpcEndpoint",
+                "ec2:CreateVpcEndpointConnectionNotification",
+                "ec2:DeleteVpcEndpoints",
+                "ec2:ModifyVpcEndpoint",
+                "ec2:DescribeVpcAttribute",
+                "ec2:DescribeVpcEndpointConnections",
+                "ec2:DescribeVpcEndpoints",
+                "ec2:DescribeVpcEndpointServices",
+                "ec2:DescribeVpcs",
+                "ec2:CreateVpc",
+                "ec2:CreateVpcEndpointServiceConfiguration",
+                "ec2:DeleteVpc",
+                "ec2:DeleteVpcEndpointConnectionNotifications",
+                "ec2:DeleteVpcEndpointServiceConfigurations",
+                "ec2:ModifyVpcAttribute",
+                "ec2:ModifyVpcEndpointConnectionNotification"
+            ],
+            "Resource": [
+                "arn:aws:ec2:us-east-1:078090784717:vpc-endpoint/*",
+                "arn:aws:ec2:us-east-1:078090784717:vpc/*",
+                "arn:aws:ec2:us-east-1:078090784717:subnet/*",
+                "arn:aws:ec2:us-east-1:078090784717:security-group/*"
+            ]
+        },
+        {
+            "Sid": "Statement3",
+            "Effect": "Allow",
+            "Action": [
+                "iam:CreateServiceLinkedRole",
+                "iam:DeleteServiceLinkedRole"
+            ],
+            "Resource": [
+                "arn:aws:iam::078090784717:role/aws-service-role/observability.aoss.amazonaws.com/AWSServiceRoleForAmazonOpenSearchServerless"
+            ]
+        }
+    ]
+}
+```
