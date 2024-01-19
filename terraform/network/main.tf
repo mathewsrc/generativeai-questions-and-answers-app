@@ -7,7 +7,7 @@ resource "aws_default_vpc" "default_vpc" {
 
 # Create a default subnet for us-east-1a and us-east-1b
 resource "aws_default_subnet" "default_subnet_a" {
-  availability_zone = "us-east-1a"
+  availability_zone = "${data.aws_region.current.name}-1a"
   tags = {
     Name = "Default subnet for us-east-1a"
   }
@@ -15,7 +15,7 @@ resource "aws_default_subnet" "default_subnet_a" {
 }
 
 resource "aws_default_subnet" "default_subnet_b" {
-  availability_zone = "us-east-1b"
+  availability_zone = "${data.aws_region.current.name}-1b"
   tags = {
     Name = "Default subnet for us-east-1b"
   }
