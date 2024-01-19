@@ -24,12 +24,12 @@ resource "aws_ecs_task_definition" "ecs_task_definition" {
 
   #container_definitions = file("../.aws/task-definition.json")
   container_definitions = templatefile("${path.module}/../../.aws/task-definition.json",
-    { tag = data.external.envs.result.sha,
-      ecr = var.ecr_repository_url,
-      service_name = var.ecs_service_name,
-      region = var.region,
+    { tag             = data.external.envs.result.sha,
+      ecr             = var.ecr_repository_url,
+      service_name    = var.ecs_service_name,
+      region          = var.region,
       logs_group_name = var.logs_group_name
-    })
+  })
 
   runtime_platform {
     operating_system_family = "LINUX"
