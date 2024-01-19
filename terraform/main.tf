@@ -30,7 +30,7 @@ module "network" {
   environment = var.environment
 }
 
-module "s3" {
+module "s3_cnu" {
   source      = "./s3"
   region      = var.region
   name        = var.name
@@ -39,7 +39,7 @@ module "s3" {
   subfolder = "cnu"
 }
 
-module "s3" {
+module "s3_immigration" {
   source      = "./s3"
   region      = var.region
   name        = var.name
