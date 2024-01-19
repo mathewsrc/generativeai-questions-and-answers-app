@@ -121,7 +121,7 @@ We currently have two alternatives for setting up the AWS Command Line Interface
 
 For this project, I opted to create a new user in AWS Identity and Access Management (IAM) and define policies with minimal permissions. You can check the policies needed in [policies](tutorials/iam_user_policies.md).
 
-Finally we can use the command `aws configure` in the terminal and pass the Access Key and the Secret access key that we just created.
+Finally we can use the command `aws configure` in the terminal and pass the Access Key and the Secret access key that we just created. You can set the default region too.
 
 You can check your credentials using one of the following command in the Terminal
 ```bash
@@ -139,11 +139,49 @@ This command will return details about the user such as user id and account id.
 }
 ```
 
+## Deploy
+
+This project has two deployment options: manually in the Terminal and CI/CD with GitHub Actions
+
+As Terraform backend if configured to use a Terraform state file located in AWS S3 we need first to 
+upload the state file to S3.
+
+1. In the terminal init Terraform
+
+```bash
+make tf-init
+```
+
+2. Again in the terminal execute the following script
+
+```bash
+scripts/upload_state.sh
+```
+
+### Terminal
+
+You can deploy this application by following the steps below:
+
+```bash
+make tf-plan 
+make tf-apply or make tf-deploy
+```
+
+These commands will called Terraform to provide all infrastructure required.
+
+Now we can deploy the application using a bash script:
+
+```bash
+scripts/deploy.sh
+```
+
 If you want to deploy this application to AWS ECS using GitHub actions you will need to follow some more steps:
 
 1. Create a Terraform API Token and a secret key in GitHub. See [Terraform API token](tutorials/terraform.md) inside this project
 2. Create secret keys passing your AWS credentials. See [Github Actions Secret Keys](tutorials/aws_secret_keys.md)
 3. Well done! Now you can deploy this application using CI/CD
+
+
 
 Now we have everything setup and you can how this application.
 
