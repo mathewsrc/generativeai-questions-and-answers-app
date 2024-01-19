@@ -1,3 +1,9 @@
+# Get the current AWS account ID
+data "aws_caller_identity" "current" {}
+
+# Get the current AWS region
+data "aws_region" "current" {}
+
 # Create a default VPC
 resource "aws_default_vpc" "default_vpc" {
   tags = {
@@ -7,7 +13,7 @@ resource "aws_default_vpc" "default_vpc" {
 
 # Create a default subnet for us-east-1a and us-east-1b
 resource "aws_default_subnet" "default_subnet_a" {
-  availability_zone = "${data.aws_region.current.name}-1a"
+  availability_zone = "${data.aws_region.current.name}a"
   tags = {
     Name = "Default subnet for us-east-1a"
   }
@@ -15,7 +21,7 @@ resource "aws_default_subnet" "default_subnet_a" {
 }
 
 resource "aws_default_subnet" "default_subnet_b" {
-  availability_zone = "${data.aws_region.current.name}-1b"
+  availability_zone = "${data.aws_region.current.name}b"
   tags = {
     Name = "Default subnet for us-east-1b"
   }
