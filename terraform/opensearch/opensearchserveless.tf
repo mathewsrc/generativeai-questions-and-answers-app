@@ -1,6 +1,9 @@
 # Get the current AWS account ID
 data "aws_caller_identity" "current" {}
 
+# Get the current AWS region
+data "aws_region" "current" {}
+
 # Creates an encryption security policy
 resource "aws_opensearchserverless_security_policy" "encryption_policy" {
   name        = var.encryption_policy_name
