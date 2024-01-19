@@ -186,7 +186,12 @@ Benefits of ECS:
 ### Amazon ECR (Elastic Container Register)
 
 
-### Vector Search 
+### Amazon OpenSearch Service
 
-Open Search can search semantically similar or semantically related items and it can be used for recommendation engines, search engines, chatbots, and text classification. First, PDFs (or any kind of data such as videos, audio, and images) are converted into embedding representation, second, the embeddings are uploaded to OpenSearch or any other Vector Store. Then we can create an index to run queries to get recommendations or results. 
+Open Search can search semantically similar or semantically related items and it can be used for recommendation engines, search engines, chatbots, and text classification. First, PDFs (or any kind of data such as videos, audio, and images) are converted into embedding representation, second, the embeddings are uploaded to OpenSearch or any other Vector Store. Then we can create an index to run queries to get recommendations or results. The serveless version of Open Search is an OpenSearch cluster that scales compute capacity based on your application's needs.
+
+Benefits:
+- Pay only for what you use
+- Auto-scaling configuration
+- High-performing vector search
 
