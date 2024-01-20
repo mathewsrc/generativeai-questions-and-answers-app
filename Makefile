@@ -38,6 +38,10 @@ aws-deploy:
 	chmod +x ./scripts/deploy.sh
 	./scripts/deploy.sh
 
+hf-del-cache:
+	@echo "Deleting downloaded models"
+	huggingface-cli delete-cache
+
 tf-init:
 	@echo "Initializing Terraform <Initialize the provider with plugin>"
 	cd terraform && terraform init
@@ -107,5 +111,21 @@ aws-user:
 aws-collections:
 	@echo "Print out collections"
 	aws opensearchserverless list-collections
+
+qdrant-ask:
+	@echo "Ask Qdrant"
+	poetry run python src/cli/qdrant_cli.py ask
+
+qdrant-create:
+	@echo "Create Qdrant collection"
+	poetry run python src/cli/qdrant_cli.py create
+
+qdrant-delete:
+	@echo "Delete Qdrant collection"
+	poetry run python src/cli/qdrant_cli.py delete
+
+qdrant-info:
+	@echo "Info Qdrant collection"
+	poetry run python src/cli/qdrant_cli.py info
 
 all: install format lint
