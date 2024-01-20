@@ -337,6 +337,7 @@ Open Search Serveless
             "Sid": "Statement1",
             "Effect": "Allow",
             "Action": [
+                "aoss:APIAccessAll",
                 "aoss:CreateSecurityPolicy",
                 "aoss:CreateAccessPolicy",
                 "aoss:ListCollections",
