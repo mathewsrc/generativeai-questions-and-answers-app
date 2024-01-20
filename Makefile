@@ -104,4 +104,8 @@ aws-user:
 	@echo "Check current AWS user signed in to AWS CLI"
 	aws sts get-caller-identity
 
+aws-collections:
+	@echo "Print out collections"
+	aws opensearchserverless list-collections
+
 all: install format lint
