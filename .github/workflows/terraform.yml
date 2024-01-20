@@ -51,7 +51,7 @@ name: 'Terraform (IaC)'
 # Trigger on CI workflow completion
 on:
   workflow_run:
-    workflows: ["CI"]
+    workflows: ["CI ###"]
     types:
       - completed
 
