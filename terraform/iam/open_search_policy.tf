@@ -5,6 +5,7 @@ data "aws_iam_policy_document" "opensearch" {
     sid    = "opensearch"
     effect = "Allow"
     actions = [
+      "aoss:APIAccessAll",
       "aoss:CreateSecurityPolicy",
       "aoss:CreateAccessPolicy",
       "aoss:ListCollections",
