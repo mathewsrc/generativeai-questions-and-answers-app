@@ -179,7 +179,7 @@ def question(question, max_tokens, model_id):
 
     Assistant:"""
 
-    PROMPT = PromptTemplate(
+    prompt = PromptTemplate(
         template=prompt_template, input_variables=["context", "question"]
     )
 
@@ -202,7 +202,7 @@ def question(question, max_tokens, model_id):
             search_type="similarity", search_kwargs={"k": 3}
         ),
         return_source_documents=True,
-        chain_type_kwargs={"prompt": PROMPT, "verbose": False},
+        chain_type_kwargs={"prompt": prompt, "verbose": False},
     )
 
     result = qa({"query": question})
