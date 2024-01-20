@@ -11,6 +11,8 @@ from langchain_community.document_loaders import PyPDFDirectoryLoader
 from langchain_community.vectorstores import Qdrant
 from langchain.prompts import PromptTemplate
 from langchain.chains import RetrievalQA
+from open_search import create_vectostore
+
 
 
 from global_variables import (
@@ -207,6 +209,7 @@ def question(question, max_tokens, model_id):
     answer = result["result"]
     click.echo(click.style(f"\nAnswer: {answer}", fg="green"))
 
+    
 
 if __name__ == "__main__":
     cli()
