@@ -207,7 +207,7 @@ make tf-upload
 
 3. Deploying using Terminal and GitHub Actions
 
-### Terminal
+### Manually deploy using the terminal
 
 Follow the steps below to create the AWS infrastructure:
 
@@ -224,7 +224,7 @@ Now, to deploy the application to ECS use the make command:
 make aws-deploy
 ```
 
-## GitHub actions (CI/CD)
+### Automatically deploy using GitHub actions for Continuous Integration and Continuous Deployment (CI/CD)
 
 If you want to deploy this application to AWS ECS using GitHub actions you will need to follow some more steps:
 
