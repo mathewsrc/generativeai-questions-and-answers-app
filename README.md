@@ -142,7 +142,7 @@ This command will retrieve details about the user, including user ID and account
 }
 ```
 
-### Setup Qdrant Cloud
+## Setup Qdrant Cloud
 
 To access Qdrant Cloud via the Client SDK, you need to create a cluster in Qdrant Cloud and obtain a Token and the cluster URL.
 
@@ -159,7 +159,7 @@ touch .env
 QDRANT_URL = "YOUR CLUSTER URL"
 QDRANT_API_KEY = "YOUR TOKEN"
 
-## To create a collection in Qdrant Cloud using the Command-Line Interface (CLI), follow these steps:
+### To create a collection in Qdrant Cloud using the Command-Line Interface (CLI), follow these steps:
 
 1. Create a collection
 
