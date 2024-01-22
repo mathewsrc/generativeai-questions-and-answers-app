@@ -28,3 +28,17 @@ qdrant-client = "^1.7.0"
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
+
+[tool.ruff]
+line-length = 100
+
+[tool.ruff.lint]
+# 2. Avoid enforcing line-length violations (`E501`)
+#ignore = ["E501"]
+extend-safe-fixes = ["F541"]
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "tab"
+docstring-code-format = true
+line-ending = "auto"
