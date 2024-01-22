@@ -21,6 +21,7 @@ Question and Answer application using Amazon Bedrock, Langchain, and FastAPI
 - [Terraform](https://developer.hashicorp.com/terraform/install?product_intent=terraform)
 - [Terraform API token](tutorials/terraform.md)
 - [GitHub Actions](https://docs.github.com/en/actions)
+- [Qdrant](https://cloud.qdrant.io/login)
 
 ## How to run this application
 
@@ -112,7 +113,7 @@ aws configure
 
 Alternatively, run the provided Bash script `install_aws_cli.sh` in the terminal. 
 
-6. Configure AWS CLI
+### Configure AWS CLI
 
 We currently have two alternatives for setting up the AWS Command Line Interface (CLI):
 
@@ -139,6 +140,44 @@ This command will return details about the user such as user id and account id.
 }
 ```
 
+### Setup Qdrant Cloud
+
+We need to create cluster in Qdrant Cloud and get a Token and cluster URL to access it throghout the Client API.
+
+1. You can follow the instructions on how to setup a free cluster in this link: [Qdrant-cluster](https://qdrant.tech/documentation/cloud/quickstart-cloud/)
+
+2. Create a new file to store senstive data
+```bash
+touch .env
+```
+
+3. Then store the Qdrant token and cluster URL as follow:
+QDRANT_URL = "YOUR CLUSTER URL"
+QDRANT_API_KEY = "YOUR TOKEN"
+
+## Creating a collection in Qdrant Cloud using CLI
+
+1. Create collection
+
+Choose one of the methods below and provide a collection name and choose one embedding model (10-15 minutes):
+```bash
+make qdrant-create
+poetry run python src/cli/qdrant_cli.py create
+```
+
+2. (Optional) Run the app locally to test
+
+```bash
+make run-app
+```
+Then go to http://127.0.0.1:8000 or http://127.0.0.1:8000/docs
+
+(Optional) Docker
+```bash
+make docker-build
+make docker-run
+```
+
 ## Deploy
 
 This project has two deployment options: manually in the Terminal and CI/CD with GitHub Actions
@@ -152,11 +191,13 @@ upload the state file to S3.
 make tf-init
 ```
 
-2. Again in the terminal execute the following script
+2. Again in the terminal execute the following command to upload state file to AWS S3
 
 ```bash
-scripts/upload_state.sh
+make tf-upload
 ```
+
+3. Deploy using Terminal and GitHub Actions
 
 ### Terminal
 
@@ -164,16 +205,18 @@ You can deploy this application by following the steps below:
 
 ```bash
 make tf-plan 
-make tf-apply or make tf-deploy
+make tf-apply
 ```
 
 These commands will called Terraform to provide all infrastructure required.
 
-Now we can deploy the application using a bash script:
+Now we can deploy the application to ECS using make:
 
 ```bash
-scripts/deploy.sh
+make aws-deploy
 ```
+
+## GitHub actions (CI/CD)
 
 If you want to deploy this application to AWS ECS using GitHub actions you will need to follow some more steps:
 
@@ -214,7 +257,7 @@ Benefits of ECR:
 - Lifecycle policies for managing the lifecycle of the images
 - Cross-Region and cross-account replication 
 
-### Amazon OpenSearch Service
+### Amazon OpenSearch Service (I replace OpenSearch with Qdrant Cloud as it offer a free-tier)
 
 Open Search can search semantically similar or semantically related items and it can be used for recommendation engines, search engines, chatbots, and text classification. First, PDFs (or any kind of data such as videos, audio, and images) are converted into embedding representation, second, the embeddings are uploaded to OpenSearch or any other Vector Store. Then we can create an index to run queries to get recommendations or results. The serveless version of Open Search is an OpenSearch cluster that scales compute capacity based on your application's needs. 
 
@@ -244,6 +287,7 @@ Benefits:
 - Easy setup using Dockerfile
 - Portability (run on on-premises servers and in the cloud)
 
+## Qdrant
 
 ## Costs 
 
