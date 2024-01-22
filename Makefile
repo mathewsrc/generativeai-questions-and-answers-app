@@ -23,8 +23,11 @@ test:
 
 run-app:
 	@echo "Running local app with uvicorn"
-	poetry run uvicorn src.app.main:app --reload --host 127.0.0.1 --port 8000
+	poetry run uvicorn src.app.main:app --host 127.0.0.1 --port 8000
 
+ask:
+	@echo "Running local app with ask"
+	curl -X POST http://localhost:8000/ask -H "Content-Type: application/json" -d '{"question":"What is the test day?"}'
 docker-build:
 	@echo "Building Docker container"
 	docker build -t app .
@@ -112,10 +115,6 @@ aws-user:
 aws-region:
 	@echo "Check current AWS region"
 	aws configure get region
-
-qdrant-ask:
-	@echo "Ask Qdrant"
-	poetry run python src/cli/qdrant_cli.py ask
 
 qdrant-create:
 	@echo "Create Qdrant collection"
