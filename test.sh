@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/bin/bash
 
 for DIR in */; do
     DIRNAME=$(basename "$DIR")
