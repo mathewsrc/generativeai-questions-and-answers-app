@@ -2,6 +2,9 @@ import os
 import click
 from transformers import pipeline, AutoTokenizer, AutoModelForCausalLM
 from dotenv import load_dotenv
+import sys
+module_path = ".."
+sys.path.append(os.path.abspath(module_path))
 from global_variables import COLLECTION_NAME
 from langchain_community.vectorstores.qdrant import Qdrant
 from langchain.prompts import PromptTemplate
