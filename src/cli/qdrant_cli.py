@@ -3,6 +3,9 @@ import click
 import boto3
 import os
 from dotenv import load_dotenv
+import sys
+module_path = ".."
+sys.path.append(os.path.abspath(module_path))
 from global_variables import COLLECTION_NAME, AWS_REGION, AWS_S3_BUCKET, DOCUMENTS_PATH
 from utils import (
 	get_embeddings,
@@ -21,9 +24,11 @@ QDRANT_API_KEY = os.environ.get("QDRANT_API_KEY")
 
 boto_session = boto3.Session(region_name=AWS_REGION)
 
+
 @click.group()
 def cli():
 	pass
+
 
 @cli.command("download-docs")
 @click.option("--collection-name", required=True, prompt=True, help="Collection name")
@@ -69,9 +74,10 @@ def create_vectostore(url, api_key, collection_name, embedding_model):
 		embeddings = get_embeddings(
 			embedding=Embedding(embeddings=embedding, model_name=model_name)
 		)
-		click.echo(click.style("Creating collection...this going to take some time to finish",
-                         fg="green"))
-             
+		click.echo(
+			click.style("Creating collection... (15-35 minutes)", fg="green")
+		)
+
 		vectorstore = Qdrant.from_documents(
 			documents=docs,
 			embedding=embeddings,
