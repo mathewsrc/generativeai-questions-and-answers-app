@@ -10,7 +10,11 @@ Question and Answer application for Unified National Competition (Concurso Nacio
 Many people end up giving up reading competition notices due to different factors such as too much information, inaccessible font size, and difficulty in interpretation. This project aims to build a generative AI application to help candidates quickly and easily understand the notices of the Unified National Competition (Concurso Nacional Unificado).
 
 PT-BR
+
 Muitas pessoas acabam por desistir de ler editais de concursos devidos a diferentes fatores como: muitas informações, tamanho de letras não acessíveis e dificuldade de interpretação. Este projeto tem como objetivo construir uma aplicação de IA generativa para auxiliar candidados a compreender de forma facil e rápida os editais do Concurso Nacional Unificado.
+
+![image](https://github.com/mathewsrc/GenerativeAI-Questions-and-Answers-app-with-Bedrock-Langchain-and-FastAPI/assets/94936606/0066112b-0ec9-4174-83cf-fca44a91af16)
+
 
 ## Steps
 
