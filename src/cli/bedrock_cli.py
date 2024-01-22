@@ -24,7 +24,6 @@ QDRANT_URL = os.environ.get("QDRANT_URL")
 QDRANT_API_KEY = os.environ.get("QDRANT_API_KEY")
 
 boto_session = boto3.Session(region_name=AWS_REGION)
-credentials = boto_session.get_credentials()
 
 # bedrock
 bedrock_models = boto3.client("bedrock", region_name=AWS_REGION)
