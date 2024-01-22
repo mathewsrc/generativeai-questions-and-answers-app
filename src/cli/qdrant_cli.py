@@ -20,7 +20,6 @@ QDRANT_URL = os.environ.get("QDRANT_URL")
 QDRANT_API_KEY = os.environ.get("QDRANT_API_KEY")
 
 boto_session = boto3.Session(region_name=AWS_REGION)
-credentials = boto_session.get_credentials()
 
 @click.group()
 def cli():
@@ -44,7 +43,7 @@ def download_files(collection_name, bucket=None):
 @cli.command("create")
 @click.option("--url", default=QDRANT_URL, help="Qdrant server URL")
 @click.option("--api-key", default=QDRANT_API_KEY, help="Qdrant API key")
-@click.option("--collection-name", default=COLLECTION_NAME, help="Qdrant collection name")
+@click.option("--collection-name", required=True, prompt=True, help="Qdrant collection name")
 @click.option(
 	"--embedding-model",
 	required=True,
@@ -54,14 +53,14 @@ def download_files(collection_name, bucket=None):
 )
 def create_vectostore(url, api_key, collection_name, embedding_model):
 	try:
-		docs = get_documents_from_pdf()
+		docs = get_documents_from_pdf(collection_name)
 
 		if embedding_model in huggingface_embeddings:
 			embedding = Embeddings.HUGGINGFACE
 			model_name = embedding_model
 
 		elif embedding_model in aws_embeddings:
-			embedding = Embeddings.AWS
+			embedding = Embeddings.BEDROCK
 			model_name = embedding_model
 
 		else:
@@ -70,8 +69,9 @@ def create_vectostore(url, api_key, collection_name, embedding_model):
 		embeddings = get_embeddings(
 			embedding=Embedding(embeddings=embedding, model_name=model_name)
 		)
-		click.echo(click.style("Creating collection!", fg="green"))
-
+		click.echo(click.style("Creating collection...this going to take some time to finish",
+                         fg="green"))
+             
 		vectorstore = Qdrant.from_documents(
 			documents=docs,
 			embedding=embeddings,
@@ -102,7 +102,7 @@ def delete_collection(url, api_key, collection_name):
 @cli.command("info")
 @click.option("--url", default=QDRANT_URL, help="Qdrant server URL")
 @click.option("--api-key", default=QDRANT_API_KEY, help="Qdrant API key")
-@click.option("--collection-name", default=COLLECTION_NAME, help="Qdrant collection name")
+@click.option("--collection-name", required=True, prompt=True, help="Qdrant collection name")
 def info(url, api_key, collection_name):
 	try:
 		client = get_client(url, api_key)
