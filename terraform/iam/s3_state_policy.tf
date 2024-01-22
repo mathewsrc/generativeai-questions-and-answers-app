@@ -11,7 +11,7 @@ data "aws_iam_policy_document" "s3_state" {
       "s3:DeleteObject"
     ]
     resources = [
-    "arn:aws:s3:::terraform-bucket-state-tf",
+      "arn:aws:s3:::terraform-bucket-state-tf",
     "arn:aws:s3:::terraform-bucket-state-tf/*/*"]
   }
 }
