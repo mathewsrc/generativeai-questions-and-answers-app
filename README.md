@@ -2,9 +2,17 @@
 [![Terraform](https://github.com/mathewsrc/GenerativeAI-Questions-and-Answers-app-with-Bedrock-Langchain-and-FastAPI/actions/workflows/terraform.yml/badge.svg)](https://github.com/mathewsrc/GenerativeAI-Questions-and-Answers-app-with-Bedrock-Langchain-and-FastAPI/actions/workflows/terraform.yml)
 [![Deploy (Amazon ECS)](https://github.com/mathewsrc/GenerativeAI-Questions-and-Answers-app-with-Bedrock-Langchain-and-FastAPI/actions/workflows/aws.yml/badge.svg)](https://github.com/mathewsrc/GenerativeAI-Questions-and-Answers-app-with-Bedrock-Langchain-and-FastAPI/actions/workflows/aws.yml)
 
-# GenerativeAI-Questions-and-Answers-app-with-Bedrock-Langchain-and-FastAPI
-Question and Answer application using Amazon Bedrock, Langchain, and FastAPI
+# GenerativeAI Questions and Answers app with Bedrock Langchain and FastAPI
+Question and Answer application for Unified National Competition (Concurso Nacional Unificado) using Amazon Bedrock, Langchain, and FastAPI
 
+## Objective
+
+Many people end up giving up reading competition notices due to different factors such as too much information, inaccessible font size, and difficulty in interpretation. This project aims to build a generative AI application to help candidates quickly and easily understand the notices of the Unified National Competition (Concurso Nacional Unificado).
+
+PT-BR
+Muitas pessoas acabam por desistir de ler editais de concursos devidos a diferentes fatores como: muitas informações, tamanho de letras não acessíveis e dificuldade de interpretação. Este projeto tem como objetivo construir uma aplicação de IA generativa para auxiliar candidados a compreender de forma facil e rápida os editais do Concurso Nacional Unificado.
+
+## Steps
 
 1. Load PDF documents
 2. Chunk documents
