@@ -5,9 +5,12 @@ from langchain.llms.bedrock import Bedrock
 from langchain_community.vectorstores import Qdrant
 from langchain.prompts import PromptTemplate
 from langchain.chains import RetrievalQA
-from global_variables import AWS_REGION, COLLECTION_NAME
 import os
 from dotenv import load_dotenv
+import sys
+module_path = ".."
+sys.path.append(os.path.abspath(module_path))
+from global_variables import AWS_REGION, COLLECTION_NAME
 from utils import (
 	get_embeddings,
 	get_client,
