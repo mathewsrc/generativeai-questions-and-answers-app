@@ -23,17 +23,14 @@ credentials = boto_session.get_credentials()
 bedrock_models = boto3.client("bedrock", region_name=AWS_REGION)
 bedrock_runtime = boto3.client("bedrock-runtime", region_name=AWS_REGION)
 
-
 class Embeddings(Enum):
 	HUGGINGFACE = "HuggingFaceEmbeddings"
 	BEDROCK = "BedrockEmbeddings"
-
 
 @dataclass()
 class Embedding:
 	embeddings: Embeddings
 	model_name: str
-
 
 huggingface_embeddings = [
 	"BAAI/bge-small-en",
@@ -70,12 +67,14 @@ def get_bedrock_embeddings(model_name: str) -> BedrockEmbeddings:
 
 
 def get_embeddings(embedding: Embedding):
-	if embedding == Embeddings.HUGGINGFACE:
-		return get_huggingface_embeddings(embedding.model_name)
-	elif embedding == Embeddings.BEDROCK:
-		return get_bedrock_embeddings(embedding.model_name)
-	else:
-		return None
+    click.echo(click.style(f"Embedding model: {embedding.model_name}", fg="green"))
+    click.echo(click.style(f"Embedding type: {embedding.embeddings}", fg="green"))
+    if embedding.embeddings == Embeddings.HUGGINGFACE:
+        return get_huggingface_embeddings(embedding.model_name)
+    elif embedding.embeddings == Embeddings.BEDROCK:
+        return get_bedrock_embeddings(embedding.model_name)
+    else:
+        raise Exception("Invalid embedding type")
 
 
 def get_documents_from_pdf(collection_name: str) -> list:
