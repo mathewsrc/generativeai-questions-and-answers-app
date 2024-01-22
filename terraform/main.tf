@@ -48,15 +48,16 @@ module "network" {
 #  subfolder   = "immigration"
 #}
 
-module "opensearchserveless" {
-  source             = "./opensearch"
-  region             = var.region
-  name               = var.name
-  environment        = var.environment
-  subnet_ids         = module.network.subnets
-  vpc_id             = module.network.vpc_id
-  security_group_ids = module.network.service_security_group_ids
-}
+# Use Qdrant Cloud steady
+# module "opensearchserveless" {
+#   source             = "./opensearch"
+#   region             = var.region
+#   name               = var.name
+#   environment        = var.environment
+#   subnet_ids         = module.network.subnets
+#   vpc_id             = module.network.vpc_id
+#   security_group_ids = module.network.service_security_group_ids
+# }
 
 module "ecr" {
   source      = "./ecr"
@@ -88,10 +89,6 @@ terraform {
   backend "s3" {
     bucket = "terraform-bucket-state-tf"
     key    = "state/terraform.tfstate"
-    region = "us-east-1"
-    assume_role = {
-      role_arn = "arn:aws:iam::078090784717:role/terraform_state_role"
-    }
   }
 }
 
