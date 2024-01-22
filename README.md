@@ -62,7 +62,7 @@ poetry install
 poetry --version
 ```
 
-3. Install Terraform (Linux). More information see [Terraform](https://developer.hashicorp.com/terraform/install#Linux)
+3. Install Terraform (Linux). For more information see [Terraform](https://developer.hashicorp.com/terraform/install#Linux)
 
 ```bash
 # Install Terraform by HashiCorp
@@ -78,18 +78,17 @@ sudo apt update && sudo apt install terraform
 terraform --version
 ```
 
-Alternatively, run the provided Bash script `install_terraform.sh` in the terminal. 
-
+Alternatively, run the Bash script `install_terraform.sh` in the terminal. 
 
 4. Enable Bedrock Foundation Models
 
-Then go to the AWS console > Amazon Bedrock > Template Access and enable the base templates you want to use. I created a [bedrock_tutorial](tutorials/bedrock_tutorial.md) tutorial for you on how to request model access.
+Then, navigate to the AWS console, access Amazon Bedrock, and go to Template Access. Enable the base templates that you wish to utilize. I created a [bedrock_tutorial](tutorials/bedrock_tutorial.md) tutorial for you on how to request model access.
 
 5. Install AWS CLI
 
-Finally, we need to install AWS CLI to use Terraform with aws provider. See [link](https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html#cliv2-linux-install) for more information:
+Finally, we need to install AWS CLI to use Terraform with AWS provider. Refer to the [cliv2-linux-install](https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html#cliv2-linux-install) for more information:
 
-Execute the following code to install AWS CLI: 
+To install the AWS CLI, execute the following commands in the terminal:
 
 ```bash
 # Install the AWS CLI
@@ -111,27 +110,30 @@ aws --version
 aws configure
 ```
 
-Alternatively, run the provided Bash script `install_aws_cli.sh` in the terminal. 
+Alternatively, you can run the provided Bash script `install_aws_cli.sh` in the terminal to streamline the installation process.
 
 ### Configure AWS CLI
 
-We currently have two alternatives for setting up the AWS Command Line Interface (CLI):
+We have two alternatives for setting up the AWS Command Line Interface (CLI):
 
-- Configure as an Administrator (less secure)
-- Create a new user with restricted permissions.
+- Configure as an Administrator (less secure): This option provides broad permissions but is less secure as it grants extensive access.
+- Create a new user with restricted permissions: For enhanced security, this alternative involves creating a new user with limited permissions.
 
-For this project, I opted to create a new user in AWS Identity and Access Management (IAM) and define policies with minimal permissions. You can check the policies needed in [policies](tutorials/iam_user_policies.md).
+For this project, a new user has been created in AWS Identity and Access Management (IAM), and policies 
+with minimal permissions have been defined. You can review the necessary policies in [policies](tutorials/iam_user_policies.md).
 
-Finally we can use the command `aws configure` in the terminal and pass the Access Key and the Secret access key that we just created. You can set the default region too.
+Finally, in the terminal, execute the command `aws configure` and provide the Access Key and Secret Access Key that were just created. 
+Set the default region as well.
 
-You can check your credentials using one of the following command in the Terminal
+To verify your credentials, you can use one of the following commands in the terminal:
+
 ```bash
 aws sts get-caller-identity
-
 make aws-user
 ```
 
-This command will return details about the user such as user id and account id.
+This command will retrieve details about the user, including user ID and account ID.
+
 ```
 {
     "UserId": "##############",
@@ -142,35 +144,42 @@ This command will return details about the user such as user id and account id.
 
 ### Setup Qdrant Cloud
 
-We need to create cluster in Qdrant Cloud and get a Token and cluster URL to access it throghout the Client API.
+To access Qdrant Cloud via the Client SDK, you need to create a cluster in Qdrant Cloud and obtain a Token and the cluster URL.
 
-1. You can follow the instructions on how to setup a free cluster in this link: [Qdrant-cluster](https://qdrant.tech/documentation/cloud/quickstart-cloud/)
+1. Follow the instructions on how to set up a free cluster by visiting the following link: [Qdrant-cluster](https://qdrant.tech/documentation/cloud/quickstart-cloud/)
 
-2. Create a new file to store senstive data
+2. Create a new file to store sensitive data
+
 ```bash
 touch .env
 ```
 
-3. Then store the Qdrant token and cluster URL as follow:
+3. Store the Qdrant token and cluster URL by executing the following commands:
+   
 QDRANT_URL = "YOUR CLUSTER URL"
 QDRANT_API_KEY = "YOUR TOKEN"
 
-## Creating a collection in Qdrant Cloud using CLI
+## To create a collection in Qdrant Cloud using the Command-Line Interface (CLI), follow these steps:
 
-1. Create collection
+1. Create a collection
 
-Choose one of the methods below and provide a collection name and choose one embedding model (10-15 minutes):
+First, open your terminal and select one of the methods below. Then specify a collection name, and choose an embedding model (this process typically takes 10-15 minutes):
+
 ```bash
 make qdrant-create
 poetry run python src/cli/qdrant_cli.py create
 ```
 
-2. (Optional) Run the app locally to test
+### Qdrant cluster
+
+![image](https://github.com/mathewsrc/GenerativeAI-Questions-and-Answers-app-with-Bedrock-Langchain-and-FastAPI/assets/94936606/18216ebe-a6e7-4c82-9baf-da20f633c8d9)
+
+2. (Optional) Run the app locally for testing
 
 ```bash
 make run-app
 ```
-Then go to http://127.0.0.1:8000 or http://127.0.0.1:8000/docs
+Next, navigate to http://127.0.0.1:8000 or http://127.0.0.1:8000/docs in your web browser.
 
 (Optional) Docker
 ```bash
@@ -180,37 +189,36 @@ make docker-run
 
 ## Deploy
 
-This project has two deployment options: manually in the Terminal and CI/CD with GitHub Actions
+This project offers two deployment options: manual execution in the terminal and CI/CD with GitHub Actions.
 
-As Terraform backend if configured to use a Terraform state file located in AWS S3 we need first to 
-upload the state file to S3.
+As the Terraform backend is configured to utilize a Terraform state file stored in AWS S3, the initial step is to upload the state file to S3.
 
-1. In the terminal init Terraform
+1. Execute the following command to initialize Terraform
 
 ```bash
 make tf-init
 ```
 
-2. Again in the terminal execute the following command to upload state file to AWS S3
+2. In the terminal, execute the following command to upload the state file to AWS S3:
 
 ```bash
 make tf-upload
 ```
 
-3. Deploy using Terminal and GitHub Actions
+3. Deploying using Terminal and GitHub Actions
 
 ### Terminal
 
-You can deploy this application by following the steps below:
+Follow the steps below to create the AWS infrastructure:
 
 ```bash
 make tf-plan 
 make tf-apply
 ```
 
-These commands will called Terraform to provide all infrastructure required.
+These commands will invoke Terraform to configure all the necessary infrastructure.
 
-Now we can deploy the application to ECS using make:
+Now, to deploy the application to ECS use the make command:
 
 ```bash
 make aws-deploy
@@ -220,74 +228,76 @@ make aws-deploy
 
 If you want to deploy this application to AWS ECS using GitHub actions you will need to follow some more steps:
 
-1. Create a Terraform API Token and a secret key in GitHub. See [Terraform API token](tutorials/terraform.md) inside this project
-2. Create secret keys passing your AWS credentials. See [Github Actions Secret Keys](tutorials/aws_secret_keys.md)
-3. Well done! Now you can deploy this application using CI/CD
-
-Now we have everything setup and you can how this application.
+1. CGenerate a Terraform API Token and a secret key in GitHub. Refer to the [Terraform API token](tutorials/terraform.md) inside this project
+2. Set up secret keys by providing your AWS credentials. Check out the  [Github Actions Secret Keys](tutorials/aws_secret_keys.md)
+3. Congratulations! You are now ready to deploy this application using CI/CD
 
 ## Tools used in this project
 
 ### Terraform
 
-Terraform is an open-source infrastructure as a code tool designed for provisioning and managing cloud resources in the cloud known as Infrastructure as Code (IaC).
+Terraform is an open-source Infrastructure as Code (IaC) tool, crafted for provisioning and managing cloud resources.
 
-Benefits of IaC:
-- IaC is a declarative which means that we can specify the desired state of infrastructure
-- It can be managed as source code, we can commit, collaborate, and easily use it inside our CI/CD pipeline
-- IaC is portable, we can build reusable modules across an organization
-- Can be used for multi-cloud deployments
-- Can automate changes and standardize configurations
+Key benefits:
+
+- Declarative approach
+- Enable collaboration, versioning, and integration into CI/CD pipelines
+- Reusable modules 
+- Multi-Cloud deployment
+- Automation and standardization
 
 ### Amazon ECS (Elastic Container Service)
 
-Amazon ECS (Elastic Container Service) is a fully managed container orchestration service that allows you to run and scale containerized applications on AWS easily. 
+Amazon ECS (Elastic Container Service) is a fully managed container orchestration service facilitating the effortless deployment and scaling of containerized applications on AWS.
 
-Benefits of ECS:
-- No need to install or operate your container orchestration
-- Easily auto-scaling configuration
-- Different types of instances such as EC2 and Fargate
+Key benefits:
+
+- Simplified Operation: Eliminate the need to install or manage your container orchestration
+- Auto-Scaling Configuration: Easily configure auto-scaling to match application demands.
+- Multiple instance types, including EC2 and Fargate, to meet specific application requirements.
 
 ### Amazon ECR (Elastic Container Register)
 
-Amazon ECR is a managed container register service to store Docker images that supports public and private repositories
+Amazon ECR is a managed container registry service designed for storing Docker images, supporting both public and private repositories.
 
-Benefits of ECR:
-- Image scanning helps in identifying software vulnerabilities in your container images
-- Lifecycle policies for managing the lifecycle of the images
-- Cross-Region and cross-account replication 
+Key benefits:
 
-### Amazon OpenSearch Service (I replace OpenSearch with Qdrant Cloud as it offer a free-tier)
-
-Open Search can search semantically similar or semantically related items and it can be used for recommendation engines, search engines, chatbots, and text classification. First, PDFs (or any kind of data such as videos, audio, and images) are converted into embedding representation, second, the embeddings are uploaded to OpenSearch or any other Vector Store. Then we can create an index to run queries to get recommendations or results. The serveless version of Open Search is an OpenSearch cluster that scales compute capacity based on your application's needs. 
-
-Benefits:
-- Pay only for what you use
-- Auto-scaling configuration
-- Can accommodate 16,000 dimensions
-- High-performing vector search
+- Image Scanning for vulnerabilities within your container images 
+- Effectively manage image lifecycles with customizable policies
+- Cross-Region and Cross-Account Replication: Facilitate seamless replication of images across regions and accounts for enhanced accessibility and redundancy.
 
 ### GitHub Actions
 
-GitHub Actions is a continuous integration and continuous delivery (CI/CD) platform for build, test, and deploy pipelines.
+GitHub Actions is a versatile CI/CD platform facilitating build, testing, and deployment pipelines. Key advantages include:
 
-Benefits:
-- Automatic, manual, schedule and event triggered workflow support 
-- Linux, Windows, and macOS virtual machines to run workflows
-- Visual workflow for debug and error fix
-- Can easily be used with AWS ECS and Terraform
+Key benefits:
+
+- Support for automatic, manual, scheduled, and event-triggered workflows
+- Compatibility with Linux, Windows, and macOS virtual machines for running workflows
+- Intuitive visual workflow for efficient debugging and error resolution
+- Seamless integration with AWS ECS and Terraform
 
 ### Docker
 
-Docker is a platform that use OS-level virtualization to deliver software in packages called containers.
-We can use Docker to create microservices applications using FastAPI and run it locally or on cloud services as ECS.
+Docker is a platform that uses OS-level virtualization to deliver software in packages called containers. We can use Docker to create microservices applications using FastAPI and run them locally or on cloud services as ECS.
 
-Benefits:
+Key benefits:
+
 - Isolation
 - Easy setup using Dockerfile
 - Portability (run on on-premises servers and in the cloud)
 
-## Qdrant
+### Qdrant
+
+Qdrant Cloud offers managed Qdrant instances on the cloud, serving as a powerful similarity search engine.
+
+Key benefits:
+
+- Seamless Integration with LangChain
+- Software-as-a-Service (SaaS) 
+- Easily scalability 
+- Comprehensive Monitoring and Logging for Cluster Performance
+- Availability on Major Cloud Platforms: AWS, GCP, and Azure
 
 ## Costs 
 
