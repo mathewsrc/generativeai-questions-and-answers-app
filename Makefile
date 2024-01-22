@@ -44,7 +44,8 @@ hf-del-cache:
 
 tf-init:
 	@echo "Initializing Terraform <Initialize the provider with plugin>"
-	cd terraform && terraform init
+	chmod +x ./scripts/terraform_init.sh
+	./scripts/terraform_init.sh
 
 tf-plan:
 	@echo "Planning Terraform <Preview of resources to be created>"
@@ -86,14 +87,14 @@ tf-upload:
 	@echo "Uploading Terraform <Upload infrastruture resources>"
 	cd terraform && terraform init 
 	chmod +x ./scripts/upload_state.sh
+	chmod +x ./scripts/terraform_migrate.sh
 	./scripts/upload_state.sh 
-	cd terraform && terraform init -migrate-state
-	cd terraform && terraform refresh
+	./scripts/terraform_migrate.sh
 
 tf-mgt:
-	@echo "Migrating Terraform <Migrate infrastruture resources>"
-	cd terraform && terraform init -migrate-state
-	cd terraform && terraform refresh
+	@echo "Migrating Terraform <Migrate infrastructure resources>"
+	chmod +x ./scripts/terraform_migrate.sh
+	./scripts/terraform_migrate.sh
 
 tf-refresh:
 	@echo "Refreshing Terraform <Refresh infrastruture resources>"
@@ -108,9 +109,9 @@ aws-user:
 	@echo "Check current AWS user signed in to AWS CLI"
 	aws sts get-caller-identity
 
-aws-collections:
-	@echo "Print out collections"
-	aws opensearchserverless list-collections
+aws-region:
+	@echo "Check current AWS region"
+	aws configure get region
 
 qdrant-ask:
 	@echo "Ask Qdrant"
