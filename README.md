@@ -292,6 +292,22 @@ Key benefits:
 - Effectively manage image lifecycles with customizable policies
 - Cross-Region and Cross-Account Replication: Facilitate seamless replication of images across regions and accounts for enhanced accessibility and redundancy.
 
+
+### API Gateway
+
+API Gateway is a fully managed service that supports containerized and web applications. API Gateway makes it easy for developers to create, publish, maintain, monitor, and secure APIs at any scale. 
+
+API: A set of rules that allow different software entities to communicate with each other.
+
+Gateway: A point of entry into a system. It often serves as a proxy that forwards requests to multiple services.
+
+Key benefits:
+- Supports RESTful APIs and WebSocket APIs
+- Handles traffic management and throttling
+- Handles authorization and access control
+- Monitoring, and API version management. 
+
+
 ### GitHub Actions
 
 GitHub Actions is a versatile CI/CD platform facilitating build, testing, and deployment pipelines. Key advantages include:
