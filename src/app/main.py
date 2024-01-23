@@ -43,6 +43,10 @@ prompt_template = """
 
                 Answer:
             """
+            
+def get_bedrock_embeddings(model_name: str) -> BedrockEmbeddings:
+	embeddings = BedrockEmbeddings(client=bedrock_runtime, model_id=model_name)
+	return embeddings
 
 @app.get("/", response_class=HTMLResponse)
 async def root():
@@ -52,10 +56,6 @@ async def root():
     <p>Use the /question endpoint to ask a question.</p>
     """
 	)
-
-def get_bedrock_embeddings(model_name: str) -> BedrockEmbeddings:
-	embeddings = BedrockEmbeddings(client=bedrock_runtime, model_id=model_name)
-	return embeddings
 
 @app.post("/ask", response_class=HTMLResponse)
 async def question(body:Body):
