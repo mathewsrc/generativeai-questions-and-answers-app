@@ -2,6 +2,10 @@ output "load_balancer_name" {
   value = aws_lb.load_balancer.name
 }
 
+output "laod_balancer_arn" {
+  value = aws_lb.load_balancer.arn  
+}
+
 output "target_group_arn" {
   value = aws_lb_target_group.lb_target_group.arn
 }
