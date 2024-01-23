@@ -246,6 +246,18 @@ If you want to deploy this application to AWS ECS using GitHub actions you will 
 2. Set up secret keys by providing your AWS credentials. Check out the  [Github Actions Secret Keys](tutorials/aws_secret_keys.md)
 3. Congratulations! You are now ready to deploy this application using CI/CD
 
+## Tear Down the AWS Resources
+
+Terraform truly excels in this aspect, eliminating the need for manual navigation through the console to locate each created resource. With Terraform we can just use `terraform destroy` or `make tf-destroy` in the terminal:
+
+```bash
+cd terraform && terraform destroy
+```
+
+```bash
+make tf-destroy
+```
+
 ## Tools used in this project
 
 ### Terraform
