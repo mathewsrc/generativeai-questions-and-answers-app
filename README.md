@@ -3,7 +3,7 @@
 [![Deploy (Amazon ECS)](https://github.com/mathewsrc/GenerativeAI-Questions-and-Answers-app-with-Bedrock-Langchain-and-FastAPI/actions/workflows/aws.yml/badge.svg)](https://github.com/mathewsrc/GenerativeAI-Questions-and-Answers-app-with-Bedrock-Langchain-and-FastAPI/actions/workflows/aws.yml)
 
 # GenerativeAI Questions and Answers app Unified National Competition (Concurso Nacional Unificado)
-Question and Answer application for Unified National Competition (Concurso Nacional Unificado) using Amazon Bedrock, Langchain, and FastAPI
+Question and Answer application for Unified National Competition (Concurso Nacional Unificado) using Amazon Bedrock, Langchain, Qdrant, AWS ECS and FastAPI
 
 ## Objective
 
