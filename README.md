@@ -2,7 +2,7 @@
 [![Terraform](https://github.com/mathewsrc/GenerativeAI-Questions-and-Answers-app-with-Bedrock-Langchain-and-FastAPI/actions/workflows/terraform.yml/badge.svg)](https://github.com/mathewsrc/GenerativeAI-Questions-and-Answers-app-with-Bedrock-Langchain-and-FastAPI/actions/workflows/terraform.yml)
 [![Deploy (Amazon ECS)](https://github.com/mathewsrc/GenerativeAI-Questions-and-Answers-app-with-Bedrock-Langchain-and-FastAPI/actions/workflows/aws.yml/badge.svg)](https://github.com/mathewsrc/GenerativeAI-Questions-and-Answers-app-with-Bedrock-Langchain-and-FastAPI/actions/workflows/aws.yml)
 
-# GenerativeAI Questions and Answers app with Bedrock Langchain and FastAPI
+# GenerativeAI Questions and Answers app Unified National Competition (Concurso Nacional Unificado)
 Question and Answer application for Unified National Competition (Concurso Nacional Unificado) using Amazon Bedrock, Langchain, and FastAPI
 
 ## Objective
@@ -170,6 +170,7 @@ touch .env
 3. Store the Qdrant token and cluster URL by executing the following commands:
    
 QDRANT_URL = "YOUR CLUSTER URL"
+
 QDRANT_API_KEY = "YOUR TOKEN"
 
 ### To create a collection in Qdrant Cloud using the Command-Line Interface (CLI), follow these steps:
