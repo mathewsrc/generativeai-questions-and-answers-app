@@ -3,13 +3,13 @@ resource "aws_api_gateway_vpc_link" "vpc_link" {
   description = "VPC Link for API Gateway"
   target_arns = [var.load_balancer_arn]
   tags = {
-    Name = var.name
+    Name        = var.name
     Environment = var.environment
   }
 }
 
 resource "aws_api_gateway_rest_api" "api" {
-  name = var.api_name
+  name        = var.api_name
   description = "API Gateway for REST API"
 
   endpoint_configuration {
@@ -88,7 +88,7 @@ resource "aws_api_gateway_deployment" "api_deployment" {
   }
 }
 
-resource "aws_api_gateway_stage" "api_stage" {
+resource "aws_api_gateway_stage" "production" {
   deployment_id = aws_api_gateway_deployment.api_deployment.id
   rest_api_id   = aws_api_gateway_rest_api.api.id
   stage_name    = var.api_stage_name
@@ -96,8 +96,8 @@ resource "aws_api_gateway_stage" "api_stage" {
 }
 
 resource "aws_api_gateway_method_settings" "all" {
-  rest_api_id = aws_api_gateway_rest_api.example.id
-  stage_name  = aws_api_gateway_stage.example.stage_name
+  rest_api_id = aws_api_gateway_rest_api.api.id
+  stage_name  = aws_api_gateway_stage.production.stage_name
   method_path = "*/*" # This is the method path for all methods in the API
 
   settings {
@@ -111,19 +111,19 @@ resource "aws_cloudwatch_log_group" "log_group" {
   retention_in_days = var.logs_retantion_in_days
 
   tags = {
-    Name = "API-Gateway-Execution-Logs_${aws_api_gateway_rest_api.api.id}/${var.api_stage_name}"
+    Name        = "API-Gateway-Execution-Logs_${aws_api_gateway_rest_api.api.id}/${var.api_stage_name}"
     Environment = var.environment
   }
 }
 
 resource "aws_api_gateway_usage_plan" "usage_plan" {
-  name         = var.usage_plan_name
-  description  = "QA Usage Plan"
+  name        = var.usage_plan_name
+  description = "QA Usage Plan"
 
-  api_stages {
-    api_id = aws_api_gateway_rest_api.api.id
-    stage  = aws_api_gateway_stage.development.stage_name
-  }
+#   api_stages {
+#     api_id = aws_api_gateway_rest_api.api.id
+#     stage  = aws_api_gateway_stage.development.stage_name
+#   }
 
   api_stages {
     api_id = aws_api_gateway_rest_api.api.id
@@ -133,16 +133,16 @@ resource "aws_api_gateway_usage_plan" "usage_plan" {
   quota_settings {
     limit  = var.quota_limit  # Maximum number of requests that can be made in a given time period.
     offset = var.quota_offset # Number of requests to subtract from the given limit.   
-    period = var.period # Time period in which the limit applies. Valid values are "DAY", "WEEK" or "MONTH".
+    period = var.period       # Time period in which the limit applies. Valid values are "DAY", "WEEK" or "MONTH".
   }
 
   throttle_settings {
-    burst_limit = 5   # The maximum rate limit over a time ranging from one to a few seconds
-    rate_limit  = 10  # The API request steady-state rate limit.
+    burst_limit = 5  # The maximum rate limit over a time ranging from one to a few seconds
+    rate_limit  = 10 # The API request steady-state rate limit.
   }
 
   tags = {
-    Name = var.usage_plan_name
+    Name        = var.usage_plan_name
     Environment = var.environment
   }
 }
