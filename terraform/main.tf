@@ -79,6 +79,15 @@ module "ecs" {
   service_security_group_ids  = module.network.service_security_group_ids
 }
 
+module "api_gateway" {
+  source                 = "./api_gateway"
+  region                 = var.region
+  name                   = var.name
+  environment            = var.environment
+  load_balancer_arn      = module.network.load_balancer_arn
+  load_balancer_dns_name = module.network.load_balancer_dns_name
+}
+
 # terraform {
 #   backend "local" {
 #     path = "terraform.tfstate"
