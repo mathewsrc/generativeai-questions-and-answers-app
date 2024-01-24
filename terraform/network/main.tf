@@ -4,34 +4,55 @@ data "aws_caller_identity" "current" {}
 # Get the current AWS region
 data "aws_region" "current" {}
 
-# Create a default VPC
-resource "aws_default_vpc" "default_vpc" {
+# Create a VPC
+resource "aws_vpc" "main" {
+  cidr_block = var.aws_vpc_cidr_block
+}
+
+# Create public subnets
+resource "aws_subnet" "public_subnets" {
+  count                   = length(var.aws_public_subnet_cidr_blocks)
+  vpc_id                  = aws_vpc.main.id
+  cidr_block              = element(var.aws_public_subnet_cidr_blocks, count.index)
+  map_public_ip_on_launch = true
   tags = {
-    Name = "Default VPC"
+    Name = "public-subnet-${count.index}"
   }
 }
 
-# Create a default subnet for us-east-1a and us-east-1b
-resource "aws_default_subnet" "default_subnet_a" {
-  availability_zone = "${data.aws_region.current.name}a"
+# Create private subnets
+resource "aws_subnet" "private_subnets" {
+  count      = length(var.aws_private_subnet_cidr_blocks)
+  vpc_id     = aws_vpc.main.id
+  cidr_block = element(var.aws_private_subnet_cidr_blocks, count.index)
   tags = {
-    Name = "Default subnet for us-east-1a"
+    Name = "private-subnet-${count.index}"
   }
-  depends_on = [aws_default_vpc.default_vpc]
 }
 
-resource "aws_default_subnet" "default_subnet_b" {
-  availability_zone = "${data.aws_region.current.name}b"
-  tags = {
-    Name = "Default subnet for us-east-1b"
-  }
-  depends_on = [aws_default_vpc.default_vpc]
+# Create an Internet Gateway and attach it to the VPC
+resource "aws_internet_gateway" "main" {
+  vpc_id = aws_vpc.main.id
 }
 
-# Create a ECS security group
-resource "aws_security_group" "security_group" {
-  vpc_id = aws_default_vpc.default_vpc.id
-  name   = var.security_group_name
+# Create a Route Table
+resource "aws_route_table" "main" {
+  vpc_id = aws_vpc.main.id
+
+  route {
+    cidr_block = "0.0.0.0/0"
+    gateway_id = aws_internet_gateway.main.id
+  }
+
+  tags = {
+    Name = "main-route-table"
+  }
+}
+
+# Create a security group for the load balancer
+resource "aws_security_group" "lb" {
+  vpc_id = aws_vpc.main.id
+  name   = var.security_group_name_lb
   ingress {
     from_port   = 80
     to_port     = 80
@@ -48,38 +69,20 @@ resource "aws_security_group" "security_group" {
   tags = {
     Environment = var.environment
     Application = var.name
-    Name        = var.security_group_name
+    Name        = var.security_group_name_lb
   }
 }
 
-# Create a load balancer
-resource "aws_lb" "load_balancer" {
-  name               = var.load_balance_name
-  internal           = false
-  load_balancer_type = "application"
-  security_groups    = [aws_security_group.security_group.id]
-  subnets = [
-    "${aws_default_subnet.default_subnet_a.id}",
-    "${aws_default_subnet.default_subnet_b.id}"
-  ]
+# Create a security group for the ECS tasks
+resource "aws_security_group" "ecs_tasks" {
+  name   = var.security_group_name_ecs_tasks
+  vpc_id = aws_vpc.main.id
 
-  enable_deletion_protection = false
-
-  tags = {
-    Environment = var.environment
-    Application = var.name
-    Name        = var.load_balance_name
-  }
-}
-
-# Create a service security group
-resource "aws_security_group" "service_security_group" {
   ingress {
-    from_port = 0
-    to_port   = 0
-    protocol  = "-1"
-    # Only allowing traffic in from the load balancer security group
-    security_groups = [aws_security_group.security_group.id]
+    from_port   = var.container_port
+    to_port     = var.container_port
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
   }
 
   egress {
@@ -92,36 +95,6 @@ resource "aws_security_group" "service_security_group" {
   tags = {
     Environment = var.environment
     Application = var.name
-    Name        = var.security_group_name
-  }
-}
-
-# Create a ECS load balancer target group
-resource "aws_lb_target_group" "lb_target_group" {
-  name        = var.load_balancer_target_group_name
-  port        = 80
-  protocol    = "HTTP"
-  vpc_id      = aws_default_vpc.default_vpc.id
-  target_type = "ip"
-  tags = {
-    Environment = var.environment
-    Application = var.name
-    Name        = var.load_balancer_target_group_name
-  }
-}
-
-# Create a ECS load balancer listener
-resource "aws_lb_listener" "lb_listener" {
-  load_balancer_arn = aws_lb.load_balancer.arn
-  port              = "80"
-  protocol          = "HTTP"
-  default_action {
-    type             = "forward"
-    target_group_arn = aws_lb_target_group.lb_target_group.arn
-  }
-
-  tags = {
-    Environment = var.environment
-    Application = var.name
+    Name        = var.security_group_name_ecs_tasks
   }
 }
