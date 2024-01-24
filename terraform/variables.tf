@@ -16,3 +16,8 @@ variable "environment" {
     error_message = "Environment must be one of DEV, STAG, PROD"
   }
 }
+
+variable "container_port" {
+  description = "The port the application is listening on"
+  default     = 80
+}
