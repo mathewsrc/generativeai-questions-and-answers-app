@@ -13,7 +13,6 @@ variable "name" {
 }
 
 variable "region" {
-  default     = "us-east-1"
   description = "The region where the resources will be created"
 }
 
@@ -30,11 +29,11 @@ variable "container_port" {
 }
 
 variable "target_group_name" {
-  default = "bedrock-qa-rag-tg"
+  default     = "bedrock-qa-rag-tg"
   description = "The name of the target group"
 }
 
 variable "nlb_name" {
-  default = "bedrock-qa-rag-nlb"
+  default     = "bedrock-qa-rag-nlb"
   description = "The name of the network load balancer"
 }
