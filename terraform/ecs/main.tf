@@ -62,17 +62,18 @@ resource "aws_ecs_service" "ecs_service" {
   task_definition = aws_ecs_task_definition.ecs_task_definition.arn
   launch_type     = "FARGATE"
   desired_count   = 2 # Number of containers 
+  depends_on      = [var.ecs_aws_iam_role]
 
   load_balancer {
-    target_group_arn = var.target_group_arn
+    target_group_arn = var.nlb_target_group_arn
     container_name   = var.ecs_service_name
     container_port   = 80
   }
 
   network_configuration {
-    subnets          = var.subnets
-    assign_public_ip = true
-    security_groups  = var.service_security_group_ids
+    subnets          = var.private_subnets # Instance under this subnet can’t be accessed from the Internet directly
+    assign_public_ip = false
+    security_groups  = var.ecs_tasks_security_group_id
   }
 
   tags = {
