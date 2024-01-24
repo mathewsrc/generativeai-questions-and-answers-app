@@ -28,13 +28,18 @@ run-app:
 ask:
 	@echo "Running local app with ask"
 	curl -X POST http://localhost:8000/ask -H "Content-Type: application/json" -d '{"question":"What is the test day?"}'
+
+docker-inspect:
+	@echo "Inspecting Docker container"
+	docker inspect app
+
 docker-build:
 	@echo "Building Docker container"
 	docker build -t app .
 
 docker-run:
 	@echo "Starting Docker container"
-	docker run -p 80:80 app 
+	docker run -p 80:80 --env-file .env app 
 
 aws-deploy:
 	@echo "Deploying to AWS"
@@ -58,10 +63,6 @@ tf-outp:
 	@echo "Output Terraform <Output of resources to be created>"
 	cd terraform && terraform output
 
-tf-apply:
-	@echo "Applying Terraform <Create infrastruture resources>"
-	cd terraform && terraform apply -auto-approve -input=false
-
 tf-destroy:
 	@echo "Destroying Terraform <Destroy infrastruture resources>"
 	cd terraform && terraform destroy
@@ -84,7 +85,7 @@ tf-plan-json:
 
 tf-deploy:
 	@echo "Deploying Terraform <Deploy infrastruture resources>"
-	cd terraform && terraform init && terraform apply -auto-approve
+	cd terraform && terraform fmt -recursive && terraform validate && terraform apply -auto-approve -input=false
 
 tf-upload:
 	@echo "Uploading Terraform <Upload infrastruture resources>"
