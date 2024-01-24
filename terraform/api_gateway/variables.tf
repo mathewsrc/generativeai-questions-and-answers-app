@@ -64,7 +64,6 @@ variable "name" {
 }
 
 variable "region" {
-  default     = "us-east-1"
   description = "The region where the resources will be created"
 }
 
