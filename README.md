@@ -195,12 +195,6 @@ make run-app
 ```
 Next, navigate to http://127.0.0.1:8000 or http://127.0.0.1:8000/docs in your web browser.
 
-(Optional) Docker
-```bash
-make docker-build
-make docker-run
-```
-
 ## Deploy
 
 This project offers two deployment options: manual execution in the terminal and CI/CD with GitHub Actions.
