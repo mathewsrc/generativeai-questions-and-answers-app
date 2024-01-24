@@ -21,6 +21,10 @@ variable "ecs_task_family_name" {
   default     = "bedrock-qa-rag-task-tf"
 }
 
+variable "nlb_target_group_arn" {
+  description = "The arn of target group"
+}
+
 variable "logs_group_name" {
   description = "The name of the logs group"
   default     = "bedrock"
@@ -36,14 +40,8 @@ variable "ecs_service_name" {
   default     = "bedrock-qa-rag-service-tf"
 }
 
-variable "ecs_security_group_name" {
-  description = "The name of the ECS security group"
-  default     = "bedrock-qa-rag-ecs-security-group-tf"
-}
-
 variable "container_port" {
   description = "The port of container"
-  default     = 80
   type        = number
 }
 
@@ -67,20 +65,26 @@ variable "ecr_repository_name" {
   description = "The name of ECR repository"
 }
 
-variable "target_group_arn" {
-  description = "The arn of target group"
-}
-
-variable "service_security_group_ids" {
-  description = "The id of service security group"
+variable "ecs_tasks_security_group_id" {
+  description = "The security group ids"
   type        = list(string)
 }
 
-variable "subnets" {
-  description = "The subnets of ECS service"
+variable "private_subnets" {
+  description = "VPC private subnets"
   type        = list(string)
 }
 
 variable "ecs_task_execution_role_arn" {
   description = "The arn of ECS task execution role"
+}
+
+variable "vpc_id" {
+  description = "The id of VPC"
+  type        = string
+}
+
+variable "ecs_aws_iam_role" {
+  description = "The ECS task executor role"
+  type        = any
 }
