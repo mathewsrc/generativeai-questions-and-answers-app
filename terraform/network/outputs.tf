@@ -1,31 +1,15 @@
-output "load_balancer_name" {
-  value = aws_lb.load_balancer.name
-}
-
-output "load_balancer_arn" {
-  value = aws_lb.load_balancer.arn
-}
-
-output "load_balancer_dns_name" {
-  value = aws_lb.load_balancer.dns_name
-}
-
-output "target_group_arn" {
-  value = aws_lb_target_group.lb_target_group.arn
-}
-
-output "service_security_group_ids" {
-  value = tolist([aws_security_group.service_security_group.id])
+output "ecs_tasks_security_group_id" {
+  value = aws_security_group.ecs_tasks.id
 }
 
 output "vpc_id" {
-  value = aws_default_vpc.default_vpc.id
+  value = aws_vpc.main.id
 }
 
-output "subnets" {
-  value = tolist([aws_default_subnet.default_subnet_a.id, aws_default_subnet.default_subnet_b.id])
+output "public_subnets" {
+  value = aws_subnet.public_subnets.*.id
 }
 
-output "app_url" {
-  value = aws_lb.load_balancer.dns_name
+output "private_subnets" {
+  value = aws_subnet.private_subnets.*.id
 }
