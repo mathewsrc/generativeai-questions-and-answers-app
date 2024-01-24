@@ -167,7 +167,7 @@ To access Qdrant Cloud via the Client SDK, you need to create a cluster in Qdran
 touch .env
 ```
 
-3. Store the Qdrant token and cluster URL by executing the following commands:
+3. Store the Qdrant token and cluster URL inside `.env` file:
    
 QDRANT_URL = "YOUR CLUSTER URL"
 
