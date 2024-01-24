@@ -1,13 +1,3 @@
-variable "load_balancer_arn" {
-  description = "The ARN of the load balancer"
-  type        = string
-}
-
-variable "load_balancer_dns_name" {
-  description = "The DNS name of the load balancer"
-  type        = string
-}
-
 variable "vpc_link_name" {
   description = "The name of the VPC link"
   default     = "vpc-link"
@@ -22,7 +12,7 @@ variable "api_name" {
 
 variable "api_stage_name" {
   description = "The name of the API stage"
-  default     = "dev"
+  default     = "prod"
   type        = string
 }
 
@@ -84,4 +74,18 @@ variable "environment" {
     condition     = contains(["DEV", "STAG", "PROD"], var.environment)
     error_message = "Environment must be one of DEV, STAG, PROD"
   }
+}
+
+variable "container_port" {
+  description = "The port the application is listening on"
+}
+
+variable "nlb_arn" {
+  type        = string
+  description = "The ARN of the internal NLB"
+}
+
+variable "nlb_dns_name" {
+  type        = string
+  description = "The DNS name of the internal NLB"
 }
