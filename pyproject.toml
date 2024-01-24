@@ -23,6 +23,7 @@ pydantic = "^2.5.3"
 langchain-community = "^0.0.11"
 lancedb = "^0.4.4"
 qdrant-client = "^1.7.0"
+python-dotenv = "^1.0.1"
 
 
 [build-system]
