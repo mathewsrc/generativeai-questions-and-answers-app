@@ -59,6 +59,16 @@ module "network" {
 #   security_group_ids = module.network.service_security_group_ids
 # }
 
+module "load_balancer" {
+  source         = "./load_balancer"
+  region         = var.region
+  name           = var.name
+  environment    = var.environment
+  public_subnets = module.network.public_subnets
+  vpc_id         = module.network.vpc_id
+  container_port = var.container_port
+}
+
 module "ecr" {
   source      = "./ecr"
   region      = var.region
@@ -73,19 +83,23 @@ module "ecs" {
   environment                 = var.environment
   ecr_repository_url          = module.ecr.ecr_repository_url
   ecr_repository_name         = module.ecr.ecr_repository_name
-  target_group_arn            = module.network.target_group_arn
-  subnets                     = module.network.subnets
   ecs_task_execution_role_arn = module.iam.ecs_task_execution_role_arn
-  service_security_group_ids  = module.network.service_security_group_ids
+  vpc_id                      = module.network.vpc_id
+  ecs_aws_iam_role            = module.iam.ecs_aws_iam_role
+  private_subnets             = module.network.private_subnets
+  nlb_target_group_arn        = module.load_balancer.nlb_target_group_arn
+  container_port              = var.container_port
+  ecs_tasks_security_group_id = [module.network.ecs_tasks_security_group_id]
 }
 
 module "api_gateway" {
-  source                 = "./api_gateway"
-  region                 = var.region
-  name                   = var.name
-  environment            = var.environment
-  load_balancer_arn      = module.network.load_balancer_arn
-  load_balancer_dns_name = module.network.load_balancer_dns_name
+  source               = "./api_gateway"
+  region               = var.region
+  name                 = var.name
+  environment          = var.environment
+  nlb_dns_name         = module.load_balancer.nlb_dns_name
+  nlb_arn = module.load_balancer.nlb_arn
+  container_port       = var.container_port
 }
 
 # terraform {
