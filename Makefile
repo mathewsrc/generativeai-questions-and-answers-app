@@ -129,4 +129,9 @@ qdrant-info:
 	@echo "Info Qdrant collection"
 	poetry run python src/cli/qdrant_cli.py info
 
+upload_secrets:
+	@echo "Uploading secret to AWS Secret Manager"
+	chmod +x ./scripts/upload_secrets.sh
+	./scripts/upload_secrets.sh
+
 all: install format lint
