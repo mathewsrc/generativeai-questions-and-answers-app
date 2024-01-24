@@ -1,5 +1,4 @@
 variable "region" {
-  default     = "us-east-1"
   description = "The region of deploy"
 }
 
@@ -33,14 +32,14 @@ variable "container_port" {
 
 variable "number_of_private_subnets" {
   type        = number
-  default     = 1
+  default     = 2
   description = "The number of private subnets in a VPC."
 }
 
 variable "number_of_public_subnets" {
   type        = number
-  default     = 1
-  description = "The number of private subnets in a VPC."
+  default     = 2
+  description = "The number of public subnets in a VPC."
 }
 
 variable "aws_vpc_cidr_block" {
@@ -60,4 +59,3 @@ variable "aws_private_subnet_cidr_blocks" {
   default     = ["10.0.3.0/24", "10.0.4.0/24"]
   description = "List of CIDR blocks for the private subnets"
 }
-

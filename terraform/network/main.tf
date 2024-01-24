@@ -4,9 +4,14 @@ data "aws_caller_identity" "current" {}
 # Get the current AWS region
 data "aws_region" "current" {}
 
+# Get the availability zones for the current region
+data "aws_availability_zones" "available" {}
+
 # Create a VPC
 resource "aws_vpc" "main" {
-  cidr_block = var.aws_vpc_cidr_block
+  cidr_block           = var.aws_vpc_cidr_block
+  enable_dns_support   = true # Required for VPC endpoints
+  enable_dns_hostnames = true # Required for VPC endpoints
 }
 
 # Create public subnets
@@ -14,19 +19,21 @@ resource "aws_subnet" "public_subnets" {
   count                   = length(var.aws_public_subnet_cidr_blocks)
   vpc_id                  = aws_vpc.main.id
   cidr_block              = element(var.aws_public_subnet_cidr_blocks, count.index)
+  availability_zone       = element(data.aws_availability_zones.available.names, count.index)
   map_public_ip_on_launch = true
   tags = {
-    Name = "public-subnet-${count.index}"
+    Name = "public-subnets-${count.index}"
   }
 }
 
 # Create private subnets
 resource "aws_subnet" "private_subnets" {
-  count      = length(var.aws_private_subnet_cidr_blocks)
-  vpc_id     = aws_vpc.main.id
-  cidr_block = element(var.aws_private_subnet_cidr_blocks, count.index)
+  count             = length(var.aws_private_subnet_cidr_blocks)
+  vpc_id            = aws_vpc.main.id
+  cidr_block        = element(var.aws_private_subnet_cidr_blocks, count.index)
+  availability_zone = element(data.aws_availability_zones.available.names, count.index)
   tags = {
-    Name = "private-subnet-${count.index}"
+    Name = "private-subnets-${count.index}"
   }
 }
 
@@ -82,7 +89,16 @@ resource "aws_security_group" "ecs_tasks" {
     from_port   = var.container_port
     to_port     = var.container_port
     protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
+    cidr_blocks = [var.aws_vpc_cidr_block]
+  }
+
+  # The security group attached to the VPC endpoint must allow incoming 
+  # connections on TCP port 443 from the private subnet of the VPC.
+  ingress {
+    protocol    = "tcp"
+    from_port   = 443
+    to_port     = 443
+    cidr_blocks = [var.aws_vpc_cidr_block]
   }
 
   egress {
@@ -90,6 +106,22 @@ resource "aws_security_group" "ecs_tasks" {
     to_port     = 0
     protocol    = "-1"
     cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  egress {
+    from_port = 443
+    to_port   = 443
+    protocol  = "tcp"
+    prefix_list_ids = [
+      aws_vpc_endpoint.s3.prefix_list_id
+    ]
+  }
+
+  egress {
+    from_port   = 443
+    to_port     = 443
+    protocol    = "tcp"
+    cidr_blocks = [var.aws_vpc_cidr_block]
   }
 
   tags = {
