@@ -1,8 +1,3 @@
-variable "region" {
-  default     = "us-east-1"
-  description = "The region of deploy"
-}
-
 variable "name" {
   default     = "bedrock-qa-rag"
   description = "The name for resource"

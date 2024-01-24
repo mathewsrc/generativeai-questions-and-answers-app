@@ -7,8 +7,11 @@ terraform {
   }
 }
 
+data "aws_region" "current" {}
+data "aws_caller_identity" "current" {}
+
 provider "aws" {
-  region = var.region
+  region = "us-east-1" # Make sure the region is the same of the one returned by 'data "aws_region" "current" {}' 
   default_tags {
     tags = {
       Name = var.name
@@ -18,21 +21,27 @@ provider "aws" {
 
 module "iam" {
   source      = "./iam"
-  region      = var.region
+  region      = data.aws_region.current.name
   name        = var.name
   environment = var.environment
 }
 
+module "secrets_manager" {
+  source      = "./secrets_manager"
+  environment = var.environment
+  region      = data.aws_region.current.name
+}
+
 module "network" {
   source      = "./network"
-  region      = var.region
+  region      = data.aws_region.current.name
   name        = var.name
   environment = var.environment
 }
 
 #module "s3_cnu" {
 #  source      = "./s3"
-#  region      = var.region
+#  region      = data.aws_region.current.name
 #  name        = var.name
 #  bucket_name = "bedrock-qa-bucket-tf"
 #  environment = var.environment
@@ -41,7 +50,7 @@ module "network" {
 
 #module "s3_immigration" {
 #  source      = "./s3"
-#  region      = var.region
+#  region      = data.aws_region.current.name
 #  name        = var.name
 #  bucket_name = "bedrock-qa-bucket-tf"
 #  environment = var.environment
@@ -51,7 +60,7 @@ module "network" {
 # Use Qdrant Cloud steady
 # module "opensearchserveless" {
 #   source             = "./opensearch"
-#   region             = var.region
+#   region             = data.aws_region.current.name
 #   name               = var.name
 #   environment        = var.environment
 #   subnet_ids         = module.network.subnets
@@ -61,7 +70,7 @@ module "network" {
 
 module "load_balancer" {
   source         = "./load_balancer"
-  region         = var.region
+  region         = data.aws_region.current.name
   name           = var.name
   environment    = var.environment
   public_subnets = module.network.public_subnets
@@ -71,14 +80,14 @@ module "load_balancer" {
 
 module "ecr" {
   source      = "./ecr"
-  region      = var.region
+  region      = data.aws_region.current.name
   name        = var.name
   environment = var.environment
 }
 
 module "ecs" {
   source                      = "./ecs"
-  region                      = var.region
+  region                      = data.aws_region.current.name
   name                        = var.name
   environment                 = var.environment
   ecr_repository_url          = module.ecr.ecr_repository_url
@@ -93,13 +102,13 @@ module "ecs" {
 }
 
 module "api_gateway" {
-  source               = "./api_gateway"
-  region               = var.region
-  name                 = var.name
-  environment          = var.environment
-  nlb_dns_name         = module.load_balancer.nlb_dns_name
-  nlb_arn = module.load_balancer.nlb_arn
-  container_port       = var.container_port
+  source         = "./api_gateway"
+  region         = data.aws_region.current.name
+  name           = var.name
+  environment    = var.environment
+  nlb_dns_name   = module.load_balancer.nlb_dns_name
+  nlb_arn        = module.load_balancer.nlb_arn
+  container_port = var.container_port
 }
 
 # terraform {
