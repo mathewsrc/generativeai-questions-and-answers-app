@@ -2,16 +2,16 @@
 [![Terraform](https://github.com/mathewsrc/GenerativeAI-Questions-and-Answers-app-with-Bedrock-Langchain-and-FastAPI/actions/workflows/terraform.yml/badge.svg)](https://github.com/mathewsrc/GenerativeAI-Questions-and-Answers-app-with-Bedrock-Langchain-and-FastAPI/actions/workflows/terraform.yml)
 [![Deploy (Amazon ECS)](https://github.com/mathewsrc/GenerativeAI-Questions-and-Answers-app-with-Bedrock-Langchain-and-FastAPI/actions/workflows/aws.yml/badge.svg)](https://github.com/mathewsrc/GenerativeAI-Questions-and-Answers-app-with-Bedrock-Langchain-and-FastAPI/actions/workflows/aws.yml)
 
-# GenerativeAI Questions and Answers app Unified National Competition (Concurso Nacional Unificado)
-Question and Answer application for Unified National Competition (Concurso Nacional Unificado) using Amazon Bedrock, Langchain, Qdrant, AWS ECS and FastAPI
+# GenerativeAI Questions and Answers app for competition notices
+Question and Answer application for competition notices using Amazon Bedrock, Langchain, Qdrant, AWS ECS, and FastAPI
 
 ## Objective
 
-Many people end up giving up reading competition notices due to different factors such as too much information, inaccessible font size, and difficulty in interpretation. This project aims to build a generative AI application to help candidates quickly and easily understand the notices of the Unified National Competition (Concurso Nacional Unificado).
+Many people end up giving up reading competition notices due to different factors such as too much information, inaccessible font size, and difficulty in interpretation. This project aims to build a generative AI application to help candidates quickly and easily understand competition notices.
 
 PT-BR
 
-Muitas pessoas acabam por desistir de ler editais de concursos devidos a diferentes fatores como: muitas informações, tamanho de letras não acessíveis e dificuldade de interpretação. Este projeto tem como objetivo construir uma aplicação de IA generativa para auxiliar candidados a compreender de forma facil e rápida os editais do Concurso Nacional Unificado.
+Muitas pessoas acabam por desistir de ler editais de concursos devidos a diferentes fatores como: muitas informações, tamanho de letras não acessíveis e dificuldade de interpretação. Este projeto tem como objetivo construir uma aplicação de IA generativa para auxiliar candidados a compreender de forma facil e rápida editais de concursos.
 
 <p align="center">
 <img src="https://github.com/mathewsrc/GenerativeAI-Questions-and-Answers-app-with-Bedrock-Langchain-and-FastAPI/assets/94936606/0066112b-0ec9-4174-83cf-fca44a91af16" width=50% height=50%>
