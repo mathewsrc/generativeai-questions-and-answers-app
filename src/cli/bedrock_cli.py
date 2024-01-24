@@ -8,6 +8,7 @@ from langchain.chains import RetrievalQA
 import os
 from dotenv import load_dotenv
 import sys
+
 module_path = ".."
 sys.path.append(os.path.abspath(module_path))
 from global_variables import AWS_REGION, COLLECTION_NAME
