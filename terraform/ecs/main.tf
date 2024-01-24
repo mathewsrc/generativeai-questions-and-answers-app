@@ -72,7 +72,7 @@ resource "aws_ecs_service" "ecs_service" {
 
   network_configuration {
     subnets          = var.private_subnets # Instance under this subnet can’t be accessed from the Internet directly
-    assign_public_ip = false
+    assign_public_ip = true
     security_groups  = var.ecs_tasks_security_group_id
   }
 
