@@ -39,14 +39,14 @@ module "network" {
   environment = var.environment
 }
 
-#module "s3_cnu" {
-#  source      = "./s3"
-#  region      = data.aws_region.current.name
-#  name        = var.name
-#  bucket_name = "bedrock-qa-bucket-tf"
-#  environment = var.environment
-#  subfolder   = "cnu"
-#}
+module "s3_cnu" {
+  source      = "./s3"
+  region      = data.aws_region.current.name
+  name        = var.name
+  bucket_name = "bedrock-qa-bucket-tf"
+  environment = var.environment
+  subfolder   = "cnu"
+}
 
 #module "s3_immigration" {
 #  source      = "./s3"
@@ -99,6 +99,7 @@ module "ecs" {
   nlb_target_group_arn        = module.load_balancer.nlb_target_group_arn
   container_port              = var.container_port
   ecs_tasks_security_group_id = [module.network.ecs_tasks_security_group_id]
+  ecs_task_role_arn           = module.iam.ecs_task_role_arn
 }
 
 module "api_gateway" {
