@@ -50,6 +50,7 @@ env:
   LOGS_GROUP_NAME: bedrock
   ECS_TASK_FAMILY_NAME: bedrock-qa-rag-task-tf
   ECS_EXECUTION_ROLE_NAME: bedrock-qa-rag-ecs-execution-role-tf
+  ECS_TASK_ROLE_NAME: bedrock-qa-rag-ecs-task-role-tf
 
 permissions:
   contents: read
@@ -107,6 +108,7 @@ jobs:
         logs_group_name: ${{ env.LOGS_GROUP_NAME }}
         ecs_task_family_name: ${{ env.ECS_TASK_FAMILY_NAME }}
         ecs_execution_role_name: ${{ env.ECS_EXECUTION_ROLE_NAME }}
+        ecs_task_role_name: ${{ env.ECS_TASK_ROLE_NAME }}
       run: |
         sed -i "s|{tag}|$image|g" .aws/task-definition-actions.json
         sed -i "s|{name}|$comtainer_name|g" .aws/task-definition-actions.json
@@ -116,6 +118,7 @@ jobs:
         sed -i "s|{logs_group_name}|$logs_group_name|g" .aws/task-definition-actions.json
         sed -i "s|{ecs_task_family_name}|$ecs_task_family_name|g" .aws/task-definition-actions.json
         sed -i "s|{ecs_execution_role_name}|$ecs_execution_role_name|g" .aws/task-definition-actions.json
+        sed -i "s|{ecs_task_role_name}|$ecs_task_role_name|g" .aws/task-definition-actions.json
 
     - name: Fill in the new image ID in the Amazon ECS task definition
       id: task-def
