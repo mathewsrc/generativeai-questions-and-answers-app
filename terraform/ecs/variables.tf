@@ -87,3 +87,7 @@ variable "ecs_aws_iam_role" {
   description = "The ECS task executor role"
   type        = any
 }
+
+variable "ecs_task_role_arn" {
+  description = "The ARN of IAM role that allows your Amazon ECS container task to make calls to other AWS services."
+}

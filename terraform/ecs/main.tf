@@ -47,7 +47,7 @@ resource "aws_ecs_task_definition" "ecs_task_definition" {
   memory                   = var.memory  # Specify the memory the container requires
   cpu                      = var.cpu     # Specify the CPU the container requires
   execution_role_arn       = var.ecs_task_execution_role_arn
-
+  task_role_arn            = var.ecs_task_role_arn
   tags = {
     Environment = var.environment
     Application = var.name
@@ -71,9 +71,9 @@ resource "aws_ecs_service" "ecs_service" {
   }
 
   network_configuration {
-    subnets          = var.private_subnets # Instance under this subnet can’t be accessed from the Internet directly
+    subnets = var.private_subnets # Instance under this subnet can’t be accessed from the Internet directly
     #assign_public_ip = true
-    security_groups  = var.ecs_tasks_security_group_id
+    security_groups = var.ecs_tasks_security_group_id
   }
 
   tags = {
