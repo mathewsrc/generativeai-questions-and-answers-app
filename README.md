@@ -195,6 +195,7 @@ make run-app
 ```
 Next, navigate to http://127.0.0.1:8000 or http://127.0.0.1:8000/docs in your web browser.
 
+
 ## Deploy
 
 This project offers two deployment options: manual execution in the terminal and CI/CD with GitHub Actions.
@@ -219,12 +220,28 @@ make tf-upload
 
 Follow the steps below to create the AWS infrastructure:
 
+1. Use the following command in the terminal to create all AWS resources using
+Terraform. This command will invoke Terraform to configure all the necessary infrastructure.
+
 ```bash
-make tf-plan 
 make tf-apply
 ```
 
-These commands will invoke Terraform to configure all the necessary infrastructure.
+2. Upload Qdrant url and key to AWS Secrets Manager
+
+Would not be secure to use Qdrant URL and Key locally, so we need to
+use AWS Secrets Manager to keep this information safety, and retrieve both
+secrets using the Secrets Manager API.
+
+We could either create AWS Secrets manually using AWS console, AWS CLI or delegate
+to Terraform. As I am already using Terraform to create others AWS
+resources I decided to use it for AWS Secrets Manager too.
+
+Run the following Bash script to send Qdrant URL and Key to AWS:
+
+```bash
+scripts/upload_secrets.sh
+```
 
 Now, to deploy the application to ECS use the make command:
 
@@ -236,7 +253,7 @@ make aws-deploy
 
 If you want to deploy this application to AWS ECS using GitHub actions you will need to follow some more steps:
 
-1. CGenerate a Terraform API Token and a secret key in GitHub. Refer to the [Terraform API token](tutorials/terraform.md) inside this project
+1. Generate a Terraform API Token and a secret key in GitHub. Refer to the [Terraform API token](tutorials/terraform.md) inside this project
 2. Set up secret keys by providing your AWS credentials. Check out the  [Github Actions Secret Keys](tutorials/aws_secret_keys.md)
 3. Congratulations! You are now ready to deploy this application using CI/CD
 
