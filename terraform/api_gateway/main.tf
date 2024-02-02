@@ -29,7 +29,7 @@ resource "aws_api_gateway_resource" "root_resource" {
 resource "aws_api_gateway_method" "root_get" {
   rest_api_id   = aws_api_gateway_rest_api.api.id
   resource_id   = aws_api_gateway_resource.root_resource.id
-  http_method   = "ANY"
+  http_method   = "GET"
   authorization = "NONE"
   request_parameters = {
     "method.request.path.proxy" = true
@@ -37,22 +37,22 @@ resource "aws_api_gateway_method" "root_get" {
 }
 
 # Resource for POST /ask
-# resource "aws_api_gateway_resource" "ask_resource" {
-#   rest_api_id = aws_api_gateway_rest_api.api.id
-#   parent_id   = aws_api_gateway_rest_api.api.root_resource_id
-#   path_part   = "ask"
-# }
+resource "aws_api_gateway_resource" "ask_resource" {
+  rest_api_id = aws_api_gateway_rest_api.api.id
+  parent_id   = aws_api_gateway_rest_api.api.root_resource_id
+  path_part   = "ask"
+}
 
-# # Resource for POST /ask
-# resource "aws_api_gateway_method" "ask_post" {
-#   rest_api_id   = aws_api_gateway_rest_api.api.id
-#   resource_id   = aws_api_gateway_resource.ask_resource.id
-#   http_method   = "POST"
-#   authorization = "NONE"
-#   request_parameters = {
-#     "method.request.path.proxy" = true
-#   }
-# }
+# Resource for POST /ask
+resource "aws_api_gateway_method" "ask_post" {
+  rest_api_id   = aws_api_gateway_rest_api.api.id
+  resource_id   = aws_api_gateway_resource.ask_resource.id
+  http_method   = "POST"
+  authorization = "NONE"
+  request_parameters = {
+    "method.request.path.proxy" = true
+  }
+}
 
 # Integration for GET /
 resource "aws_api_gateway_integration" "root_get_integration" {
@@ -62,7 +62,7 @@ resource "aws_api_gateway_integration" "root_get_integration" {
 
   type                    = "HTTP_PROXY"
   integration_http_method = "GET"
-  uri                     = "http://${var.nlb_dns_name}/{proxy}"
+  uri                     = "http://${var.nlb_dns_name}:${var.container_port}/{proxy}"
   connection_type         = "VPC_LINK"
   connection_id           = aws_api_gateway_vpc_link.vpc_link.id
   request_parameters = {
@@ -71,22 +71,22 @@ resource "aws_api_gateway_integration" "root_get_integration" {
 }
 
 # Integration for POST /ask
-# resource "aws_api_gateway_integration" "ask_post_integration" {
+resource "aws_api_gateway_integration" "ask_post_integration" {
 
-#   rest_api_id = aws_api_gateway_rest_api.api.id
-#   resource_id = aws_api_gateway_resource.ask_resource.id
-#   http_method = aws_api_gateway_method.ask_post.http_method
+  rest_api_id = aws_api_gateway_rest_api.api.id
+  resource_id = aws_api_gateway_resource.ask_resource.id
+  http_method = aws_api_gateway_method.ask_post.http_method
 
-#   type                    = "HTTP_PROXY"
-#   integration_http_method = "POST"
-#   uri                     = "http://${var.nlb_dns_name}/ask"
-#   connection_type         = "VPC_LINK"
-#   connection_id           = aws_api_gateway_vpc_link.vpc_link.id
-# }
+  type                    = "HTTP_PROXY"
+  integration_http_method = "POST"
+  uri                     = "http://${var.nlb_dns_name}:${var.container_port}/ask"
+  connection_type         = "VPC_LINK"
+  connection_id           = aws_api_gateway_vpc_link.vpc_link.id
+}
 
 resource "aws_api_gateway_deployment" "api_deployment" {
   depends_on = [
-    # aws_api_gateway_integration.ask_post_integration,
+    aws_api_gateway_integration.ask_post_integration,
     aws_api_gateway_integration.root_get_integration
   ]
   rest_api_id = aws_api_gateway_rest_api.api.id
