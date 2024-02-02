@@ -24,41 +24,6 @@ resource "aws_iam_role" "bedrock" {
   POLICY
 }
 
-resource "aws_iam_role_policy_attachment" "bedrock-ecs" {
-  policy_arn = aws_iam_policy.ecs.arn
-  role       = aws_iam_role.bedrock.name
-}
-
-resource "aws_iam_role_policy_attachment" "bedrock-iam" {
-  policy_arn = aws_iam_policy.iam.arn
-  role       = aws_iam_role.bedrock.name
-}
-
-resource "aws_iam_role_policy_attachment" "bedrock-s3" {
-  policy_arn = aws_iam_policy.s3.arn
-  role       = aws_iam_role.bedrock.name
-}
-
-resource "aws_iam_role_policy_attachment" "bedrock-opensearch" {
-  policy_arn = aws_iam_policy.opensearch.arn
-  role       = aws_iam_role.bedrock.name
-}
-
-resource "aws_iam_role_policy_attachment" "bedrock-ecr" {
-  policy_arn = aws_iam_policy.ecr.arn
-  role       = aws_iam_role.bedrock.name
-}
-
-resource "aws_iam_role_policy_attachment" "bedrock-s3-state" {
-  policy_arn = aws_iam_policy.s3_state.arn
-  role       = aws_iam_role.bedrock.name
-}
-
-resource "aws_iam_role_policy_attachment" "bedrock-role" {
-  policy_arn = aws_iam_policy.bedrock.arn
-  role       = aws_iam_role.bedrock.name
-}
-
 # <<< IAM role for ECS task executor >>>
 
 resource "aws_iam_role" "ecs_task_executor_role" {
@@ -85,3 +50,61 @@ resource "aws_iam_role_policy_attachment" "ecs_task_executor_attachment" {
   policy_arn = aws_iam_policy.ecs_task_executor_policy.arn
   role       = aws_iam_role.ecs_task_executor_role.name
 }
+
+# IAM role for ECS
+resource "aws_iam_role" "ecs_task_role" {
+  name = "ecs_role"
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17",
+    Statement = [
+      {
+        Action = "sts:AssumeRole",
+        Effect = "Allow",
+        Principal = {
+          Service = "ecs-tasks.amazonaws.com"
+        },
+      },
+    ]
+  })
+}
+
+# Attach the policy to the ECS task role
+resource "aws_iam_role_policy_attachment" "ecs_task_attachment" {
+  policy_arn = aws_iam_policy.ecs_task_policy.arn
+  role       = aws_iam_role.ecs_task_role.name
+}
+
+# resource "aws_iam_role_policy_attachment" "bedrock-ecs" {
+#   policy_arn = aws_iam_policy.ecs.arn
+#   role       = aws_iam_role.bedrock.name
+# }
+
+# resource "aws_iam_role_policy_attachment" "bedrock-iam" {
+#   policy_arn = aws_iam_policy.iam.arn
+#   role       = aws_iam_role.bedrock.name
+# }
+
+# resource "aws_iam_role_policy_attachment" "bedrock-s3" {
+#   policy_arn = aws_iam_policy.s3.arn
+#   role       = aws_iam_role.bedrock.name
+# }
+
+# resource "aws_iam_role_policy_attachment" "bedrock-opensearch" {
+#   policy_arn = aws_iam_policy.opensearch.arn
+#   role       = aws_iam_role.bedrock.name
+# }
+
+# resource "aws_iam_role_policy_attachment" "bedrock-ecr" {
+#   policy_arn = aws_iam_policy.ecr.arn
+#   role       = aws_iam_role.bedrock.name
+# }
+
+# resource "aws_iam_role_policy_attachment" "bedrock-s3-state" {
+#   policy_arn = aws_iam_policy.s3_state.arn
+#   role       = aws_iam_role.bedrock.name
+# }
+
+# resource "aws_iam_role_policy_attachment" "bedrock-role" {
+#   policy_arn = aws_iam_policy.bedrock.arn
+#   role       = aws_iam_role.bedrock.name
+# }
