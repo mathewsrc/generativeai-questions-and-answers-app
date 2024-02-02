@@ -20,6 +20,11 @@ variable "ecs_execution_role_name" {
   default     = "bedrock-qa-rag-ecs-execution-role-tf"
 }
 
+variable "ecs_task_role_name" {
+  description = "The name of ECS task role"
+  default     = "bedrock-qa-rag-ecs-task-role-tf"
+}
+
 variable "bedrock_role_name" {
   description = "The name of bedrock role"
   default     = "bedrock-qa-rag-bedrock-role-tf"
