@@ -39,7 +39,8 @@ docker-build:
 
 docker-run:
 	@echo "Starting Docker container"
-	docker run -p 80:80 --env-file .env app 
+	chmod +x ./scripts/docker_run.sh
+	./scripts/docker_run.sh
 
 aws-deploy:
 	@echo "Deploying to AWS"
