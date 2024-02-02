@@ -39,6 +39,10 @@ resource "aws_iam_role" "ecs_task_executor_role" {
               "Service": "ecs-tasks.amazonaws.com"
             },
             "Action": "sts:AssumeRole"
+            "Condition": {
+              "ArnLike": {
+                "aws:SourceArn": "arn:aws:ecs:us-east-1:${data.aws_caller_identity.current.account_id}:*"
+            }
         }
     ]
 }
@@ -53,7 +57,7 @@ resource "aws_iam_role_policy_attachment" "ecs_task_executor_attachment" {
 
 # IAM role for ECS
 resource "aws_iam_role" "ecs_task_role" {
-  name = "ecs_role"
+  name =  var.ecs_task_role_name
   assume_role_policy = jsonencode({
     Version = "2012-10-17",
     Statement = [
@@ -63,6 +67,11 @@ resource "aws_iam_role" "ecs_task_role" {
         Principal = {
           Service = "ecs-tasks.amazonaws.com"
         },
+        Condition = {
+          "ArnLike":{
+            "aws:SourceArn":"arn:aws:ecs:us-east-1:${data.aws_caller_identity.current.account_id}:*"
+          }
+        }
       },
     ]
   })
