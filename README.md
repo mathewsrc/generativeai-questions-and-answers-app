@@ -17,6 +17,8 @@ Muitas pessoas acabam por desistir de ler editais de concursos devidos a diferen
 <img src="https://github.com/mathewsrc/GenerativeAI-Questions-and-Answers-app-with-Bedrock-Langchain-and-FastAPI/assets/94936606/0066112b-0ec9-4174-83cf-fca44a91af16" width=50% height=50%>
 </p>
 
+![Animação](https://github.com/mathewsrc/GenerativeAI-Questions-and-Answers-app-with-Bedrock-Langchain-and-FastAPI/assets/94936606/fbb52597-ac65-4a42-8bdc-fdd39be148ea)
+
 ## Steps
 
 1. Load PDF documents
