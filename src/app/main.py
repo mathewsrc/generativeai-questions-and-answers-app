@@ -12,18 +12,21 @@ from langchain_community.embeddings.bedrock import BedrockEmbeddings
 from langchain.prompts import PromptTemplate
 from langchain.chains import RetrievalQA
 
-COLLECTION_NAME = "cnu" # replace with your collection name
+COLLECTION_NAME = "cnu"  # replace with your collection name
 BEDROCK_MODEL_NAME = "anthropic.claude-v2"
 BEDROCK_EMBEDDINGS_MODEL_NAME = "amazon.titan-embed-text-v1"
 
 app = FastAPI()
 
+
 class Body(BaseModel):
-    text: str
+	text: str
+	temperature: float = 0.5
+
 
 load_dotenv()
 
-AWS_REGION = 'us-east-1'
+AWS_REGION = "us-east-1"
 session = boto3.Session(region_name=AWS_REGION)
 
 prompt_template = """
@@ -36,24 +39,21 @@ prompt_template = """
 
                 Answer:
             """
-            
+
+
 def get_secret(secret_name):
-    client = session.client(
-        service_name='secretsmanager',
-        region_name=AWS_REGION
-    )
-    try:
-        get_secret_value_response = client.get_secret_value(
-            SecretId=secret_name
-        )
-    except ClientError as e:
-        raise e
-    return get_secret_value_response['SecretString']
-    
- 
+	client = session.client(service_name="secretsmanager", region_name=AWS_REGION)
+	try:
+		get_secret_value_response = client.get_secret_value(SecretId=secret_name)
+	except ClientError as e:
+		raise e
+	return get_secret_value_response["SecretString"]
+
+
 def get_bedrock_embeddings(model_name: str, bedrock_runtime) -> BedrockEmbeddings:
 	embeddings = BedrockEmbeddings(client=bedrock_runtime, model_id=model_name)
 	return embeddings
+
 
 @app.get("/", response_class=HTMLResponse)
 async def root():
@@ -65,10 +65,11 @@ async def root():
     """
 	)
 
+
 @app.post("/ask")
-async def question(body:Body):
-	try:		
-		qdrant_url  = os.environ.get("QDRANT_URL")
+async def question(body: Body):
+	try:
+		qdrant_url = os.environ.get("QDRANT_URL")
 		qdrant_api_key = os.environ.get("QDRANT_API_KEY")
 
 		bedrock_runtime = boto3.client("bedrock-runtime", region_name=AWS_REGION)
@@ -78,32 +79,31 @@ async def question(body:Body):
 
 		if qdrant_api_key is None:
 			qdrant_api_key = get_secret("prod/qdrant_api_key")
-  
-		client =  QdrantClient(url=qdrant_url, api_key=qdrant_api_key)
-		embeddings = get_bedrock_embeddings(BEDROCK_EMBEDDINGS_MODEL_NAME, bedrock_runtime)
-		
-		qdrant = Qdrant(
-					client=client,
-					embeddings=embeddings,
-					collection_name=COLLECTION_NAME,
-				)
 
-		prompt = PromptTemplate(template=prompt_template, 
-                          input_variables=["context", "question"])
+		client = QdrantClient(url=qdrant_url, api_key=qdrant_api_key)
+		embeddings = get_bedrock_embeddings(BEDROCK_EMBEDDINGS_MODEL_NAME, bedrock_runtime)
+
+		qdrant = Qdrant(
+			client=client,
+			embeddings=embeddings,
+			collection_name=COLLECTION_NAME,
+		)
+
+		prompt = PromptTemplate(template=prompt_template, input_variables=["context", "question"])
 
 		# Bedrock Hyperparameters
 		inference_modifier = {
 			"max_tokens_to_sample": 100,
-			"temperature": 0.5,
+			"temperature": body.temperature,
 			"top_k": 250,
 			"top_p": 1,
-			"stop_sequences": [f"\n\nHuman"],
+			"stop_sequences": ["\n\nHuman"],
 		}
 
-		llm = Bedrock(model_id=BEDROCK_MODEL_NAME, 
-                client=bedrock_runtime, 
-                model_kwargs=inference_modifier)
-		
+		llm = Bedrock(
+			model_id=BEDROCK_MODEL_NAME, client=bedrock_runtime, model_kwargs=inference_modifier
+		)
+
 		qa = RetrievalQA.from_chain_type(
 			llm=llm,
 			chain_type="stuff",

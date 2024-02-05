@@ -7,6 +7,7 @@ import sys
 
 module_path = ".."
 sys.path.append(os.path.abspath(module_path))
+
 from global_variables import COLLECTION_NAME, AWS_REGION, AWS_S3_BUCKET, DOCUMENTS_PATH
 from utils import (
 	get_embeddings,
