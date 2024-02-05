@@ -27,6 +27,13 @@ resource "aws_s3_object" "object" {
   key      = each.value
   source   = "../documents/${var.subfolder}/${each.value}"
   etag     = filemd5("../documents/${var.subfolder}/${each.value}")
+
+  tags = {
+    Name        = "${var.bucket_name} Bucket"
+    Environment = var.environment
+    Application = var.application_name
+  }
+
   depends_on = [
     aws_s3_bucket.bucket
   ]
