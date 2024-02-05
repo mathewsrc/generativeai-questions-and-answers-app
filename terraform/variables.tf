@@ -1,6 +1,6 @@
 variable "name" {
-  default     = "bedrock-qa-rag"
-  description = "The name for resource"
+  default     = "question-answer-app"
+  description = "Application name"
 }
 
 variable "environment" {
