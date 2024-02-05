@@ -36,8 +36,8 @@ resource "aws_lambda_function" "func" {
 
   environment {
     variables = {
-      QDRANT_URL = "${external.envs.result.qdrant_url}"
-      QDRANT_API_KEY = "${external.envs.result.qdrant_api_key}"
+      QDRANT_URL = "${data.external.envs.result.qdrant_url}"
+      QDRANT_API_KEY = "${data.external.envs.result.qdrant_api_key}"
     }
   }
 
