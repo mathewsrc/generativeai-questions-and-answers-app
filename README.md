@@ -17,7 +17,7 @@ Muitas pessoas acabam por desistir de ler editais de concursos devidos a diferen
 <img src="https://github.com/mathewsrc/GenerativeAI-Questions-and-Answers-app-with-Bedrock-Langchain-and-FastAPI/assets/94936606/0066112b-0ec9-4174-83cf-fca44a91af16" width=50% height=50%>
 </p>
 
-![Animação](https://github.com/mathewsrc/GenerativeAI-Questions-and-Answers-app-with-Bedrock-Langchain-and-FastAPI/assets/94936606/fbb52597-ac65-4a42-8bdc-fdd39be148ea)
+![Generative AI - RAG](https://github.com/mathewsrc/GenerativeAI-Questions-and-Answers-app-with-Bedrock-Langchain-and-FastAPI/assets/94936606/ae5f125b-fa1c-4198-96af-0c2eb31fcb08)
 
 ## Steps
 
@@ -232,11 +232,11 @@ make tf-apply
 2. Upload Qdrant url and key to AWS Secrets Manager
 
 Would not be secure to use Qdrant URL and Key locally, so we need to
-use AWS Secrets Manager to keep this information safety, and retrieve both
+use AWS Secrets Manager to keep this information safe, and retrieve both
 secrets using the Secrets Manager API.
 
-We could either create AWS Secrets manually using AWS console, AWS CLI or delegate
-to Terraform. As I am already using Terraform to create others AWS
+We could either create AWS Secrets manually using AWS console, AWS CLI, or delegate
+to Terraform. As I am already using Terraform to create other AWS
 resources I decided to use it for AWS Secrets Manager too.
 
 Run the following Bash script to send Qdrant URL and Key to AWS:
@@ -261,7 +261,7 @@ If you want to deploy this application to AWS ECS using GitHub actions you will 
 
 ## Tear Down the AWS Resources
 
-Terraform truly excels in this aspect, eliminating the need for manual navigation through the console to locate each created resource. With Terraform we can just use `terraform destroy` or `make tf-destroy` in the terminal:
+Terraform excels in this aspect, eliminating the need for manual navigation through the console to locate each created resource. With Terraform we can just use `terraform destroy` or `make tf-destroy` in the terminal:
 
 ```bash
 cd terraform && terraform destroy
@@ -292,18 +292,25 @@ Amazon ECS (Elastic Container Service) is a fully managed container orchestratio
 Key benefits:
 
 - Simplified Operation: Eliminate the need to install or manage your container orchestration
-- Auto-Scaling Configuration: Easily configure auto-scaling to match application demands.
-- Multiple instance types, including EC2 and Fargate, to meet specific application requirements.
+- Auto-Scaling Configuration: Easily configure auto-scaling to match application demands
+- Multiple instance types, including EC2 and Fargate, to meet specific application requirements
+
+Fargate
+
+- Fargate is a serverless computing engine for containers. Fargate automatically scales in and out and manages the infrastructure
+- It eliminates the need to choose EC2 instances, cluster capacity, and scaling
+- Fargate has native integration with AWS VPC which permits to control of connectivity
+
 
 ### Amazon ECR (Elastic Container Register)
 
-Amazon ECR is a managed container registry service designed for storing Docker images, supporting both public and private repositories.
+Amazon ECR is a managed container registry service designed to store Docker images, supporting public and private repositories.
 
 Key benefits:
 
 - Image Scanning for vulnerabilities within your container images 
 - Effectively manage image lifecycles with customizable policies
-- Cross-Region and Cross-Account Replication: Facilitate seamless replication of images across regions and accounts for enhanced accessibility and redundancy.
+- Cross-Region and Cross-Account Replication: Facilitate seamless replication of images across regions and accounts for enhanced accessibility and redundancy
 
 
 ### API Gateway
@@ -318,7 +325,7 @@ Key benefits:
 - Supports RESTful APIs and WebSocket APIs
 - Handles traffic management and throttling
 - Handles authorization and access control
-- Monitoring, and API version management. 
+- Monitoring, and API version management
 
 
 ### GitHub Actions
