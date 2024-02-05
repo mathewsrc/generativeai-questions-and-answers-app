@@ -14,15 +14,24 @@ QDRANT_URL = os.environ.get("QDRANT_URL")
 QDRANT_API_KEY = os.environ.get("QDRANT_API_KEY")
 
 def lambda_handler(event, context):
-    
-    bucket_name = event["Records"][0]["s3"]["bucket"]["name"]
-    
-    create_vectostore(url=QDRANT_URL, 
-                      api_key=QDRANT_API_KEY, 
-                      bucket_name=bucket_name,
-                      collection_name=COLLECTION_NAME,
-                      embedding_model=EMBEDDING_MODEL)
-    return {
-        'statusCode': 200,
-        'body': json.dumps('Hello from Lambda!')
-    }
+    try:
+        
+        bucket_name = event["Records"][0]["s3"]["bucket"]["name"]
+        object_key = event["Records"][0]["s3"]["object"]["key"]
+        
+        create_vectostore(url=QDRANT_URL, 
+                        api_key=QDRANT_API_KEY, 
+                        bucket_name=bucket_name,
+                        object_key=object_key,
+                        collection_name=COLLECTION_NAME,
+                        embedding_model=EMBEDDING_MODEL)
+        return {
+            'statusCode': 200,
+            'body': json.dumps('Succesfull!')
+        }
+    except Exception as e:
+        print(f"Error: {e}")
+        return {
+            'statusCode': 500,
+            'body': json.dumps(f'Error: {e}')
+        }
