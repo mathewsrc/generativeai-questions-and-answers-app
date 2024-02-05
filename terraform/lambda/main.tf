@@ -63,7 +63,7 @@ resource "aws_s3_bucket_notification" "bucket_notification" {
     lambda_function_arn = aws_lambda_function.func.arn
     events              = ["s3:ObjectCreated:*"]
     filter_prefix       = "cnu/"
-    filter_suffix       = "all_files_uploaded_marker.txt" # Workround to trigger to just call the lambda function once
+    filter_suffix       = ".pdf"
   }
 
   depends_on = [aws_lambda_permission.allow_bucket]
