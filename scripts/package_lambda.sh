@@ -13,10 +13,10 @@ pip install --target ./package boto3 langchain-community qdrant-client python-do
 cd package
 
 # Create a .zip file with the installed libraries at the root
-zip -r ../lambda_payload.zip .
+zip -r ../../lambda_payload.zip .
 
 # Move back to the parent directory
 cd ..
 
 # Add all *.py files to the root of the .zip file
-zip ./lambda_payload.zip *.py
+zip ../lambda_payload.zip *.py
