@@ -141,7 +141,7 @@ upload_secrets:
 
 zip-lambda:
 	@echo "Zipping Lambda function"
-	cd lambda &&\
-	zip lambda_payload.zip *.py
+	chmod +x ./scripts/package_lambda.sh
+	./scripts/package_lambda.sh
 
 all: install format lint
