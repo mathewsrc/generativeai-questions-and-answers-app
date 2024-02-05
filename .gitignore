@@ -2,7 +2,7 @@
 terraform/.terraform
 terraform/terraform.tfstate
 terraform/terraform.tfstate.backup
-
+lambda/package
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
