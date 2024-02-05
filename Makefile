@@ -105,6 +105,10 @@ tf-refresh:
 	@echo "Refreshing Terraform <Refresh infrastruture resources>"
 	cd terraform && terraform refresh
 
+tf-st-list:
+	@echo "List Terraform state <List infrastruture resources>"
+	cd terraform && terraform state list
+
 json-fmt:
 	@echo "Formating JSON <Auto-format JSON code>"
 	jq . .aws/task-definition.json > temp.json && mv temp.json .aws/task-definition.json
@@ -134,5 +138,10 @@ upload_secrets:
 	@echo "Uploading secret to AWS Secret Manager"
 	chmod +x ./scripts/upload_secrets.sh
 	./scripts/upload_secrets.sh
+
+zip-lambda:
+	@echo "Zipping Lambda function"
+	cd lambda &&\
+	zip lambda.zip *.py
 
 all: install format lint
