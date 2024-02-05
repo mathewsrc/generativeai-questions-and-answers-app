@@ -65,17 +65,6 @@ module "lambda" {
 #  subfolder   = "immigration"
 #}
 
-# Use Qdrant Cloud steady
-# module "opensearchserveless" {
-#   source             = "./opensearch"
-#   region             = data.aws_region.current.name
-#   name               = var.name
-#   environment        = var.environment
-#   subnet_ids         = module.network.subnets
-#   vpc_id             = module.network.vpc_id
-#   security_group_ids = module.network.service_security_group_ids
-# }
-
 module "load_balancer" {
   source         = "./load_balancer"
   region         = data.aws_region.current.name
