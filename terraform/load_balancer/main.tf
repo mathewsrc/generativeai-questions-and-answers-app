@@ -8,8 +8,9 @@ resource "aws_lb" "nlb" {
 
   tags = {
     Environment = var.environment
-    Name        = var.name
+    Name        = var.nlb_name
     Terraform   = "true"
+    Application = var.application_name
   }
 }
 

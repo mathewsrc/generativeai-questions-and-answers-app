@@ -2,11 +2,6 @@ variable "region" {
   description = "The region of deploy"
 }
 
-variable "name" {
-  default     = "bedrock-qa-rag"
-  description = "The name for resource"
-}
-
 variable "environment" {
   description = "The environment the bucket is used in [DEV, STAG, PROD]"
   validation {
@@ -58,4 +53,9 @@ variable "aws_private_subnet_cidr_blocks" {
   type        = list(string)
   default     = ["10.0.3.0/24", "10.0.4.0/24"]
   description = "List of CIDR blocks for the private subnets"
+}
+
+variable "application_name" {
+  default     = "bedrock-qa-rag"
+  description = "Application name"
 }

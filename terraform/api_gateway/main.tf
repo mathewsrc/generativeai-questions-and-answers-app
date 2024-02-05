@@ -4,8 +4,8 @@ resource "aws_api_gateway_vpc_link" "vpc_link" {
   description = "VPC link for API Gateway"
   target_arns = [var.nlb_arn]
   tags = {
-    Name        = var.name
     Environment = var.environment
+    Application = var.application_name
   }
 }
 
@@ -101,6 +101,11 @@ resource "aws_api_gateway_stage" "api_stage" {
   deployment_id = aws_api_gateway_deployment.api_deployment.id
   rest_api_id   = aws_api_gateway_rest_api.api.id
   stage_name    = var.api_stage_name
+
+  tags = {
+    Environment = var.environment
+    Application = var.application_name
+  }
 }
 
 # resource "aws_api_gateway_method_settings" "all" {
@@ -142,5 +147,6 @@ resource "aws_api_gateway_usage_plan" "usage_plan" {
   tags = {
     Name        = var.usage_plan_name
     Environment = var.environment
+    Application = var.application_name
   }
 }

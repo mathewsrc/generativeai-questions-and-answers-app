@@ -10,8 +10,8 @@ resource "aws_ecs_cluster" "ecs_cluster" {
 
   tags = {
     Environment = var.environment
-    Application = var.name
     Name        = var.ecs_cluster_name
+    Application = var.application_name
   }
 }
 
@@ -46,12 +46,13 @@ resource "aws_ecs_task_definition" "ecs_task_definition" {
   network_mode             = "awsvpc"    # add the AWS VPN network mode as this is required for Fargate
   memory                   = var.memory  # Specify the memory the container requires
   cpu                      = var.cpu     # Specify the CPU the container requires
-  execution_role_arn       = var.ecs_task_execution_role_arn
-  task_role_arn            = var.ecs_task_role_arn
+  execution_role_arn       = aws_iam_role.ecs_task_executor_role.arn
+  task_role_arn            = aws_iam_role.ecs_task_role.arn
+  
   tags = {
     Environment = var.environment
-    Application = var.name
     FamilyName  = var.ecs_task_family_name
+    Application = var.application_name
   }
 }
 
@@ -62,7 +63,7 @@ resource "aws_ecs_service" "ecs_service" {
   task_definition = aws_ecs_task_definition.ecs_task_definition.arn
   launch_type     = "FARGATE"
   desired_count   = 2 # Number of containers 
-  depends_on      = [var.ecs_aws_iam_role]
+  depends_on      = []
 
   load_balancer {
     target_group_arn = var.nlb_target_group_arn
@@ -78,7 +79,7 @@ resource "aws_ecs_service" "ecs_service" {
 
   tags = {
     Environment = var.environment
-    Application = var.name
+    Application = var.application_name
     Name        = var.ecs_service_name
   }
 }

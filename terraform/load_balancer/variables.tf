@@ -7,11 +7,6 @@ variable "public_subnets" {
   type        = list(string)
 }
 
-variable "name" {
-  default     = "bedrock-qa-rag"
-  description = "The name for resource"
-}
-
 variable "region" {
   description = "The region where the resources will be created"
 }
@@ -36,4 +31,9 @@ variable "target_group_name" {
 variable "nlb_name" {
   default     = "bedrock-qa-rag-nlb"
   description = "The name of the network load balancer"
+}
+
+variable "application_name" {
+  default     = "bedrock-qa-rag"
+  description = "Application name"
 }

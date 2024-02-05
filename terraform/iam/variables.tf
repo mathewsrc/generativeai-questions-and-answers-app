@@ -2,9 +2,9 @@ variable "region" {
   description = "The region of deploy"
 }
 
-variable "name" {
+variable "application_name" {
   default     = "bedrock-qa-rag"
-  description = "The name for resource"
+  description = "Application name"
 }
 
 variable "environment" {
@@ -13,16 +13,6 @@ variable "environment" {
     condition     = contains(["DEV", "STAG", "PROD"], var.environment)
     error_message = "Environment must be one of DEV, STAG, PROD"
   }
-}
-
-variable "ecs_execution_role_name" {
-  description = "The name of ECS execution role"
-  default     = "bedrock-qa-rag-ecs-execution-role-tf"
-}
-
-variable "ecs_task_role_name" {
-  description = "The name of ECS task role"
-  default     = "bedrock-qa-rag-ecs-task-role-tf"
 }
 
 variable "bedrock_role_name" {

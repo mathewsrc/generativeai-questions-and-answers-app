@@ -15,6 +15,7 @@ resource "aws_s3_bucket" "bucket" {
   tags = {
     Name        = "${var.bucket_name} Bucket"
     Environment = var.environment
+    Application = var.application_name
   }
 }
 

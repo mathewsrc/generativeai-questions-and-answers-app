@@ -58,9 +58,9 @@ variable "rate_limit" {
   type        = number
 }
 
-variable "name" {
+variable "application_name" {
   default     = "bedrock-qa-rag"
-  description = "The name for resource"
+  description = "Application name"
 }
 
 variable "region" {

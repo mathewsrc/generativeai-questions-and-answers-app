@@ -20,3 +20,9 @@ variable "region" {
   description = "AWS Region"
   type        = string
 }
+
+variable "application_name" {
+  description = "Application Name"
+  type        = string
+  default     = "bedrock-qa-rag"
+}

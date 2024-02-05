@@ -6,6 +6,7 @@ resource "aws_secretsmanager_secret" "qdrant_url" {
   tags = {
     Name        = "Qdrant URL"
     Environment = var.environment
+    Application = var.application_name
   }
 }
 
@@ -17,5 +18,6 @@ resource "aws_secretsmanager_secret" "qdrant_api_key" {
   tags = {
     Name        = "Qdrant API Key"
     Environment = var.environment
+    Application = var.application_name
   }
 }

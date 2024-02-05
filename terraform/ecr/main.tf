@@ -17,7 +17,7 @@ resource "aws_ecr_repository" "ecr_repo" {
 
   tags = {
     Environment = var.environment
-    Application = var.name
+    Application = var.application_name
     Name        = var.ecr_name
   }
 }

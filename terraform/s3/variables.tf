@@ -2,11 +2,6 @@ variable "region" {
   description = "The region of deploy"
 }
 
-variable "name" {
-  default     = "bedrock-qa-rag"
-  description = "The name for resource"
-}
-
 variable "bucket_name" {
   description = "The name of the S3 bucket"
   default     = "$bedrock-qa-rag-bucket-tf"
@@ -22,4 +17,9 @@ variable "environment" {
     condition     = contains(["DEV", "STAG", "PROD"], var.environment)
     error_message = "Environment must be one of DEV, STAG, PROD"
   }
+}
+
+variable "application_name" {
+  default     = "bedrock-qa-rag"
+  description = "Application name"
 }

@@ -23,6 +23,8 @@ resource "aws_subnet" "public_subnets" {
   map_public_ip_on_launch = true
   tags = {
     Name = "public-subnets-${count.index}"
+    Application = var.application_name
+    Environment = var.environment
   }
 }
 
@@ -34,6 +36,8 @@ resource "aws_subnet" "private_subnets" {
   availability_zone = element(data.aws_availability_zones.available.names, count.index)
   tags = {
     Name = "private-subnets-${count.index}"
+    Application = var.application_name
+    Environment = var.environment
   }
 }
 
@@ -53,6 +57,8 @@ resource "aws_route_table" "main" {
 
   tags = {
     Name = "main-route-table"
+    Application = var.application_name
+    Environment = var.environment
   }
 }
 
@@ -75,8 +81,8 @@ resource "aws_security_group" "lb" {
 
   tags = {
     Environment = var.environment
-    Application = var.name
     Name        = var.security_group_name_lb
+    Application = var.application_name
   }
 }
 
@@ -126,7 +132,7 @@ resource "aws_security_group" "ecs_tasks" {
 
   tags = {
     Environment = var.environment
-    Application = var.name
     Name        = var.security_group_name_ecs_tasks
+    Application = var.application_name
   }
 }

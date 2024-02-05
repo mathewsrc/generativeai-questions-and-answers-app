@@ -2,9 +2,9 @@ variable "region" {
   description = "The region of deploy"
 }
 
-variable "name" {
+variable "application_name" {
   default     = "bedrock-qa-rag"
-  description = "The name for resource"
+  description = "Application name"
 }
 
 variable "environment" {
@@ -74,20 +74,30 @@ variable "private_subnets" {
   type        = list(string)
 }
 
-variable "ecs_task_execution_role_arn" {
-  description = "The arn of ECS task execution role"
-}
+# variable "ecs_task_execution_role_arn" {
+#   description = "The arn of ECS task execution role"
+# }
 
 variable "vpc_id" {
   description = "The id of VPC"
   type        = string
 }
 
-variable "ecs_aws_iam_role" {
-  description = "The ECS task executor role"
-  type        = any
+variable "ecs_execution_role_name" {
+  description = "The name of ECS execution role"
+  default     = "bedrock-qa-rag-ecs-execution-role-tf"
 }
 
-variable "ecs_task_role_arn" {
-  description = "The ARN of IAM role that allows your Amazon ECS container task to make calls to other AWS services."
+variable "ecs_task_role_name" {
+  description = "The name of ECS task role"
+  default     = "bedrock-qa-rag-ecs-task-role-tf"
 }
+
+# variable "ecs_aws_iam_role" {
+#   description = "The ECS task executor role"
+#   type        = any
+# }
+
+# variable "ecs_task_role_arn" {
+#   description = "The ARN of IAM role that allows your Amazon ECS container task to make calls to other AWS services."
+# }

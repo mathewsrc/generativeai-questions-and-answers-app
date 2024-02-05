@@ -2,9 +2,9 @@ variable "region" {
   description = "The region of deploy"
 }
 
-variable "name" {
+variable "application_name" {
   default     = "bedrock-qa-rag"
-  description = "The name for resource"
+  description = "Application name"
 }
 
 variable "environment" {
