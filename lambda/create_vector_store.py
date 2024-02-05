@@ -1,5 +1,5 @@
 from langchain_community.vectorstores.qdrant import Qdrant
-from langchain_community.document_loaders import S3DirectoryLoader
+from langchain_community.document_loaders import S3DirectoryLoader, S3FileLoader
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from qdrant_client import QdrantClient
 
@@ -26,9 +26,12 @@ def info(url:str, api_key:str, collection_name:str) -> None:
 	except Exception as e:
 		print(f"Error: {e}")
   
-def get_documents_from_pdf(bucket_name:str, collection_name: str, region_name:str) -> list:
+def get_documents_from_pdf(bucket_name:str, key:str, collection_name: str, region_name:str) -> list:
 	# Load documents
-	loader = S3DirectoryLoader(bucket=bucket_name, prefix=collection_name, region_name=region_name)
+	#loader = S3DirectoryLoader(bucket=bucket_name, prefix=collection_name, region_name=region_name)
+	#documents = loader.load()
+ 
+	loader = S3FileLoader(bucket=bucket_name, key=key, region_name=region_name)
 	documents = loader.load()
 
 	# Split documents
@@ -40,11 +43,12 @@ def get_documents_from_pdf(bucket_name:str, collection_name: str, region_name:st
 def get_client(url: str, api_key: str) -> QdrantClient:
 	return QdrantClient(url=url, api_key=api_key)
 
-def create_vectostore(url:str, api_key:str, bucket_name:str,
+def create_vectostore(url:str, api_key:str, bucket_name:str, object_key:str,
                       collection_name:str, region_name:str,
                       embedding_model:str) -> None:
 	try:
 		docs = get_documents_from_pdf(bucket_name=bucket_name,
+                                key=object_key,
                                 collection_name=collection_name,
                                 region_name=region_name)
 
