@@ -14,8 +14,12 @@ QDRANT_URL = os.environ.get("QDRANT_URL")
 QDRANT_API_KEY = os.environ.get("QDRANT_API_KEY")
 
 def lambda_handler(event, context):
+    
+    bucket_name = event["Records"][0]["s3"]["bucket"]["name"]
+    
     create_vectostore(url=QDRANT_URL, 
                       api_key=QDRANT_API_KEY, 
+                      bucket_name=bucket_name,
                       collection_name=COLLECTION_NAME,
                       embedding_model=EMBEDDING_MODEL)
     return {
