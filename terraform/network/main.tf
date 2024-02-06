@@ -22,7 +22,7 @@ resource "aws_subnet" "public_subnets" {
   availability_zone       = element(data.aws_availability_zones.available.names, count.index)
   map_public_ip_on_launch = true
   tags = {
-    Name = "public-subnets-${count.index}"
+    Name        = "public-subnets-${count.index}"
     Application = var.application_name
     Environment = var.environment
   }
@@ -35,7 +35,7 @@ resource "aws_subnet" "private_subnets" {
   cidr_block        = element(var.aws_private_subnet_cidr_blocks, count.index)
   availability_zone = element(data.aws_availability_zones.available.names, count.index)
   tags = {
-    Name = "private-subnets-${count.index}"
+    Name        = "private-subnets-${count.index}"
     Application = var.application_name
     Environment = var.environment
   }
@@ -56,7 +56,7 @@ resource "aws_route_table" "main" {
   }
 
   tags = {
-    Name = "main-route-table"
+    Name        = "main-route-table"
     Application = var.application_name
     Environment = var.environment
   }
