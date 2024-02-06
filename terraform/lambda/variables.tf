@@ -1,17 +1,17 @@
 variable "s3_bucket_id" {
   description = "The ID of the S3 bucket to which the Lambda function will be subscribed"
-  type = string
+  type        = string
 }
 
 variable "s3_bucket_arn" {
   description = "The ARN of the S3 bucket to which the Lambda function will be subscribed"
-  type = string
+  type        = string
 }
 
 variable "lambda_function_name" {
-    description = "The name of the Lambda function"
-    default = "create_vector_store"
-    type = string
+  description = "The name of the Lambda function"
+  default     = "create_vector_store"
+  type        = string
 }
 
 variable "environment" {
@@ -25,4 +25,10 @@ variable "environment" {
 variable "application_name" {
   default     = "bedrock-qa-rag"
   description = "Application name"
+}
+
+variable "bucket_name" {
+  description = "The name of the S3 bucket"
+  type        = string
+  default     = "lambda-layer-rag-bucket"
 }

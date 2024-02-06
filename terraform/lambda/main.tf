@@ -1,9 +1,58 @@
 # https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/s3_bucket_notification
 
+
+data "archive_file" "layer" {
+  type        = "zip"
+  output_path = "${path.module}/files/lambda_layer.zip"
+  source_dir  = "${path.module}/../../lambda/package"
+}
+
 data "archive_file" "lambda" {
   type        = "zip"
-  source_dir  = "${path.module}/../../lambda" 
-  output_path = "${path.module}/../../lambda_payload.zip"
+  output_path = "${path.module}/files/lambda_payload.zip"
+  source_dir  = "${path.module}/../../lambda/functions"
+  excludes = [
+    "${path.module}/../../lambda/__pycache__"
+  ]
+}
+
+# create a s3 bucket to store the lambda layer
+resource "aws_s3_bucket" "bucket" {
+  bucket = var.bucket_name
+
+  tags = {
+    Name        = "${var.bucket_name} Bucket"
+    Environment = var.environment
+    Application = var.application_name
+  }
+}
+
+# upload the lambda layer to s3
+resource "aws_s3_object" "object" {
+  # Recursively look for pdf files inside documents/ 
+  bucket = aws_s3_bucket.bucket.id
+  key    = "lambda_layer.zip"
+  source = "${path.module}/files/lambda_layer.zip"
+
+  tags = {
+    Name        = "${var.bucket_name} Bucket"
+    Environment = var.environment
+    Application = var.application_name
+  }
+
+  depends_on = [
+    aws_s3_bucket.bucket
+  ]
+}
+
+resource "aws_lambda_layer_version" "lambda_layer" {
+  #filename    = "${path.module}/files/lambda_layer.zip" # Error: Hit the 50MB limit
+  s3_bucket   = aws_s3_bucket.bucket.id
+  s3_key      = aws_s3_object.object.id
+  layer_name  = "lambda_layer"
+  description = "Lambda layer for embedding documents"
+
+  compatible_runtimes = ["python3.12"]
 }
 
 data "external" "envs" {
@@ -23,26 +72,32 @@ resource "aws_cloudwatch_log_group" "log_group" {
 resource "aws_lambda_function" "func" {
   depends_on = [
     aws_iam_role_policy_attachment.lambda_policy_attachment,
+    aws_lambda_layer_version.lambda_layer,
     aws_cloudwatch_log_group.log_group,
   ]
 
-  filename      = "lambda_payload.zip"
+  # If the file is not in the current working directory you will need to include a
+  # path.module in the filename.
+  filename      = "${path.module}/files/lambda_payload.zip"
   function_name = var.lambda_function_name
   role          = aws_iam_role.lambda_role.arn
   handler       = "main.py" # Function entrypoint 
   runtime       = "python3.12"
+  memory_size   = 256
+
+  layers = [aws_lambda_layer_version.lambda_layer.arn]
 
   source_code_hash = data.archive_file.lambda.output_base64sha256
 
   environment {
     variables = {
-      QDRANT_URL = "${data.external.envs.result.qdrant_url}"
+      QDRANT_URL     = "${data.external.envs.result.qdrant_url}"
       QDRANT_API_KEY = "${data.external.envs.result.qdrant_api_key}"
     }
   }
 
   tags = {
-    Name = var.lambda_function_name
+    Name        = var.lambda_function_name
     Environment = var.environment
     Application = var.application_name
   }

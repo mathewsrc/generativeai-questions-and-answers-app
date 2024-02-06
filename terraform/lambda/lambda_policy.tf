@@ -1,25 +1,35 @@
 data "aws_iam_policy_document" "lambda_policy" {
-    statement {
-        effect = "Allow"
+  statement {
+    effect    = "Allow"
+    actions   = ["sts:AssumeRole"]
+    resources = ["*"]
+  }
 
-        principals {
-            type        = "Service"
-            identifiers = ["lambda.amazonaws.com"]
-        }
+  statement {
+    effect = "Allow"
 
-        actions = ["sts:AssumeRole"]
-    }
+    actions = [
+      "logs:CreateLogGroup",
+      "logs:CreateLogStream",
+      "logs:PutLogEvents",
+    ]
 
-    statement {
-        effect = "Allow"
+    resources = ["arn:aws:logs:*:*:*"]
+  }
 
-        actions = [
-        "logs:CreateLogGroup",
-        "logs:CreateLogStream",
-        "logs:PutLogEvents",
-        ]
+  statement {
+    effect = "Allow"
 
-        resources = ["arn:aws:logs:*:*:*"]
+    actions = [
+      "s3:GetObject",
+      "s3:PutObject",
+      "s3:ListBucket",
+      "s3:DeleteObject"
+    ]
+
+    resources = [
+      "arn:aws:s3:::*",
+    ]
   }
 }
 
@@ -31,8 +41,19 @@ resource "aws_iam_policy" "lambda_policy" {
 }
 
 resource "aws_iam_role" "lambda_role" {
-    name               = "lambda_role"
-    assume_role_policy = data.aws_iam_policy_document.lambda_policy.json
+  name = "lambda_role"
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17",
+    Statement = [
+      {
+        Action = "sts:AssumeRole",
+        Effect = "Allow",
+        Principal = {
+          Service = "lambda.amazonaws.com"
+        }
+      },
+    ]
+  })
 }
 
 resource "aws_iam_role_policy_attachment" "lambda_policy_attachment" {
