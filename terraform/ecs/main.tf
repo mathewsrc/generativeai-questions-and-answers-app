@@ -48,7 +48,7 @@ resource "aws_ecs_task_definition" "ecs_task_definition" {
   cpu                      = var.cpu     # Specify the CPU the container requires
   execution_role_arn       = aws_iam_role.ecs_task_executor_role.arn
   task_role_arn            = aws_iam_role.ecs_task_role.arn
-  
+
   tags = {
     Environment = var.environment
     FamilyName  = var.ecs_task_family_name
