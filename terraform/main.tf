@@ -19,12 +19,12 @@ provider "aws" {
   }
 }
 
-module "iam" {
-  source           = "./iam"
-  region           = data.aws_region.current.name
-  application_name = var.name
-  environment      = var.environment
-}
+# module "iam" {
+#   source           = "./iam"
+#   region           = data.aws_region.current.name
+#   application_name = var.name
+#   environment      = var.environment
+# }
 
 module "secrets_manager" {
   source      = "./secrets_manager"
