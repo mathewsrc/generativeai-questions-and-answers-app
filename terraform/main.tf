@@ -46,6 +46,7 @@ module "s3" {
   bucket_name      = "bedrock-qa-bucket-tf"
   environment      = var.environment
   subfolder        = "cnu"
+  wait_for_lambda_deployment = module.lambda.wait_for_lambda_deployment
 }
 
 module "lambda" {
