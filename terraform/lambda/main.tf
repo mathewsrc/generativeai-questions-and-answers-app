@@ -18,7 +18,8 @@ data "archive_file" "lambda" {
 
 # create a s3 bucket to store the lambda layer
 resource "aws_s3_bucket" "layer" {
-  bucket = var.bucket_name
+  bucket        = var.bucket_name
+  force_destroy = true
 
   tags = {
     Name        = "${var.bucket_name} Bucket"
@@ -64,16 +65,10 @@ data "external" "envs" {
   ]
 }
 
-resource "aws_cloudwatch_log_group" "log_group" {
-  name              = "/aws/lambda/${var.lambda_function_name}"
-  retention_in_days = 7
-}
-
 resource "aws_lambda_function" "func" {
   depends_on = [
     aws_iam_role_policy_attachment.lambda_policy_attachment,
     aws_lambda_layer_version.lambda_layer,
-    aws_cloudwatch_log_group.log_group,
   ]
 
   # If the file is not in the current working directory you will need to include a
