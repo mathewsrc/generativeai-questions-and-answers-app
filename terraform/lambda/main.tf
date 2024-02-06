@@ -3,13 +3,13 @@
 
 data "archive_file" "layer" {
   type        = "zip"
-  output_path = "${path.module}/files/lambda_layer.zip"
+  output_path = "${path.module}/../../files/lambda_layer.zip"
   source_dir  = "${path.module}/../../lambda/package"
 }
 
 data "archive_file" "lambda" {
   type        = "zip"
-  output_path = "${path.module}/files/lambda_payload.zip"
+  output_path = "${path.module}/../../files/lambda_payload.zip"
   source_dir  = "${path.module}/../../lambda/functions"
   excludes = [
     "${path.module}/../../lambda/__pycache__"
@@ -17,7 +17,7 @@ data "archive_file" "lambda" {
 }
 
 # create a s3 bucket to store the lambda layer
-resource "aws_s3_bucket" "bucket" {
+resource "aws_s3_bucket" "layer" {
   bucket = var.bucket_name
 
   tags = {
@@ -30,9 +30,9 @@ resource "aws_s3_bucket" "bucket" {
 # upload the lambda layer to s3
 resource "aws_s3_object" "object" {
   # Recursively look for pdf files inside documents/ 
-  bucket = aws_s3_bucket.bucket.id
+  bucket = aws_s3_bucket.layer.id
   key    = "lambda_layer.zip"
-  source = "${path.module}/files/lambda_layer.zip"
+  source = "${path.module}/../../files/lambda_layer.zip"
 
   tags = {
     Name        = "${var.bucket_name} Bucket"
@@ -41,13 +41,13 @@ resource "aws_s3_object" "object" {
   }
 
   depends_on = [
-    aws_s3_bucket.bucket
+    aws_s3_bucket.layer
   ]
 }
 
 resource "aws_lambda_layer_version" "lambda_layer" {
-  #filename    = "${path.module}/files/lambda_layer.zip" # Error: Hit the 50MB limit
-  s3_bucket   = aws_s3_bucket.bucket.id
+  #filename    = "${path.module}/../../files/lambda_layer.zip" # Error: Hit the 50MB limit
+  s3_bucket   = aws_s3_bucket.layer.id
   s3_key      = aws_s3_object.object.id
   layer_name  = "lambda_layer"
   description = "Lambda layer for embedding documents"
@@ -78,7 +78,7 @@ resource "aws_lambda_function" "func" {
 
   # If the file is not in the current working directory you will need to include a
   # path.module in the filename.
-  filename      = "${path.module}/files/lambda_payload.zip"
+  filename      = "${path.module}/../../files/lambda_payload.zip"
   function_name = var.lambda_function_name
   role          = aws_iam_role.lambda_role.arn
   handler       = "main.py" # Function entrypoint 
