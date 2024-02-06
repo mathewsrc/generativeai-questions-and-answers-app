@@ -13,6 +13,7 @@ BUCKET_NAME = "bedrock-question-answer"
 QDRANT_URL = os.environ.get("QDRANT_URL")
 QDRANT_API_KEY = os.environ.get("QDRANT_API_KEY")
 
+
 def lambda_handler(event, context):
 	try:
 		bucket_name = event["Records"][0]["s3"]["bucket"]["name"]

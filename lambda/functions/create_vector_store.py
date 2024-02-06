@@ -32,7 +32,6 @@ def info(url: str, api_key: str, collection_name: str) -> None:
 def get_documents_from_pdf(
 	bucket_name: str, key: str, collection_name: str, region_name: str
 ) -> list:
-
 	loader = S3FileLoader(bucket=bucket_name, key=key, region_name=region_name)
 	documents = loader.load()
 
@@ -42,8 +41,10 @@ def get_documents_from_pdf(
 	print(f"Number of documents after split: {len(docs)}")
 	return docs
 
+
 def get_client(url: str, api_key: str) -> QdrantClient:
 	return QdrantClient(url=url, api_key=api_key)
+
 
 def create_vectostore(
 	url: str,
@@ -75,7 +76,7 @@ def create_vectostore(
 
 		embeddings = get_embeddings(
 			embedding=Embedding(embeddings=embedding, model_name=model_name),
-			region_name=region_name
+			region_name=region_name,
 		)
 		print("Creating collection...")
 
