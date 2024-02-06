@@ -8,10 +8,6 @@ data "aws_region" "current" {}
 resource "aws_s3_bucket" "bucket" {
   bucket = var.bucket_name
 
-  lifecycle {
-    prevent_destroy = true
-  }
-
   tags = {
     Name        = "${var.bucket_name} Bucket"
     Environment = var.environment
