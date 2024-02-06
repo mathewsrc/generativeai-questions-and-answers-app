@@ -2,6 +2,7 @@ from langchain_community.vectorstores.qdrant import Qdrant
 from langchain_community.document_loaders import S3FileLoader
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from qdrant_client import QdrantClient
+import json
 
 from utils import (
 	get_embeddings,
@@ -23,7 +24,7 @@ def info(url: str, api_key: str, collection_name: str) -> None:
 	try:
 		client = get_client(url, api_key)
 		info = client.get_collection(collection_name=collection_name)
-		print(f"Collection info\n: {info}")
+		print(json.dumps(f"Collection info\n: {info}", indent=4))
 	except Exception as e:
 		print(f"Error: {e}")
 
@@ -31,9 +32,6 @@ def info(url: str, api_key: str, collection_name: str) -> None:
 def get_documents_from_pdf(
 	bucket_name: str, key: str, collection_name: str, region_name: str
 ) -> list:
-	# Load documents
-	# loader = S3DirectoryLoader(bucket=bucket_name, prefix=collection_name, region_name=region_name)
-	# documents = loader.load()
 
 	loader = S3FileLoader(bucket=bucket_name, key=key, region_name=region_name)
 	documents = loader.load()
@@ -44,10 +42,8 @@ def get_documents_from_pdf(
 	print(f"Number of documents after split: {len(docs)}")
 	return docs
 
-
 def get_client(url: str, api_key: str) -> QdrantClient:
 	return QdrantClient(url=url, api_key=api_key)
-
 
 def create_vectostore(
 	url: str,
@@ -78,9 +74,10 @@ def create_vectostore(
 			raise ValueError("Invalid embedding model name")
 
 		embeddings = get_embeddings(
-			embedding=Embedding(embeddings=embedding, model_name=model_name)
+			embedding=Embedding(embeddings=embedding, model_name=model_name),
+			region_name=region_name
 		)
-		print("Creating collection... (15-35 minutes)")
+		print("Creating collection...")
 
 		vectorstore = Qdrant.from_documents(
 			documents=docs,

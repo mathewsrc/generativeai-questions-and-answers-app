@@ -33,12 +33,12 @@ def get_bedrock_embeddings(model_name: str, region_name: str) -> BedrockEmbeddin
 	return embeddings
 
 
-def get_embeddings(embedding: Embedding):
+def get_embeddings(embedding: Embedding, region_name: str):
 	print(f"Embedding model: {embedding.model_name}")
 	print(f"Embedding type: {embedding.embeddings}")
 	if embedding.embeddings == Embeddings.HUGGINGFACE:
 		return get_huggingface_embeddings(embedding.model_name)
 	elif embedding.embeddings == Embeddings.BEDROCK:
-		return get_bedrock_embeddings(embedding.model_name)
+		return get_bedrock_embeddings(embedding.model_name, region_name=region_name)
 	else:
 		raise Exception("Invalid embedding type")
