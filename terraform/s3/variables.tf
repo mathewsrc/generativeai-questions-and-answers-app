@@ -23,3 +23,9 @@ variable "application_name" {
   default     = "bedrock-qa-rag"
   description = "Application name"
 }
+
+variable "wait_for_lambda_deployment" {
+  description = "Wait for the lambda deployment to complete"
+  type        = any
+  default     = []
+}

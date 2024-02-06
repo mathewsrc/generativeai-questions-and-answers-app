@@ -6,7 +6,8 @@ data "aws_region" "current" {}
 
 # Create an S3 bucket
 resource "aws_s3_bucket" "bucket" {
-  bucket = var.bucket_name
+  bucket        = var.bucket_name
+  force_destroy = true
 
   tags = {
     Name        = "${var.bucket_name} Bucket"
@@ -31,6 +32,7 @@ resource "aws_s3_object" "object" {
   }
 
   depends_on = [
-    aws_s3_bucket.bucket
+    aws_s3_bucket.bucket,
+    var.wait_for_lambda_deployment
   ]
 }
