@@ -40,12 +40,12 @@ module "network" {
 }
 
 module "s3" {
-  source           = "./s3"
-  region           = data.aws_region.current.name
-  application_name = var.name
-  bucket_name      = "bedrock-qa-bucket-tf"
-  environment      = var.environment
-  subfolder        = "cnu"
+  source                     = "./s3"
+  region                     = data.aws_region.current.name
+  application_name           = var.name
+  bucket_name                = "bedrock-qa-bucket-tf"
+  environment                = var.environment
+  subfolder                  = "cnu"
   wait_for_lambda_deployment = module.lambda.wait_for_lambda_deployment
 }
 
