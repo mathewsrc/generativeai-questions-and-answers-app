@@ -3,20 +3,14 @@
 # Move to the lambda directory
 cd lambda
 
-# Create a directory for the package
-mkdir package
+# Create a directory for the python [place the libraries in the /python or python/lib/python3.x/site-packages folders]
+mkdir -p python
 
 # Install dependencies
-pip install --target ./package boto3 langchain-community qdrant-client python-dotenv
-
-# Move to the package directory
-cd package
+pip3 install --platform manylinux2014_x86_64 --target ./python --python-version 3.12 --only-binary=:all: boto3 langchain-community qdrant-client python-dotenv
 
 # Create a layer .zip file with the installed libraries at the root
-zip -r ../../lambda_layer.zip .
-
-# Move to the functions directory
-cd ../functions
+zip -r ../lambda_layer.zip ./python
 
 # Add all *.py files to the root of the .zip file
-zip ../lambda_payload.zip *.py
+zip ../lambda_payload.zip ./functions/*.py
