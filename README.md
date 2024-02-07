@@ -257,7 +257,11 @@ If you want to deploy this application to AWS ECS using GitHub actions you will 
 
 1. Generate a Terraform API Token and a secret key in GitHub. Refer to the [Terraform API token](tutorials/terraform.md) inside this project
 2. Set up secret keys by providing your AWS credentials. Check out the  [Github Actions Secret Keys](tutorials/aws_secret_keys.md)
-3. Congratulations! You are now ready to deploy this application using CI/CD
+3. Setup up secret keys for ECS access Qdrant URL and API key using AWS Secret Manager. You can follow the same steps from step 2.
+
+# TODO: image
+
+Congratulations! You are now ready to deploy this application using CI/CD
 
 ## Tear Down the AWS Resources
 
@@ -272,6 +276,10 @@ make tf-destroy
 ```
 
 ## Tools used in this project
+
+### Bedrock
+
+
 
 ### Terraform
 
@@ -360,6 +368,24 @@ Key benefits:
 - Easily scalability 
 - Comprehensive Monitoring and Logging for Cluster Performance
 - Availability on Major Cloud Platforms: AWS, GCP, and Azure
+
+
+### Lambda Functions
+
+
+### S3
+
+
+### Secrets Manager
+
+
+### Network Load Balancer
+
+
+### Langchain
+
+
+
 
 ## Some useful turorials and documents
 
