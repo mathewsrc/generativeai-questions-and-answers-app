@@ -15,7 +15,8 @@ pip3 install --platform manylinux2014_x86_64 --target ./temp/python\
      qdrant-client==1.7.0 \
      python-dotenv==1.0.1 \
      pypdf==3.17.4 \
-     botocore==1.34.17
+     botocore==1.34.17 \
+     s3transfer==0.10.0
 
 echo "Installed dependencies"
 
