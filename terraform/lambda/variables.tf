@@ -32,3 +32,21 @@ variable "bucket_name" {
   type        = string
   default     = "lambda-layer-rag-bucket"
 }
+
+variable "output_layer_path" {
+  description = "The path to the output layer"
+  type        = string
+  default     = "/files/lambda_layer.zip"
+}
+
+variable "output_lambda_path" {
+  description = "The path to the output lambda"
+  type        = string
+  default     = "/files/lambda_payload.zip"
+}
+
+variable "memory_size" {
+  description = "The amount of memory in MB that Lambda Function can use at runtime"
+  type        = number
+  default     = 256
+}
