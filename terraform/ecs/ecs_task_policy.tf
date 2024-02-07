@@ -1,4 +1,4 @@
-# Generates an IAM policy document in JSON format
+# Generates an IAM policy document for the ECS task role
 data "aws_iam_policy_document" "ecs_task_policy" {
   statement {
     sid       = 1

@@ -1,3 +1,5 @@
+
+# Create a secret for Qdrant URL and API Key, so ECS can access it
 resource "aws_secretsmanager_secret" "qdrant_url" {
   name                           = var.qdrant_url_key
   description                    = "Qdrant URL Key"
@@ -10,6 +12,7 @@ resource "aws_secretsmanager_secret" "qdrant_url" {
   }
 }
 
+# Create a secret for Qdrant API Key, so ECS can access it
 resource "aws_secretsmanager_secret" "qdrant_api_key" {
   name                           = var.qdrant_api_key
   description                    = "Qdrant API Key"

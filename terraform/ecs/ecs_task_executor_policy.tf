@@ -1,5 +1,5 @@
 
-# Generates an IAM policy document in JSON format
+# Generates an IAM policy document for the ECS task executor role
 data "aws_iam_policy_document" "ecs_task_executor_policy" {
   statement {
     sid = 1
@@ -31,7 +31,7 @@ resource "aws_iam_policy" "ecs_task_executor_policy" {
   policy = data.aws_iam_policy_document.ecs_task_executor_policy.json
 }
 
-
+# IAM role for ECS task executor
 resource "aws_iam_role" "ecs_task_executor_role" {
   name               = var.ecs_execution_role_name
   assume_role_policy = <<POLICY

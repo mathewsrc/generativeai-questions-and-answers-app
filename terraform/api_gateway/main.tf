@@ -9,6 +9,7 @@ resource "aws_api_gateway_vpc_link" "vpc_link" {
   }
 }
 
+# Create a API Gateway REST API
 resource "aws_api_gateway_rest_api" "api" {
   name        = var.api_name
   description = "API Gateway for REST API"
@@ -84,6 +85,7 @@ resource "aws_api_gateway_integration" "ask_post_integration" {
   connection_id           = aws_api_gateway_vpc_link.vpc_link.id
 }
 
+# Create a API Gateway Deployment
 resource "aws_api_gateway_deployment" "api_deployment" {
   depends_on = [
     aws_api_gateway_integration.ask_post_integration,
@@ -97,6 +99,7 @@ resource "aws_api_gateway_deployment" "api_deployment" {
   }
 }
 
+# Create a API Gateway Stage
 resource "aws_api_gateway_stage" "api_stage" {
   deployment_id = aws_api_gateway_deployment.api_deployment.id
   rest_api_id   = aws_api_gateway_rest_api.api.id
@@ -129,6 +132,7 @@ resource "aws_api_gateway_stage" "api_stage" {
 #   }
 # }
 
+# Create a API Gateway Usage Plan
 resource "aws_api_gateway_usage_plan" "usage_plan" {
   name        = var.usage_plan_name
   description = "QA Usage Plan"

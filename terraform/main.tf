@@ -11,7 +11,7 @@ data "aws_region" "current" {}
 data "aws_caller_identity" "current" {}
 
 provider "aws" {
-  region = "us-east-1" # Make sure the region is the same of the one returned by 'data "aws_region" "current" {}' 
+  region = "us-east-1"  
   default_tags {
     tags = {
       Name = var.name
@@ -98,12 +98,14 @@ module "api_gateway" {
   container_port   = var.container_port
 }
 
+# Define the local backend for the Terraform state
 # terraform {
 #   backend "local" {
 #     path = "terraform.tfstate"
 #   }
 # }
 
+# Define the S3 backend for the Terraform state
 terraform {
   backend "s3" {
     bucket = "terraform-bucket-state-tf"
