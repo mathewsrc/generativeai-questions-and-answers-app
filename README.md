@@ -361,14 +361,8 @@ Key benefits:
 - Comprehensive Monitoring and Logging for Cluster Performance
 - Availability on Major Cloud Platforms: AWS, GCP, and Azure
 
-## Costs 
+## Some useful turorials and documents
 
-https://aws.amazon.com/bedrock/pricing/
+AWS Lambda Layers Step by Step Tutorial | Python Libraries Management by Felix Yu in Youtube
 
-https://aws.amazon.com/fargate/pricing/
-
-https://aws.amazon.com/ecr/pricing/
-
-https://aws.amazon.com/s3/pricing/
-
-https://aws.amazon.com/opensearch-service/pricing/
+https://repost.aws/knowledge-center/lambda-import-module-error-python
