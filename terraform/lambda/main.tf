@@ -1,5 +1,3 @@
-# https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/s3_bucket_notification
-
 # Execute a Bash script to create the libraries package
 resource "null_resource" "package_lambda" {
   provisioner "local-exec" {
@@ -43,7 +41,7 @@ resource "aws_s3_bucket" "layer" {
 # Create an S3 object to store the lambda layer
 resource "aws_s3_object" "object" {
   bucket = aws_s3_bucket.layer.id
-  key    = "lambda_layer.zip"
+  key    = var.s3_key
   source = data.archive_file.layer.output_path
 
   tags = {
@@ -61,7 +59,7 @@ resource "aws_s3_object" "object" {
 resource "aws_lambda_layer_version" "lambda_layer" {
   s3_bucket   = aws_s3_bucket.layer.id
   s3_key      = aws_s3_object.object.id
-  layer_name  = "lambda_layer"
+  layer_name  = var.layer_name
   description = "Lambda layer for embedding documents"
 
   compatible_runtimes = ["python3.12"]
@@ -89,9 +87,10 @@ resource "aws_lambda_function" "func" {
   filename      = data.archive_file.lambda.output_path
   function_name = var.lambda_function_name
   role          = aws_iam_role.lambda_role.arn
-  handler       = "main.lambda_handler" # module main.py and function lambda_handler
+  handler       = var.handler # module.py and function name
   runtime       = "python3.12"
   memory_size   = var.memory_size
+  timeout       = var.timeout
 
   layers = [aws_lambda_layer_version.lambda_layer.arn]
 
@@ -127,8 +126,8 @@ resource "aws_s3_bucket_notification" "bucket_notification" {
   lambda_function {
     lambda_function_arn = aws_lambda_function.func.arn
     events              = ["s3:ObjectCreated:*"]
-    filter_prefix       = "cnu/"
-    filter_suffix       = ".pdf"
+    #filter_prefix       = "cnu/"
+    filter_suffix = ".pdf"
   }
 
   depends_on = [aws_lambda_permission.allow_bucket]
