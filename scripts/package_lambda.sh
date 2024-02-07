@@ -9,13 +9,15 @@ mkdir -p temp/python
 # Install dependencies
 pip3 install --platform manylinux2014_x86_64 --target ./temp/python\
  --python-version 3.12 \
- --only-binary=:all: boto3 \
-    langchain \
-    langchain-community \
-    qdrant-client \
-    python-dotenv \
-    unstructured \
-    pypdf
+ --only-binary=:all: boto3==1.34.17 \
+     langchain==0.1.0 \
+     langchain-community==0.0.11 \
+     qdrant-client==1.7.0 \
+     python-dotenv==1.0.1 \
+     pypdf==3.17.4 \
+     botocore==1.34.17
+
+echo "Installed dependencies"
 
 # Create a layer .zip file with the installed libraries at the root [Not required if you are using Terraform]
 #zip -r ../lambda_layer.zip ./temp/python
