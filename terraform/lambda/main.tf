@@ -2,7 +2,8 @@
 
 resource "null_resource" "package_lambda" {
   provisioner "local-exec" {
-    command = "chmod +x ${path.module}/../../scripts/package_lambda.sh && ${path.module}/../../scripts/package_lambda.sh"
+    command     = "chmod +x ${path.module}/../../scripts/package_lambda.sh; ${path.module}/../../scripts/package_lambda.sh"
+    interpreter = ["bash", "-c"]
   }
 }
 
