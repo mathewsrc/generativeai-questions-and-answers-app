@@ -1,10 +1,16 @@
 # https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/s3_bucket_notification
 
+resource "null_resource" "package_lambda" {
+  provisioner "local-exec" {
+    command = "chmod +x ${path.module}/../../scripts/package_lambda.sh && ${path.module}/../../scripts/package_lambda.sh"
+  }
+}
 
 data "archive_file" "layer" {
   type        = "zip"
   output_path = "${path.module}/../../files/lambda_layer.zip"
-  source_dir  = "${path.module}/../../lambda/package"
+  source_dir  = "${path.module}/../../lambda/python"
+  depends_on  = [null_resource.package_lambda]
 }
 
 data "archive_file" "lambda" {
@@ -14,6 +20,8 @@ data "archive_file" "lambda" {
   excludes = [
     "${path.module}/../../lambda/__pycache__"
   ]
+
+  depends_on = [null_resource.package_lambda]
 }
 
 # create a s3 bucket to store the lambda layer
