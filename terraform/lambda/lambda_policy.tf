@@ -1,3 +1,5 @@
+
+# Create an IAM policy document for the lambda
 data "aws_iam_policy_document" "lambda_policy" {
   statement {
     effect    = "Allow"
@@ -33,6 +35,7 @@ data "aws_iam_policy_document" "lambda_policy" {
   }
 }
 
+# Create an IAM policy for the lambda
 resource "aws_iam_policy" "lambda_policy" {
   name        = "lambda_policy"
   path        = "/"
@@ -40,6 +43,7 @@ resource "aws_iam_policy" "lambda_policy" {
   policy      = data.aws_iam_policy_document.lambda_policy.json
 }
 
+# Create an IAM role for the lambda
 resource "aws_iam_role" "lambda_role" {
   name = "lambda_role"
   assume_role_policy = jsonencode({
@@ -56,6 +60,7 @@ resource "aws_iam_role" "lambda_role" {
   })
 }
 
+# Attach the policy to the lambda role
 resource "aws_iam_role_policy_attachment" "lambda_policy_attachment" {
   role       = aws_iam_role.lambda_role.name
   policy_arn = aws_iam_policy.lambda_policy.arn
