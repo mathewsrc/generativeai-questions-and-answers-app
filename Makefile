@@ -144,4 +144,8 @@ zip-lambda:
 	chmod +x ./scripts/package_lambda.sh
 	./scripts/package_lambda.sh
 
+lambda-info:
+	@echo "Info Lambda functions"
+	aws lambda list-functions --max-items 10
+	
 all: install format lint
