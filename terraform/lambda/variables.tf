@@ -33,20 +33,33 @@ variable "bucket_name" {
   default     = "lambda-layer-rag-bucket"
 }
 
-variable "output_layer_path" {
-  description = "The path to the output layer"
+variable "s3_key" {
+  description = "The key of the S3 object"
   type        = string
-  default     = "/files/lambda_layer.zip"
+  default     = "lambda_layer.zip"
 }
 
-variable "output_lambda_path" {
-  description = "The path to the output lambda"
+variable "layer_name" {
+  description = "The name of the Lambda layer"
   type        = string
-  default     = "/files/lambda_payload.zip"
+  default     = "lambda_layer"
+}
+
+variable "handler" {
+  description = "The name of the handler"
+  type        = string
+  default     = "main.lambda_handler"
 }
 
 variable "memory_size" {
   description = "The amount of memory in MB that Lambda Function can use at runtime"
   type        = number
-  default     = 256
+  default     = 512
+}
+
+variable "timeout" {
+  description = "The amount of time in seconds that Lambda Function has to run"
+  type        = number
+  # 10 minutes
+  default = 600
 }
