@@ -1,4 +1,7 @@
 resource "null_resource" "package_lambda" {
+  triggers = {
+    files = "${filebase64sha256("${path.module}/../../scripts/package_lambda.sh")}"
+  }
   provisioner "local-exec" {
     command     = "chmod +x ${path.module}/../../scripts/package_lambda.sh; ${path.module}/../../scripts/package_lambda.sh"
     interpreter = ["bash", "-c"]
@@ -50,7 +53,7 @@ resource "aws_lambda_layer_version" "layer" {
   s3_key              = aws_s3_object.object.key
   layer_name          = var.layer_name
   description         = "Lambda layer for Qdrant"
-  compatible_runtimes = ["python3.12"]
+  compatible_runtimes = [var.python_version]
 }
 
 # Get the Qdrant URL and API key from the environment
@@ -74,7 +77,7 @@ resource "aws_lambda_function" "func" {
   function_name = var.lambda_function_name
   role          = aws_iam_role.lambda_role.arn
   handler       = var.handler # module.py and function name
-  runtime       = "python3.12"
+  runtime       = var.python_version
   memory_size   = var.memory_size
   timeout       = var.timeout
   package_type  = "Zip"

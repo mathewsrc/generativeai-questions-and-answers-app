@@ -63,3 +63,9 @@ variable "timeout" {
   # 10 minutes
   default = 600
 }
+
+variable "python_version" {
+  description = "The Python version to use"
+  type        = string
+  default     = "python3.11"
+}
