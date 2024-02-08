@@ -13,13 +13,14 @@ pip install \
     --platform manylinux2014_x86_64 \
     --target ./temp/python \
     --implementation cp \
-    --python-version 3.12 \
+    --python-version 3.11 \
     --only-binary=:all: --upgrade \
      langchain \
      langchain-community \
      qdrant-client \
      python-dotenv \
-     unstructured
+     unstructured \
+     numpy
 
 echo "Installed dependencies"
 
