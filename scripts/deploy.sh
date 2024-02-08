@@ -10,7 +10,10 @@ AWS_ECR_REPOSITORY_URL=$AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$AWS_EC
 TAG=$(git rev-parse HEAD) # Get the short commit hash
 
 # Login to AWS ECR
-aws ecr get-login-password --region $AWS_REGION | docker login --username AWS --password-stdin $AWS_ECR_REPOSITORY_URL
+aws ecr get-login-password \
+    --region $AWS_REGION | docker login \
+    --username AWS \
+    --password-stdin $AWS_ECR_REPOSITORY_URL
 
 # Build the Docker image
 docker build -t $AWS_ECR_REPOSITORY . 
