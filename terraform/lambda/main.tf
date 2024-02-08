@@ -1,4 +1,3 @@
-# Execute a Bash script to create the libraries package
 resource "null_resource" "package_lambda" {
   provisioner "local-exec" {
     command     = "chmod +x ${path.module}/../../scripts/package_lambda.sh; ${path.module}/../../scripts/package_lambda.sh"
@@ -6,28 +5,25 @@ resource "null_resource" "package_lambda" {
   }
 }
 
-# Create a zip file from the libraries package
-data "archive_file" "layer" {
+# Archive the Lambda function 
+data "archive_file" "lambda" {
   type        = "zip"
-  output_path = "${path.module}/../../files/lambda_layer.zip"
-  source_dir  = "${path.module}/temp"
+  source_dir  = "${path.module}/../../lambda/src"
+  output_path = "${path.module}/../../lambda/lambda_payload.zip"
   depends_on  = [null_resource.package_lambda]
 }
 
-# Create a zip file from the lambda functions
-data "archive_file" "lambda" {
+# Archive layer
+data "archive_file" "layer" {
   type        = "zip"
-  output_path = "${path.module}/../../files/lambda_payload.zip"
-  source_dir  = "${path.module}/../../lambda/functions"
-  excludes = [
-    "${path.module}/../../lambda/__pycache__"
-  ]
+  source_dir  = "${path.module}/../../lambda/temp"
+  output_path = "${path.module}/../../lambda/lambda_layer.zip"
 
   depends_on = [null_resource.package_lambda]
 }
 
-# Create an S3 bucket to store the lambda layer
-resource "aws_s3_bucket" "layer" {
+# Create bucket
+resource "aws_s3_bucket" "layers" {
   bucket        = var.bucket_name
   force_destroy = true
 
@@ -38,30 +34,22 @@ resource "aws_s3_bucket" "layer" {
   }
 }
 
-# Create an S3 object to store the lambda layer
+# Upload zip to S3
 resource "aws_s3_object" "object" {
-  bucket = aws_s3_bucket.layer.id
+  bucket = aws_s3_bucket.layers.id
   key    = var.s3_key
   source = data.archive_file.layer.output_path
+  etag   = filemd5(data.archive_file.layer.output_path)
 
-  tags = {
-    Name        = "${var.bucket_name} Bucket"
-    Environment = var.environment
-    Application = var.application_name
-  }
-
-  depends_on = [
-    aws_s3_bucket.layer
-  ]
+  depends_on = [null_resource.package_lambda]
 }
 
-# Create an Lambda layer
-resource "aws_lambda_layer_version" "lambda_layer" {
-  s3_bucket   = aws_s3_bucket.layer.id
-  s3_key      = aws_s3_object.object.id
-  layer_name  = var.layer_name
-  description = "Lambda layer for embedding documents"
-
+# Create layer
+resource "aws_lambda_layer_version" "layer" {
+  s3_bucket           = aws_s3_bucket.layers.bucket
+  s3_key              = aws_s3_object.object.key
+  layer_name          = var.layer_name
+  description         = "Lambda layer for Qdrant"
   compatible_runtimes = ["python3.12"]
 }
 
@@ -79,11 +67,9 @@ data "external" "envs" {
 resource "aws_lambda_function" "func" {
   depends_on = [
     aws_iam_role_policy_attachment.lambda_policy_attachment,
-    aws_lambda_layer_version.lambda_layer,
+    aws_lambda_layer_version.layer,
   ]
 
-  # If the file is not in the current working directory you will need to include a
-  # path.module in the filename.
   filename      = data.archive_file.lambda.output_path
   function_name = var.lambda_function_name
   role          = aws_iam_role.lambda_role.arn
@@ -91,10 +77,9 @@ resource "aws_lambda_function" "func" {
   runtime       = "python3.12"
   memory_size   = var.memory_size
   timeout       = var.timeout
+  package_type  = "Zip"
 
-  layers = [aws_lambda_layer_version.lambda_layer.arn]
-
-  source_code_hash = data.archive_file.lambda.output_base64sha256
+  layers = [aws_lambda_layer_version.layer.arn]
 
   environment {
     variables = {
@@ -126,9 +111,7 @@ resource "aws_s3_bucket_notification" "bucket_notification" {
   lambda_function {
     lambda_function_arn = aws_lambda_function.func.arn
     events              = ["s3:ObjectCreated:*"]
-    #filter_prefix       = "cnu/"
-    filter_suffix = ".pdf"
+    filter_suffix       = ".pdf"
   }
-
   depends_on = [aws_lambda_permission.allow_bucket]
 }
