@@ -66,7 +66,7 @@ tf-outp:
 
 tf-destroy:
 	@echo "Destroying Terraform <Destroy infrastruture resources>"
-	cd terraform && terraform destroy
+	cd terraform && terraform destroy -auto-approve
 
 tf-fmt:
 	@echo "Formating Terraform <Auto-format Terraform code>"
@@ -147,5 +147,5 @@ zip-lambda:
 lambda-info:
 	@echo "Info Lambda functions"
 	aws lambda list-functions --max-items 10
-	
+
 all: install format lint
