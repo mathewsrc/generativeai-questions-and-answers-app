@@ -17,8 +17,9 @@ RUN pip3 install \
           python-dotenv \
           numpy \
           unstructured \
-          unstructured[pdf] 
-          
+          unstructured[pdf] \
+          nltk
+
 # Copy function code
 COPY ./lambda/src/main.py  ${LAMBDA_TASK_ROOT}
 COPY ./lambda/src/utils.py  ${LAMBDA_TASK_ROOT}
