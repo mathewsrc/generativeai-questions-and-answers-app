@@ -4,7 +4,6 @@ from langchain.text_splitter import RecursiveCharacterTextSplitter
 from qdrant_client import QdrantClient
 import json
 import logging
-import os
 
 from utils import (
 	get_embeddings,
