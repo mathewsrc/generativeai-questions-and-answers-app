@@ -67,5 +67,11 @@ variable "timeout" {
 variable "python_version" {
   description = "The Python version to use"
   type        = string
-  default     = "python3.11"
+  default     = "python3.12"
+}
+variable "ecr_repository" {
+  description = "The URL of the ECR repository"
+  type        = string
+  default     = "lambda-repo"
+
 }
