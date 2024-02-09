@@ -1,4 +1,3 @@
-
 # Create an IAM policy document for the lambda
 data "aws_iam_policy_document" "lambda_policy" {
   statement {
@@ -16,7 +15,7 @@ data "aws_iam_policy_document" "lambda_policy" {
       "logs:PutLogEvents",
     ]
 
-    resources = ["arn:aws:logs:*:*:*"]
+    resources = ["arn:aws:logs:${data.aws_region.current.name}:*:*"]
   }
 
   statement {
@@ -38,7 +37,6 @@ data "aws_iam_policy_document" "lambda_policy" {
 # Create an IAM policy for the lambda
 resource "aws_iam_policy" "lambda_policy" {
   name        = "lambda_policy"
-  path        = "/"
   description = "IAM policy for lambda"
   policy      = data.aws_iam_policy_document.lambda_policy.json
 }
