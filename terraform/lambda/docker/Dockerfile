@@ -1,10 +1,10 @@
 FROM public.ecr.aws/lambda/python:3.12
 
-
 # Install dependencies
 RUN pip3 install \ 
      --no-cache-dir \
      --platform manylinux2014_x86_64 \
+     --target "${LAMBDA_TASK_ROOT}" \
      --implementation cp \
      --python-version 3.12 \ 
      --only-binary=:all: --upgrade boto3 \
@@ -12,9 +12,7 @@ RUN pip3 install \
           langchain-community \
           qdrant-client \
           python-dotenv \
-          numpy \
-          unstructured \
-          unstructured[pdf]
+          pypdf
 
 # Copy function code
 COPY ./lambda/src/main.py  ${LAMBDA_TASK_ROOT}
