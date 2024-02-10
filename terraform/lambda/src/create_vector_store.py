@@ -1,9 +1,10 @@
 from langchain_community.vectorstores.qdrant import Qdrant
-from langchain_community.document_loaders import S3FileLoader
+from langchain_community.document_loaders import PyPDFLoader
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from qdrant_client import QdrantClient
 import json
 import logging
+import boto3
 
 from utils import (
 	get_embeddings,
@@ -20,10 +21,10 @@ huggingface_embeddings = [
 
 aws_embeddings = ["amazon.titan-embed-text-v1"]
 
+s3 = boto3.client("s3")
+
 logger = logging.getLogger()
 logger.setLevel(logging.INFO)
-
-#os.chdir("tmp/")
 
 def info(url: str, api_key: str, collection_name: str) -> None:
 	client = get_client(url, api_key)
@@ -35,7 +36,14 @@ def get_documents_from_pdf(
 	bucket_name: str, key: str, collection_name: str, region_name: str
 ) -> list:
 	
-	loader = S3FileLoader(bucket=bucket_name, key=key, region_name=region_name)
+	s3_object_name = key.split("/")[-1]
+
+	logger.info(f"Downloading file from s3://{bucket_name}/{key}")
+	logger.info(f"File name: {s3_object_name}")
+ 
+	s3.download_file(bucket_name, key, f"/tmp/{s3_object_name}")
+ 
+	loader = PyPDFLoader(f"/tmp/{s3_object_name}")
 	documents = loader.load()
 
 	# Split documents
