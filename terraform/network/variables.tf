@@ -25,17 +25,6 @@ variable "container_port" {
   default     = 80
 }
 
-variable "number_of_private_subnets" {
-  type        = number
-  default     = 2
-  description = "The number of private subnets in a VPC."
-}
-
-variable "number_of_public_subnets" {
-  type        = number
-  default     = 2
-  description = "The number of public subnets in a VPC."
-}
 
 variable "aws_vpc_cidr_block" {
   type        = string
