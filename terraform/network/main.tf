@@ -66,12 +66,16 @@ resource "aws_route_table" "main" {
 resource "aws_security_group" "lb" {
   vpc_id = aws_vpc.main.id
   name   = var.security_group_name_lb
+
+  # This ingress rule allows incoming HTTP traffic.
   ingress {
-    from_port   = 80
-    to_port     = 80
+    from_port   = 80  # Allow port 80 (HTTP)
+    to_port     = 80  # Allow port 80 (HTTP)
     protocol    = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
   }
+
+  # This egress rule allows all outgoing traffic.
   egress {
     from_port   = 0
     to_port     = 0
@@ -91,6 +95,8 @@ resource "aws_security_group" "ecs_tasks" {
   name   = var.security_group_name_ecs_tasks
   vpc_id = aws_vpc.main.id
 
+  # Allows incoming TCP traffic on the port specified by var.container_port from the IP 
+  # addresses in the CIDR block specified by var.aws_vpc_cidr_block.
   ingress {
     from_port   = var.container_port
     to_port     = var.container_port
@@ -98,15 +104,16 @@ resource "aws_security_group" "ecs_tasks" {
     cidr_blocks = [var.aws_vpc_cidr_block]
   }
 
-  # The security group attached to the VPC endpoint must allow incoming 
-  # connections on TCP port 443 from the private subnet of the VPC.
+  # Allows incoming TCP traffic on port 443 from the IP addresses in 
+  # the CIDR block specified by var.# aws_vpc_cidr_block.
   ingress {
     protocol    = "tcp"
-    from_port   = 443
-    to_port     = 443
+    from_port   = 443 # Allow port 443 (HTTPS)
+    to_port     = 443 # Allow port 443 (HTTPS)
     cidr_blocks = [var.aws_vpc_cidr_block]
   }
 
+  # Allows all outgoing traffic to any IP address (0.0.0.0/0) and any protocol
   egress {
     from_port   = 0
     to_port     = 0
@@ -114,18 +121,22 @@ resource "aws_security_group" "ecs_tasks" {
     cidr_blocks = ["0.0.0.0/0"]
   }
 
+  # Allows outgoing TCP traffic on port 443 to the destinations specified by the
+  # prefix list of your S3 VPC endpoint.
   egress {
-    from_port = 443
-    to_port   = 443
+    from_port = 443 # Allow port 443 (HTTPS)
+    to_port   = 443 # Allow port 443 (HTTPS)
     protocol  = "tcp"
     prefix_list_ids = [
       aws_vpc_endpoint.s3.prefix_list_id
     ]
   }
 
+  # Allows outgoing TCP traffic on port 443 to the IP addresses in the CIDR block
+  # specified by var.aws_vpc_cidr_block.
   egress {
-    from_port   = 443
-    to_port     = 443
+    from_port   = 443 # Allow port 443 (HTTPS)
+    to_port     = 443 # Allow port 443 (HTTPS)
     protocol    = "tcp"
     cidr_blocks = [var.aws_vpc_cidr_block]
   }
