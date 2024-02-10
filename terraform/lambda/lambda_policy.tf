@@ -7,6 +7,7 @@ data "aws_iam_policy_document" "lambda_policy" {
   }
 
   statement {
+    sid    = "CloudWatchAccess"
     effect = "Allow"
 
     actions = [
@@ -19,6 +20,8 @@ data "aws_iam_policy_document" "lambda_policy" {
   }
 
   statement {
+    sid = "S3Access"
+
     effect = "Allow"
 
     actions = [
@@ -31,6 +34,12 @@ data "aws_iam_policy_document" "lambda_policy" {
     resources = [
       "arn:aws:s3:::*",
     ]
+  }
+
+  statement {
+    sid       = "BedrockAccess"
+    actions   = ["bedrock:InvokeModel", "bedrock:ListCustomModels", "bedrock:ListFoundationModels"]
+    resources = ["arn:aws:bedrock:*::foundation-model/*"]
   }
 }
 
