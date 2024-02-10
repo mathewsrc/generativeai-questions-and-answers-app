@@ -16,8 +16,7 @@ RUN pip3 install \
           qdrant-client \
           python-dotenv \
           numpy \
-          unstructured \
-          unstructured[pdf]
+          pypdf
 
 echo "Installed dependencies"
 
