@@ -8,11 +8,11 @@ load_dotenv()
 
 EMBEDDING_MODEL = "amazon.titan-embed-text-v1"
 COLLECTION_NAME = "cnu"
-AWS_REGION = "us-east-1"
-BUCKET_NAME = "bedrock-question-answer"
 
 QDRANT_URL = os.environ.get("QDRANT_URL")
 QDRANT_API_KEY = os.environ.get("QDRANT_API_KEY")
+BUCKET_NAME = os.environ.get("BUCKET_NAME")
+AWS_REGION = os.environ.get("AWS_REGION")
 
 
 def lambda_handler(event, context):
