@@ -4,7 +4,7 @@ variable "region" {
 
 variable "bucket_name" {
   description = "The name of the S3 bucket"
-  default     = "$bedrock-qa-rag-bucket-tf"
+  default     = "bedrock-question-answer"
 }
 
 variable "subfolder" {
@@ -20,8 +20,8 @@ variable "environment" {
 }
 
 variable "application_name" {
-  default     = "bedrock-qa-rag"
   description = "Application name"
+  type = string
 }
 
 variable "wait_for_lambda_deployment" {

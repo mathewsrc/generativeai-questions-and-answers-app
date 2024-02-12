@@ -3,7 +3,6 @@ variable "region" {
 }
 
 variable "application_name" {
-  default     = "bedrock-qa-rag"
   description = "Application name"
 }
 
@@ -74,10 +73,6 @@ variable "private_subnets" {
   type        = list(string)
 }
 
-# variable "ecs_task_execution_role_arn" {
-#   description = "The arn of ECS task execution role"
-# }
-
 variable "vpc_id" {
   description = "The id of VPC"
   type        = string
@@ -92,12 +87,3 @@ variable "ecs_task_role_name" {
   description = "The name of ECS task role"
   default     = "bedrock-qa-rag-ecs-task-role-tf"
 }
-
-# variable "ecs_aws_iam_role" {
-#   description = "The ECS task executor role"
-#   type        = any
-# }
-
-# variable "ecs_task_role_arn" {
-#   description = "The ARN of IAM role that allows your Amazon ECS container task to make calls to other AWS services."
-# }

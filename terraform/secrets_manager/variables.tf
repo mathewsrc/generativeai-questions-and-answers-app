@@ -24,5 +24,4 @@ variable "region" {
 variable "application_name" {
   description = "Application Name"
   type        = string
-  default     = "bedrock-qa-rag"
 }

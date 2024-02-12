@@ -45,6 +45,5 @@ variable "aws_private_subnet_cidr_blocks" {
 }
 
 variable "application_name" {
-  default     = "bedrock-qa-rag"
   description = "Application name"
 }

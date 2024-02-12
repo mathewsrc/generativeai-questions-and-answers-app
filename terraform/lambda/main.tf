@@ -116,6 +116,8 @@ resource "aws_lambda_function" "func" {
     variables = {
       QDRANT_URL     = "${data.external.envs.result.qdrant_url}"
       QDRANT_API_KEY = "${data.external.envs.result.qdrant_api_key}"
+      BUCKET_NAME    = var.s3_bucket_id
+      AWS_REGION    = data.aws_region.current.name
     }
   }
 

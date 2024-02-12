@@ -3,7 +3,6 @@ variable "region" {
 }
 
 variable "application_name" {
-  default     = "bedrock-qa-rag"
   description = "Application name"
 }
 
