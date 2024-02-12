@@ -57,7 +57,7 @@ def get_client(url: str, api_key: str) -> QdrantClient:
 	return QdrantClient(url=url, api_key=api_key)
 
 
-def create_vectostore(
+def create_vectorstore(
 	url: str,
 	api_key: str,
 	bucket_name: str,
