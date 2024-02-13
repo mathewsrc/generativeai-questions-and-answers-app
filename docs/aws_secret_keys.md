@@ -2,7 +2,7 @@
 
 1. Go to GitHub -> this project cloned -> Settings -> Secrets and variables -> actions -> `New repository secret`
 
-![image](https://github.com/mathewsrc/GenerativeAI-Questions-and-Answers-app-with-Bedrock-Langchain-and-FastAPI/assets/94936606/1c4fe6cc-1f71-4476-b7c9-23e2e24b3670)
+![image](https://github.com/mathewsrc/GenerativeAI-Questions-and-Answers-app-with-Bedrock-Langchain-and-FastAPI/assets/94936606/52cfed6d-c628-40ea-9150-28e569ab491c)
 
 Figure 1. GitHub secrets required
 
