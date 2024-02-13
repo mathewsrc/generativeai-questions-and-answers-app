@@ -4,9 +4,9 @@ This project utilizes a Lambda Function with S3 as a trigger to generate a vecto
 Qdrant cluster. The documents are located in the `documents/` directory.
 
 <p align="center">
-<img src="https://github.com/mathewsrc/GenerativeAI-Questions-and-Answers-app-with-Bedrock-Langchain-and-FastAPI/assets/94936606/731b8ac3-b771-4513-99cd-a7db7f6725a6" width=80%>
+<img src="https://github.com/mathewsrc/GenerativeAI-Questions-and-Answers-app-with-Bedrock-Langchain-and-FastAPI/assets/94936606/2bbfd86d-1aa7-4d8d-b5d2-d2409bf59604" width=80%>
 <p/>
-
+	
 ## Permissions required
 
 You can find the permissions required to create the following resources in the `iam_user_policies.md` document
