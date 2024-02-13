@@ -1,6 +1,9 @@
 # AWS Network
 
-![network drawio](https://github.com/mathewsrc/GenerativeAI-Questions-and-Answers-app-with-Bedrock-Langchain-and-FastAPI/assets/94936606/c083e363-e8fb-44ea-83b3-2b2696e0a078)
+<p align="center">
+<img src="https://github.com/mathewsrc/GenerativeAI-Questions-and-Answers-app-with-Bedrock-Langchain-and-FastAPI/assets/94936606/c083e363-e8fb-44ea-83b3-2b2696e0a078" width=80%>
+<p/>
+
 Figure 1. Elastic Container Service Network Architecture (some features were omitted for better visualization)
 
 ## Permissions required
