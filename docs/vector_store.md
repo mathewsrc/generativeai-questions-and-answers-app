@@ -1,10 +1,17 @@
 # Qdrant Vector Store with Lambda and S3
 
-This project uses Lambda Function and s3 as a trigger to create a vector store in a Qdrant cluster
-You can find the documents in the `documents/` directory.
+This project utilizes a Lambda Function with S3 as a trigger to generate a vector store within a 
+Qdrant cluster. The documents are located in the `documents/` directory.
 
-The Lambda Function uses a Docker image stored in ECR. Below you can find the details of the image
-used by Lambda:
+## Permissions required
+
+You can find the permissions required to create the following resources in the `iam_user_policies.md` document
+in this directory.
+
+## Docker Image
+
+The Lambda Function relies on a Docker image stored in ECR. Here are the details of the image 
+employed by Lambda:
 
 ```docker
 FROM public.ecr.aws/lambda/python:3.12
@@ -72,8 +79,8 @@ def lambda_handler(event, context):
 ```
 
 
-The `creator_vectorstore(...)` function call the get_documents_from_pdf function which download the PDF file uploaded
-to S3 into the Lambda `/tmp` directory, which is the only place where we have permission to write files, and convert it into a set of smaller documents also called chunks, convert it into a vector representation also called embedding, and uploaded it to Qdrant Cloud using Langchain. 
+
+The `create_vectorstore(...)` function initiates the get_documents_from_pdf function, which, in turn, downloads the uploaded PDF file from S3 to the Lambda `/tmp` directory—the exclusive location with write permissions. Subsequently, it divides the document into smaller sections, referred to as chunks, converts these chunks into a vector representation, also known as embedding, and uploads the resulting data to Qdrant Cloud via Langchain.
 
 ```python
 
@@ -111,4 +118,58 @@ def get_documents_from_pdf(
 	docs = text_splitter.split_documents(documents)
 	logger.info(f"Number of documents after split: {len(docs)}")
 	return docs
+```
+
+## Lambda Function Policy
+
+The Lambda Function requires permission to interact with other services. These include permissions
+to access CloudWatch for monitoring, S3 for downloading PDF files, and Bedrock for invoking the 
+Amazon `amazon.titan-embed-text-v1` model for embedding documents.
+
+**Terraform Policy Document**
+
+```terraform
+data "aws_iam_policy_document" "lambda_policy" {
+  statement {
+    effect    = "Allow"
+    actions   = ["sts:AssumeRole"]
+    resources = ["*"]
+  }
+
+  statement {
+    sid    = "CloudWatchAccess"
+    effect = "Allow"
+
+    actions = [
+      "logs:CreateLogGroup",
+      "logs:CreateLogStream",
+      "logs:PutLogEvents",
+    ]
+
+    resources = ["arn:aws:logs:${data.aws_region.current.name}:*:*"]
+  }
+
+  statement {
+    sid = "S3Access"
+
+    effect = "Allow"
+
+    actions = [
+      "s3:GetObject",
+      "s3:PutObject",
+      "s3:ListBucket",
+      "s3:DeleteObject"
+    ]
+
+    resources = [
+      "arn:aws:s3:::*",
+    ]
+  }
+
+  statement {
+    sid       = "BedrockAccess"
+    actions   = ["bedrock:InvokeModel", "bedrock:ListCustomModels", "bedrock:ListFoundationModels"]
+    resources = ["arn:aws:bedrock:*::foundation-model/*"]
+  }
+}
 ```
