@@ -3,8 +3,9 @@
 This project utilizes a Lambda Function with S3 as a trigger to generate a vector store within a 
 Qdrant cluster. The documents are located in the `documents/` directory.
 
-![vector_store_serveless drawio](https://github.com/mathewsrc/GenerativeAI-Questions-and-Answers-app-with-Bedrock-Langchain-and-FastAPI/assets/94936606/687bb657-b597-4070-a1e5-38b96d371f83)
-
+<p align="center">
+<img src="https://github.com/mathewsrc/GenerativeAI-Questions-and-Answers-app-with-Bedrock-Langchain-and-FastAPI/assets/94936606/687bb657-b597-4070-a1e5-38b96d371f83" width=80%>
+<p/>
 
 ## Permissions required
 
