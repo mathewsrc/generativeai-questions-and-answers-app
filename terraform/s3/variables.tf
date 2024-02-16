@@ -21,7 +21,7 @@ variable "environment" {
 
 variable "application_name" {
   description = "Application name"
-  type = string
+  type        = string
 }
 
 variable "wait_for_lambda_deployment" {
