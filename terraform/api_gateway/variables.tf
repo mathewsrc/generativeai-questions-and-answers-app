@@ -78,12 +78,12 @@ variable "container_port" {
   description = "The port the application is listening on"
 }
 
-variable "nlb_arn" {
+variable "lb_arn" {
   type        = string
   description = "The ARN of the internal NLB"
 }
 
-variable "nlb_dns_name" {
+variable "lb_dns_name" {
   type        = string
   description = "The DNS name of the internal NLB"
 }
