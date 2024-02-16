@@ -37,6 +37,24 @@ resource "aws_vpc_endpoint" "ecr_api" {
   }
 }
 
+# Create a VPC Endpoint for Secrests Manager
+resource "aws_vpc_endpoint" "secretsmanager" {
+  vpc_id              = aws_vpc.main.id
+  service_name        = "com.amazonaws.${var.region}.secretsmanager"
+  vpc_endpoint_type   = "Interface"
+  private_dns_enabled = true
+  subnet_ids          = aws_subnet.private_subnets.*.id
+
+  security_group_ids = [
+    aws_security_group.ecs_tasks.id,
+  ]
+
+  tags = {
+    Name        = "Secrets Manager VPC Endpoint"
+    Environment = var.environment
+  }
+}
+
 # Create a VPC Endpoint for CloudWatch
 resource "aws_vpc_endpoint" "cloudwatch" {
   vpc_id              = aws_vpc.main.id
