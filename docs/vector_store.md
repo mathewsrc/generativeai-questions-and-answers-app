@@ -3,10 +3,6 @@
 This project utilizes a Lambda Function with S3 as a trigger to generate a vector store within a 
 Qdrant cluster. The documents are located in the `documents/` directory.
 
-## Permissions required
-
-You can find the permissions required to create the following resources in the `iam_user_policies.md` document
-in this directory.
 
 ## Docker Image
 
@@ -128,7 +124,7 @@ Amazon `amazon.titan-embed-text-v1` model for embedding documents.
 
 **Terraform Policy Document**
 
-```terraform
+```json
 data "aws_iam_policy_document" "lambda_policy" {
   statement {
     effect    = "Allow"
