@@ -101,7 +101,7 @@ resource "aws_lambda_function" "func" {
   role          = aws_iam_role.lambda_role.arn
   image_uri     = "${data.aws_caller_identity.current.account_id}.dkr.ecr.${data.aws_region.current.name}.amazonaws.com/${var.ecr_repository}:${data.external.envs.result.sha}"
   function_name = var.lambda_function_name
-  description = "Converts PDFs to embeddings and stores them in Qdrant Cloud"
+  description   = "Converts PDFs to embeddings and stores them in Qdrant Cloud"
   #filename      = data.archive_file.lambda.output_path [Not required for Image type]
   #handler       = var.handler # module.py and function name [Not required for Image type]
   #runtime       = var.python_version [Not required for Image type]
@@ -117,7 +117,7 @@ resource "aws_lambda_function" "func" {
       QDRANT_URL     = "${data.external.envs.result.qdrant_url}"
       QDRANT_API_KEY = "${data.external.envs.result.qdrant_api_key}"
       BUCKET_NAME    = var.s3_bucket_id
-      AWS_REGION    = data.aws_region.current.name
+      REGION         = data.aws_region.current.name
     }
   }
 
