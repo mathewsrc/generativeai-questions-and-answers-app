@@ -3,14 +3,9 @@
 ![network drawio](https://github.com/mathewsrc/GenerativeAI-Questions-and-Answers-app-with-Bedrock-Langchain-and-FastAPI/assets/94936606/c083e363-e8fb-44ea-83b3-2b2696e0a078)
 Figure 1. Elastic Container Service Network Architecture (some features were omitted for better visualization)
 
-## Permissions required
-
-You can find the permissions required to create the following resources in the `iam_user_policies.md` document
-in this directory.
-
 ## AWS VPC
 
-```terraform
+```json
 variable "aws_vpc_cidr_block" {
   type        = string
   default     = "10.0.0.0/16"
@@ -42,7 +37,7 @@ increases the redundancy and fault tolerance.
 AWS reserves five IP addresses in each subnet for routing, Domain Name System (DNS), and network management. 
 The remaining IP addresses are diveded by the four subnets.
 
-```terraform
+```json
 # Create public subnets
 resource "aws_subnet" "public_subnets" {
   count                   = length(var.aws_public_subnet_cidr_blocks)
@@ -54,7 +49,7 @@ resource "aws_subnet" "public_subnets" {
 }
 ```
 
-```terraform
+```json
 # Create private subnets
 resource "aws_subnet" "private_subnets" {
   count             = length(var.aws_private_subnet_cidr_blocks)
@@ -74,14 +69,14 @@ hosted on Google Cloud.
 ## Route table 
 
 The route table has a set of rules called routes that determine where the network traffic 
-is directed. The route table allow traffic between all subnets to the VPC
+is directed. The route table allow traffic between all subnets to the VPC.
 
 ## Security groups
 
 The security groups controls the imbound and outbound traffic from Load Balancer and
 ECS tasks. 
 
-```terraform
+```json
 # Create a security group for the load balancer
 resource "aws_security_group" "lb" {
   vpc_id = aws_vpc.main.id  
@@ -106,7 +101,7 @@ resource "aws_security_group" "lb" {
 }
 ```
 
-```terraform
+```json
 # Create a security group for the ECS tasks
 resource "aws_security_group" "ecs_tasks" {
   name   = var.security_group_name_ecs_tasks
@@ -123,6 +118,8 @@ resource "aws_security_group" "ecs_tasks" {
 
   # Allows incoming TCP traffic on port 443 from the IP addresses in 
   # the CIDR block specified by var.# aws_vpc_cidr_block.
+  # The security group attached to the VPC endpoint must allow incoming 
+  # connections on TCP port 443 from the private subnet of the VPC.
   ingress {
     protocol    = "tcp"
     from_port   = 443 # Allow port 443 (HTTPS)
@@ -166,9 +163,9 @@ VPC Endpoints
 
 The ECR Docker endpoint permits ECS to pull Docker images within the VPC without needing to traverse
 the public internet. This endpoint's network interfaces is created in the private subnets and 
-the security group rules are the same as the ECS tasks.
+the security group rules are the same as the ECS tasks. More information: https://docs.aws.amazon.com/AmazonECR/latest/userguide/vpc-endpoints.html
 
-```terraform
+```json
 resource "aws_vpc_endpoint" "ecr_dkr" {
   vpc_id              = aws_vpc.main.id
   service_name        = "com.amazonaws.${var.region}.ecr.dkr"
@@ -188,7 +185,7 @@ the VPC without needing to traverse the public internet. This endpoint's network
 interfaces is created in the private subnets and the security group rules are the same 
 as the ECS tasks.
 
-```terraform
+```json
 # Create a VPC Endpoint for ECR API
 resource "aws_vpc_endpoint" "ecr_api" {
   vpc_id              = aws_vpc.main.id
@@ -205,10 +202,32 @@ resource "aws_vpc_endpoint" "ecr_api" {
 }
 ```
 
+The  Secrests Manager Endpoint allow ECS to get secrets without leave the Amazon network
+
+```json
+# Create a VPC Endpoint for Secrests Manager
+resource "aws_vpc_endpoint" "secretsmanager" {
+  vpc_id              = aws_vpc.main.id
+  service_name        = "com.amazonaws.${var.region}.secretsmanager"
+  vpc_endpoint_type   = "Interface"
+  private_dns_enabled = true
+  subnet_ids          = aws_subnet.private_subnets.*.id
+
+  security_group_ids = [
+    aws_security_group.ecs_tasks.id,
+  ]
+
+  tags = {
+    Name        = "Secrets Manager VPC Endpoint"
+    Environment = var.environment
+  }
+}
+```
+
 The Cloudwatch endpoint permit to send logs from resources within your VPC to CloudWatch 
 Logs without needing to traverse the public internet.
 
-```terraform
+```json
 # Create a VPC Endpoint for CloudWatch
 resource "aws_vpc_endpoint" "cloudwatch" {
   vpc_id              = aws_vpc.main.id
@@ -226,8 +245,9 @@ resource "aws_vpc_endpoint" "cloudwatch" {
 ```
 
 The S3 endpoint permit to access S3 from within your VPC without needing to traverse the public internet.
+ The gateway endpoint is required because Amazon ECR uses Amazon S3 to store image layers. 
 
-```terraform
+```json
 # Create a VPC Endpoint for S3
 resource "aws_vpc_endpoint" "s3" {
   vpc_id            = aws_vpc.main.id
