@@ -1,8 +1,8 @@
-# Create a VPC Link from the API Gateway to the NLB
+# Create a VPC Link from the API Gateway to the Load Balancer
 resource "aws_api_gateway_vpc_link" "vpc_link" {
   name        = var.vpc_link_name
   description = "VPC link for API Gateway"
-  target_arns = [var.nlb_arn]
+  target_arns = [var.lb_arn]
   tags = {
     Environment = var.environment
     Application = var.application_name
@@ -63,7 +63,7 @@ resource "aws_api_gateway_integration" "root_get_integration" {
 
   type                    = "HTTP_PROXY"
   integration_http_method = "GET"
-  uri                     = "http://${var.nlb_dns_name}:${var.container_port}/{proxy}"
+  uri                     = "http://${var.lb_dns_name}:${var.container_port}/{proxy}"
   connection_type         = "VPC_LINK"
   connection_id           = aws_api_gateway_vpc_link.vpc_link.id
   request_parameters = {
@@ -80,7 +80,7 @@ resource "aws_api_gateway_integration" "ask_post_integration" {
 
   type                    = "HTTP_PROXY"
   integration_http_method = "POST"
-  uri                     = "http://${var.nlb_dns_name}:${var.container_port}/ask"
+  uri                     = "http://${var.lb_dns_name}:${var.container_port}/ask"
   connection_type         = "VPC_LINK"
   connection_id           = aws_api_gateway_vpc_link.vpc_link.id
 }
