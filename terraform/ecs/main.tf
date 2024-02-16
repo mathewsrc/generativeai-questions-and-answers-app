@@ -66,7 +66,7 @@ resource "aws_ecs_service" "ecs_service" {
   depends_on      = []
 
   load_balancer {
-    target_group_arn = var.nlb_target_group_arn
+    target_group_arn = var.lb_target_group_arn
     container_name   = var.ecs_service_name
     container_port   = 80
   }
