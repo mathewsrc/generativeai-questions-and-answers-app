@@ -1,5 +1,5 @@
-# Create a Network Load Balancer
-resource "aws_lb" "nlb" {
+# Create a Load Balancer
+resource "aws_lb" "lb" {
   name                       = var.nlb_name
   internal                   = true
   load_balancer_type         = "network"
@@ -16,7 +16,7 @@ resource "aws_lb" "nlb" {
 
 # Create a target group
 resource "aws_lb_target_group" "target_group" {
-  depends_on  = [aws_lb.nlb]
+  depends_on  = [aws_lb.lb]
   name        = var.target_group_name
   port        = var.container_port
   protocol    = "TCP"
@@ -24,9 +24,9 @@ resource "aws_lb_target_group" "target_group" {
   target_type = "ip"
 }
 
-# Redirect traffic from the Network Load Balancer to the target group
+# Redirect traffic from the Load Balancer to the target group
 resource "aws_lb_listener" "listener" {
-  load_balancer_arn = aws_lb.nlb.arn
+  load_balancer_arn = aws_lb.lb.arn
   port              = var.container_port
   protocol          = "TCP"
 
