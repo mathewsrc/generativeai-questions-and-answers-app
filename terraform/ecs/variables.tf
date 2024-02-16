@@ -19,7 +19,7 @@ variable "ecs_task_family_name" {
   default     = "bedrock-qa-rag-task-tf"
 }
 
-variable "nlb_target_group_arn" {
+variable "lb_target_group_arn" {
   description = "The arn of target group"
 }
 
@@ -86,4 +86,9 @@ variable "ecs_execution_role_name" {
 variable "ecs_task_role_name" {
   description = "The name of ECS task role"
   default     = "bedrock-qa-rag-ecs-task-role-tf"
+}
+
+variable "secrets_manager_arns" {
+  description = "The arn of secrets manager"
+  type        = list(string)
 }
