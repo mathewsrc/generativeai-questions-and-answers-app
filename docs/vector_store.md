@@ -3,6 +3,14 @@
 This project utilizes a Lambda Function with S3 as a trigger to generate a vector store within a 
 Qdrant cluster. The documents are located in the `documents/` directory.
 
+<p align="center">
+<img src="https://github.com/mathewsrc/GenerativeAI-Questions-and-Answers-app-with-Bedrock-Langchain-and-FastAPI/assets/94936606/2bbfd86d-1aa7-4d8d-b5d2-d2409bf59604" width=80%>
+<p/>
+	
+## Permissions required
+
+You can find the permissions required to create the following resources in the `iam_user_policies.md` document
+in this directory.
 
 ## Docker Image
 
