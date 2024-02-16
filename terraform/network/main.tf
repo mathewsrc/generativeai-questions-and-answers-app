@@ -69,8 +69,8 @@ resource "aws_security_group" "lb" {
 
   # This ingress rule allows incoming HTTP traffic.
   ingress {
-    from_port   = 80  # Allow port 80 (HTTP)
-    to_port     = 80  # Allow port 80 (HTTP)
+    from_port   = 80 # Allow port 80 (HTTP)
+    to_port     = 80 # Allow port 80 (HTTP)
     protocol    = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
   }
@@ -106,6 +106,8 @@ resource "aws_security_group" "ecs_tasks" {
 
   # Allows incoming TCP traffic on port 443 from the IP addresses in 
   # the CIDR block specified by var.# aws_vpc_cidr_block.
+  # The security group attached to the VPC endpoint must allow incoming 
+  # connections on TCP port 443 from the private subnet of the VPC.
   ingress {
     protocol    = "tcp"
     from_port   = 443 # Allow port 443 (HTTPS)
