@@ -15,6 +15,11 @@ data "aws_iam_policy_document" "ecs_task_policy" {
     actions   = ["s3:GetObject"]
     resources = ["arn:aws:s3:::bedrock-qa-bucket-tf/*"]
   }
+  statement {
+    sid       = 4
+    actions   = ["secretsmanager:GetSecretValue"]
+    resources = var.secrets_manager_arns
+  }
 }
 
 # IAM policy for ECS task role
