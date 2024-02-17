@@ -18,8 +18,7 @@ lint:
 
 test:
 	@echo "Running tests"
-	chmod +x ./test.sh
-	./test.sh
+	poetry run python -m pytest -vv tests/*.py --cov=tests
 
 run-app:
 	@echo "Running local app with uvicorn"
