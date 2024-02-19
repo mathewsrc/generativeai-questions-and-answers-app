@@ -8,7 +8,7 @@ Figure 1. Elastic Container Service Network Architecture (some features were omi
 
 ## AWS VPC
 
-```json
+```terraform
 variable "aws_vpc_cidr_block" {
   type        = string
   default     = "10.0.0.0/16"
@@ -40,7 +40,7 @@ increases the redundancy and fault tolerance.
 AWS reserves five IP addresses in each subnet for routing, Domain Name System (DNS), and network management. 
 The remaining IP addresses are diveded by the four subnets.
 
-```json
+```terraform
 # Create public subnets
 resource "aws_subnet" "public_subnets" {
   count                   = length(var.aws_public_subnet_cidr_blocks)
@@ -52,7 +52,7 @@ resource "aws_subnet" "public_subnets" {
 }
 ```
 
-```json
+```terraform
 # Create private subnets
 resource "aws_subnet" "private_subnets" {
   count             = length(var.aws_private_subnet_cidr_blocks)
@@ -79,7 +79,7 @@ is directed. The route table allow traffic between all subnets to the VPC.
 The security groups controls the imbound and outbound traffic from Load Balancer and
 ECS tasks. 
 
-```json
+```terraform
 # Create a security group for the load balancer
 resource "aws_security_group" "lb" {
   vpc_id = aws_vpc.main.id  
@@ -104,7 +104,7 @@ resource "aws_security_group" "lb" {
 }
 ```
 
-```json
+```terraform
 # Create a security group for the ECS tasks
 resource "aws_security_group" "ecs_tasks" {
   name   = var.security_group_name_ecs_tasks
@@ -168,7 +168,7 @@ The ECR Docker endpoint permits ECS to pull Docker images within the VPC without
 the public internet. This endpoint's network interfaces is created in the private subnets and 
 the security group rules are the same as the ECS tasks. More information: https://docs.aws.amazon.com/AmazonECR/latest/userguide/vpc-endpoints.html
 
-```json
+```terraform
 resource "aws_vpc_endpoint" "ecr_dkr" {
   vpc_id              = aws_vpc.main.id
   service_name        = "com.amazonaws.${var.region}.ecr.dkr"
@@ -188,7 +188,7 @@ the VPC without needing to traverse the public internet. This endpoint's network
 interfaces is created in the private subnets and the security group rules are the same 
 as the ECS tasks.
 
-```json
+```terraform
 # Create a VPC Endpoint for ECR API
 resource "aws_vpc_endpoint" "ecr_api" {
   vpc_id              = aws_vpc.main.id
@@ -207,7 +207,7 @@ resource "aws_vpc_endpoint" "ecr_api" {
 
 The  Secrests Manager Endpoint allow ECS to get secrets without leave the Amazon network
 
-```json
+```terraform
 # Create a VPC Endpoint for Secrests Manager
 resource "aws_vpc_endpoint" "secretsmanager" {
   vpc_id              = aws_vpc.main.id
@@ -230,7 +230,7 @@ resource "aws_vpc_endpoint" "secretsmanager" {
 The Cloudwatch endpoint permit to send logs from resources within your VPC to CloudWatch 
 Logs without needing to traverse the public internet.
 
-```json
+```terraform
 # Create a VPC Endpoint for CloudWatch
 resource "aws_vpc_endpoint" "cloudwatch" {
   vpc_id              = aws_vpc.main.id
@@ -250,7 +250,7 @@ resource "aws_vpc_endpoint" "cloudwatch" {
 The S3 endpoint permit to access S3 from within your VPC without needing to traverse the public internet.
  The gateway endpoint is required because Amazon ECR uses Amazon S3 to store image layers. 
 
-```json
+```terraform
 # Create a VPC Endpoint for S3
 resource "aws_vpc_endpoint" "s3" {
   vpc_id            = aws_vpc.main.id
