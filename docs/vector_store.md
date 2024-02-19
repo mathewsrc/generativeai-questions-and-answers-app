@@ -127,7 +127,7 @@ Amazon `amazon.titan-embed-text-v1` model for embedding documents.
 
 **Terraform Policy Document**
 
-```json
+```terraform
 data "aws_iam_policy_document" "lambda_policy" {
   statement {
     effect    = "Allow"
