@@ -1,5 +1,5 @@
 import pytest
-from src.cli.utils import get_embeddings, Embedding, Embeddings
+from terraform.lambda_functions.src.utils import get_embeddings, Embedding, Embeddings
 from langchain_community.embeddings import BedrockEmbeddings
 
 def test_embedding_invalid():
@@ -13,7 +13,7 @@ def test_embedding_valid():
 
 def test_get_embeddings_bedrock():
     embedding = Embedding(Embeddings.BEDROCK, "amazon.titan-embed-text-v1")
-    result = get_embeddings(embedding)
+    result = get_embeddings(embedding, "us-east-1")
     assert isinstance(result, BedrockEmbeddings)
     assert result.model_id == "amazon.titan-embed-text-v1"
 
