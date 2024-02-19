@@ -20,21 +20,21 @@ resource "aws_api_gateway_rest_api" "api" {
 }
 
 # Resource for GET /
-resource "aws_api_gateway_resource" "root_resource" {
-  rest_api_id = aws_api_gateway_rest_api.api.id
-  parent_id   = aws_api_gateway_rest_api.api.root_resource_id
-  path_part   = "{proxy+}"
-}
+# resource "aws_api_gateway_resource" "root_resource" {
+#   rest_api_id = aws_api_gateway_rest_api.api.id
+#   parent_id   = aws_api_gateway_rest_api.api.root_resource_id
+#   path_part   = "{proxy+}"
+# }
 
 # Method for GET /
 resource "aws_api_gateway_method" "root_get" {
   rest_api_id   = aws_api_gateway_rest_api.api.id
-  resource_id   = aws_api_gateway_resource.root_resource.id
+  resource_id   = aws_api_gateway_rest_api.api.root_resource_id
   http_method   = "GET"
   authorization = "NONE"
-  request_parameters = {
-    "method.request.path.proxy" = true
-  }
+  # request_parameters = {
+  #   "method.request.path.proxy" = true
+  # }
 }
 
 # Resource for POST /ask
@@ -50,25 +50,23 @@ resource "aws_api_gateway_method" "ask_post" {
   resource_id   = aws_api_gateway_resource.ask_resource.id
   http_method   = "POST"
   authorization = "NONE"
-  request_parameters = {
-    "method.request.path.proxy" = true
-  }
 }
 
 # Integration for GET /
 resource "aws_api_gateway_integration" "root_get_integration" {
   rest_api_id = aws_api_gateway_rest_api.api.id
-  resource_id = aws_api_gateway_resource.root_resource.id
+  #resource_id = aws_api_gateway_resource.root_resource.id
+  resource_id = aws_api_gateway_rest_api.api.root_resource_id
   http_method = aws_api_gateway_method.root_get.http_method
 
   type                    = "HTTP_PROXY"
   integration_http_method = "GET"
-  uri                     = "http://${var.lb_dns_name}:${var.container_port}/{proxy}"
+  uri                     = "http://${var.lb_dns_name}/"
   connection_type         = "VPC_LINK"
   connection_id           = aws_api_gateway_vpc_link.vpc_link.id
-  request_parameters = {
-    "integration.request.path.proxy" = "method.request.path.proxy"
-  }
+  # request_parameters = {
+  #   "integration.request.path.proxy" = "method.request.path.proxy"
+  # }
 }
 
 # Integration for POST /ask
@@ -80,7 +78,7 @@ resource "aws_api_gateway_integration" "ask_post_integration" {
 
   type                    = "HTTP_PROXY"
   integration_http_method = "POST"
-  uri                     = "http://${var.lb_dns_name}:${var.container_port}/ask"
+  uri                     = "http://${var.lb_dns_name}/ask"
   connection_type         = "VPC_LINK"
   connection_id           = aws_api_gateway_vpc_link.vpc_link.id
 }
