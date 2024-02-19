@@ -7,11 +7,6 @@ from langchain.prompts import PromptTemplate
 from langchain.chains import RetrievalQA
 import os
 from dotenv import load_dotenv
-import sys
-
-module_path = ".."
-sys.path.append(os.path.abspath(module_path))
-from global_variables import AWS_REGION, COLLECTION_NAME
 from utils import (
 	get_embeddings,
 	get_client,
@@ -26,6 +21,8 @@ load_dotenv()
 
 QDRANT_URL = os.environ.get("QDRANT_URL")
 QDRANT_API_KEY = os.environ.get("QDRANT_API_KEY")
+AWS_REGION = os.environ.get("AWS_DEFAULT_REGION")
+COLLECTION_NAME = os.environ.get("COLLECTION_NAME")
 
 boto_session = boto3.Session(region_name=AWS_REGION)
 
