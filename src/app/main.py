@@ -19,7 +19,6 @@ logger.setLevel(logging.INFO)
 COLLECTION_NAME = "cnu"  # replace with your collection name
 BEDROCK_MODEL_NAME = "anthropic.claude-v2"
 BEDROCK_EMBEDDINGS_MODEL_NAME = "amazon.titan-embed-text-v1"
-AWS_REGION = "us-east-1"
 
 app = FastAPI()
 
@@ -74,7 +73,7 @@ async def question(body: Body):
 		qdrant_url = os.environ.get("QDRANT_URL")
 		qdrant_api_key = os.environ.get("QDRANT_API_KEY")
   
-		bedrock_runtime = boto3.client("bedrock-runtime", region_name=AWS_REGION)
+		bedrock_runtime = boto3.client("bedrock-runtime", region_name=os.environ.get("AWS_DEFAULT_REGION"))
 
 		if qdrant_url is None:
 			qdrant_url = get_secret("prod/qdrant_url")
