@@ -1,5 +1,8 @@
 FROM python:3.12-slim-bullseye
 
+# Set the environment variables
+ENV AWS_DEFAULT_REGION=us-east-1
+
 # Install curl and curl the poetry installer
 RUN apt-get update && \
   DEBIAN_FRONTEND=noninteractive && \
