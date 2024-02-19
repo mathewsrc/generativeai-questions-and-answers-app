@@ -109,26 +109,26 @@ resource "aws_api_gateway_stage" "api_stage" {
   }
 }
 
-# resource "aws_api_gateway_method_settings" "all" {
-#   rest_api_id = aws_api_gateway_rest_api.api.id
-#   stage_name  = aws_api_gateway_stage.api_stage.stage_name
-#   method_path = "*/*" # This is the method path for all methods in the API
+resource "aws_api_gateway_method_settings" "all" {
+  rest_api_id = aws_api_gateway_rest_api.api.id
+  stage_name  = aws_api_gateway_stage.api_stage.stage_name
+  method_path = "*/*" # This is the method path for all methods in the API
 
-#   settings {
-#     metrics_enabled = true
-#     logging_level   = "INFO"
-#   }
-# }
+  settings {
+    metrics_enabled = true
+    logging_level   = "INFO"
+  }
+}
 
-# resource "aws_cloudwatch_log_group" "log_group" {
-#   name              = "API-Gateway-Execution-Logs_${aws_api_gateway_rest_api.api.id}/${var.api_stage_name}"
-#   retention_in_days = var.logs_retantion_in_days
+resource "aws_cloudwatch_log_group" "log_group" {
+  name              = "API-Gateway-Execution-Logs_${aws_api_gateway_rest_api.api.id}/${var.api_stage_name}"
+  retention_in_days = var.logs_retantion_in_days
 
-#   tags = {
-#     Name        = "API-Gateway-Execution-Logs_${aws_api_gateway_rest_api.api.id}/${var.api_stage_name}"
-#     Environment = var.environment
-#   }
-# }
+  tags = {
+    Name        = "API-Gateway-Execution-Logs_${aws_api_gateway_rest_api.api.id}/${var.api_stage_name}"
+    Environment = var.environment
+  }
+}
 
 # Create a API Gateway Usage Plan
 resource "aws_api_gateway_usage_plan" "usage_plan" {
