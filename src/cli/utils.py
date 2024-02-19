@@ -4,7 +4,6 @@ from langchain.text_splitter import RecursiveCharacterTextSplitter
 import click
 from langchain_community.embeddings.huggingface import HuggingFaceEmbeddings
 from langchain_community.embeddings import BedrockEmbeddings
-from global_variables import AWS_REGION
 import boto3
 from dataclasses import dataclass
 from dotenv import load_dotenv
@@ -15,6 +14,7 @@ load_dotenv()
 
 QDRANT_URL = os.environ.get("QDRANT_URL")
 QDRANT_API_KEY = os.environ.get("QDRANT_API_KEY")
+AWS_REGION = os.environ.get("AWS_DEFAULT_REGION")
 
 boto_session = boto3.Session(region_name=AWS_REGION)
 credentials = boto_session.get_credentials()
@@ -77,7 +77,7 @@ def get_embeddings(embedding: Embedding):
 	elif embedding.embeddings == Embeddings.BEDROCK:
 		return get_bedrock_embeddings(embedding.model_name)
 	else:
-		raise Exception("Invalid embedding type")
+		raise ValueError("Invalid embedding type")
 
 
 def get_documents_from_pdf(collection_name: str) -> list:
