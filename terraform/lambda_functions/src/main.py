@@ -1,5 +1,5 @@
 import json
-from create_vector_store import create_vectostore
+from create_vector_store import create_vectorstore
 import os
 from dotenv import load_dotenv
 
@@ -18,7 +18,7 @@ def lambda_handler(event, context):
 	bucket_name = event["Records"][0]["s3"]["bucket"]["name"]
 	object_key = event["Records"][0]["s3"]["object"]["key"]
 
-	create_vectostore(
+	create_vectorstore(
 		url=QDRANT_URL,
 		api_key=QDRANT_API_KEY,
 		bucket_name=bucket_name,
