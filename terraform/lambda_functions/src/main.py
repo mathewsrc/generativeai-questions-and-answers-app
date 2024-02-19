@@ -2,7 +2,6 @@ import json
 from create_vector_store import create_vectostore
 import os
 from dotenv import load_dotenv
-import os
 
 load_dotenv()
 
