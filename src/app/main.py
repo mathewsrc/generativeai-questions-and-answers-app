@@ -15,19 +15,15 @@ from langchain.chains import RetrievalQA
 COLLECTION_NAME = "cnu"  # replace with your collection name
 BEDROCK_MODEL_NAME = "anthropic.claude-v2"
 BEDROCK_EMBEDDINGS_MODEL_NAME = "amazon.titan-embed-text-v1"
+AWS_REGION = "us-east-1"
 
 app = FastAPI()
-
 
 class Body(BaseModel):
 	text: str
 	temperature: float = 0.5
 
-
 load_dotenv()
-
-AWS_REGION = "us-east-1"
-session = boto3.Session(region_name=AWS_REGION)
 
 prompt_template = """
                 Use the following pieces of context to provide a concise answer to the question at the end. 
@@ -40,8 +36,8 @@ prompt_template = """
                 Answer:
             """
 
-
 def get_secret(secret_name):
+	session = boto3.Session(region_name=AWS_REGION)
 	client = session.client(service_name="secretsmanager", region_name=AWS_REGION)
 	try:
 		get_secret_value_response = client.get_secret_value(SecretId=secret_name)
