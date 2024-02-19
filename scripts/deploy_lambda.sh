@@ -1,8 +1,6 @@
 #!/bin/bash
 set -e # Exit if any command fails
 
-pwd
-
 # This script is used to deploy the application
 
 # Get region and account id using aws cli
