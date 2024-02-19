@@ -12,19 +12,13 @@ from utils import (
 	Embeddings,
 )
 
-huggingface_embeddings = [
-	"BAAI/bge-small-en",
-	"sentence-transformers/all-MiniLM-L6-v2",
-	"sentence-transformers/all-mpnet-base-v2",
-	"sentence-transformers/all-distilroberta-v1",
-]
-
 aws_embeddings = ["amazon.titan-embed-text-v1"]
 
 s3 = boto3.client("s3")
 
 logger = logging.getLogger()
 logger.setLevel(logging.INFO)
+
 
 def info(url: str, api_key: str, collection_name: str) -> None:
 	client = get_client(url, api_key)
@@ -35,14 +29,13 @@ def info(url: str, api_key: str, collection_name: str) -> None:
 def get_documents_from_pdf(
 	bucket_name: str, key: str, collection_name: str, region_name: str
 ) -> list:
-	
 	s3_object_name = key.split("/")[-1]
 
 	logger.info(f"Downloading file from s3://{bucket_name}/{key}")
 	logger.info(f"File name: {s3_object_name}")
- 
+
 	s3.download_file(bucket_name, key, f"/tmp/{s3_object_name}")
- 
+
 	loader = PyPDFLoader(f"/tmp/{s3_object_name}")
 	documents = loader.load()
 
@@ -73,19 +66,8 @@ def create_vectorstore(
 		region_name=region_name,
 	)
 
-	if embedding_model in huggingface_embeddings:
-		embedding = Embeddings.HUGGINGFACE
-		model_name = embedding_model
-
-	elif embedding_model in aws_embeddings:
-		embedding = Embeddings.BEDROCK
-		model_name = embedding_model
-
-	else:
-		raise ValueError("Invalid embedding model name")
-
 	embeddings = get_embeddings(
-		embedding=Embedding(embeddings=embedding, model_name=model_name),
+		embedding=Embedding(embeddings=Embeddings.BEDROCK, model_name=embedding_model),
 		region_name=region_name,
 	)
 	logger.info("Creating collection...")
@@ -101,4 +83,3 @@ def create_vectorstore(
 	)
 	vectorstore.client.close()
 	info(url, api_key, collection_name)
-	
