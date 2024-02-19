@@ -10,7 +10,7 @@ Please substitute the AWS region <YOUR-AWS-REGION> with the region applicable to
 
 Bedrock
 
-```json
+```terraform
 {
     "Version": "2012-10-17",
     "Statement": [
@@ -30,7 +30,7 @@ Bedrock
 
 ECR (Elastic Container Repository)
 
-```json
+```terraform
 {
     "Version": "2012-10-17",
     "Statement": [
@@ -80,7 +80,7 @@ ECR (Elastic Container Repository)
 
 ECS (Elastic Container Service)
 
-```json
+```terraform
 {
     "Version": "2012-10-17",
     "Statement": [
@@ -223,7 +223,7 @@ ECS (Elastic Container Service)
 
 IAM 
 
-```json
+```terraform
 {
     "Version": "2012-10-17",
     "Statement": [
@@ -281,7 +281,7 @@ IAM
 
 S3 policy for Terraform state file
 
-```json
+```terraform
 {
     "Version": "2012-10-17",
     "Statement": [
@@ -305,7 +305,7 @@ S3 policy for Terraform state file
 
 S3 policy for documents
 
-```json
+```terraform
 {
     "Version": "2012-10-17",
     "Statement": [
@@ -330,7 +330,7 @@ S3 policy for documents
 ```
 
 API Gateway
-```json
+```terraform
 {
     "Version": "2012-10-17",
     "Statement": [
@@ -427,7 +427,7 @@ API Gateway
 
 
 Open Search Serveless
-```json
+```terraform
 {
     "Version": "2012-10-17",
     "Statement": [
