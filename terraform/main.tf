@@ -69,7 +69,7 @@ module "ecs" {
   lb_target_group_arn         = module.load_balancer.lb_target_group_arn
   container_port              = var.container_port
   ecs_tasks_security_group_id = [module.network.ecs_tasks_security_group_id]
-  secrets_manager_arns         = module.secrets_manager.secrets_manager_arns_ecs
+  secrets_manager_arns        = module.secrets_manager.secrets_manager_arns_ecs
 }
 
 module "api_gateway" {
@@ -92,8 +92,8 @@ module "s3" {
   wait_for_lambda_deployment = module.lambda.wait_for_lambda_deployment
 }
 
-module "lambda" {
-  source           = "./lambda"
+module "lambda_functions" {
+  source           = "./lambda_functions"
   application_name = var.name
   environment      = var.environment
   s3_bucket_id     = module.s3.s3_bucket_id
