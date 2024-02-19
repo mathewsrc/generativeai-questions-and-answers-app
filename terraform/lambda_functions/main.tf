@@ -12,7 +12,7 @@
 # data "archive_file" "lambda" {
 #   type        = "zip"
 #   source_dir  = "${path.module}/src"
-#   output_path = "${path.module}/../../lambda/lambda_payload.zip"
+#   output_path = "${path.module}/../../files/lambda_payload.zip"
 #   depends_on  = [null_resource.package_lambda]
 # }
 
@@ -20,7 +20,7 @@
 # data "archive_file" "layer" {
 #   type        = "zip"
 #   source_dir  = "${path.module}/temp"
-#   output_path = "${path.module}/../../lambda/lambda_layer.zip"
+#   output_path = "${path.module}/../../files/lambda_layer.zip"
 
 #   depends_on = [null_resource.package_lambda]
 # }
@@ -64,11 +64,11 @@ data "aws_caller_identity" "current" {}
 
 resource "null_resource" "package_lambda" {
   triggers = {
-    files = "${filebase64sha256("${path.module}/docker/Dockerfile")}"
-    files = "${filebase64sha256("${path.module}/src/main.py")}"
-    files = "${filebase64sha256("${path.module}/src/create_vector_store.py")}"
-    files = "${filebase64sha256("${path.module}/src/utils.py")}"
-    files = "${filebase64sha256("${path.module}/../../scripts/deploy_lambda.sh")}"
+    dockerfile_hash             = "${filebase64sha256("${path.module}/docker/Dockerfile")}"
+    main_py_hash                = "${filebase64sha256("${path.module}/src/main.py")}"
+    create_vector_store_py_hash = "${filebase64sha256("${path.module}/src/create_vector_store.py")}"
+    utils_py_hash               = "${filebase64sha256("${path.module}/src/utils.py")}"
+    deploy_lambda_sh_hash       = "${filebase64sha256("${path.module}/../../scripts/deploy_lambda.sh")}"
   }
   provisioner "local-exec" {
     command     = "chmod +x ${path.module}/../../scripts/deploy_lambda.sh; ${path.module}/../../scripts/deploy_lambda.sh"
