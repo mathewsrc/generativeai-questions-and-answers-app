@@ -81,12 +81,10 @@ async def question(body: Body):
 		if qdrant_api_key is None:
 			qdrant_api_key = get_secret("prod/qdrant_api_key")
 		
-		logger.info(f"Qdrant URL and API Key retrieved successfully: {qdrant_url} / {qdrant_api_key}")
-
 		client = QdrantClient(url=qdrant_url, api_key=qdrant_api_key)
+		
 		logger.info("Qdrant client created successfully")
   
-		logger.info("Getting embeddings from Bedrock")
 		embeddings = get_bedrock_embeddings(BEDROCK_EMBEDDINGS_MODEL_NAME, bedrock_runtime)
 
 		logger.info("Get Collection from Qdrant")
@@ -111,7 +109,6 @@ async def question(body: Body):
 			model_id=BEDROCK_MODEL_NAME, client=bedrock_runtime, model_kwargs=inference_modifier
 		)
 
-		logger.info("Creating RetrievalQA object")
 		qa = RetrievalQA.from_chain_type(
 			llm=llm,
 			chain_type="stuff",
