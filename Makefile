@@ -1,19 +1,6 @@
 setup:
 	@echo "Setting up virtual environment"
 	poetry shell
-	
-install-tools:
-    @echo "Installing tools"
-    @echo "Installing tools"
-    chmod +x scripts/install_poetry.sh
-    chmod +x scripts/install_awscli.sh
-    chmod +x scripts/install_terraform.sh
-    @echo "Checking if Poetry is installed..."
-    @if ! command -v poetry &> /dev/null; then scripts/install_poetry.sh; fi
-    @echo "Checking if AWS CLI is installed..."
-    @if ! command -v aws &> /dev/null; then scripts/install_awscli.sh; fi
-    @echo "Checking if Terraform is installed..."
-    @if ! command -v terraform &> /dev/null; then scripts/install_terraform.sh; fi
 
 install:
 	@echo "Installing dependencies"
@@ -163,5 +150,18 @@ zip-lambda:
 lambda-info:
 	@echo "Info Lambda functions"
 	aws lambda list-functions --max-items 10
+
+install-tools:
+	@echo "Installing tools"
+	@echo "Installing tools"
+	chmod +x scripts/install_poetry.sh
+	chmod +x scripts/install_awscli.sh
+	chmod +x scripts/install_terraform.sh
+	@echo "Checking if Poetry is installed..."
+	@if ! command -v poetry &> /dev/null; then scripts/install_poetry.sh; fi
+	@echo "Checking if AWS CLI is installed..."
+	@if ! command -v aws &> /dev/null; then scripts/install_awscli.sh; fi
+	@echo "Checking if Terraform is installed..."
+	@if ! command -v terraform &> /dev/null; then scripts/install_terraform.sh; fi
 
 all: install format lint
