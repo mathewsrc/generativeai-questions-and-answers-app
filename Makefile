@@ -26,7 +26,7 @@ run-app:
 
 ask:
 	@echo "Running local app with ask"
-	curl -X POST http://localhost:8000/ask -H "Content-Type: application/json" -d '{"question":"What is the test day?"}'
+	curl -X POST http://localhost:8000/ask -H "Content-Type: application/json" -d '{"text":"What is Concurso Unificado?"}'
 
 docker-inspect:
 	@echo "Inspecting Docker container"
