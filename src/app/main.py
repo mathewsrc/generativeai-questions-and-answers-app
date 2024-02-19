@@ -19,9 +19,11 @@ AWS_REGION = "us-east-1"
 
 app = FastAPI()
 
+
 class Body(BaseModel):
 	text: str
 	temperature: float = 0.5
+
 
 load_dotenv()
 
@@ -35,6 +37,7 @@ prompt_template = """
 
                 Answer:
             """
+
 
 def get_secret(secret_name):
 	session = boto3.Session(region_name=AWS_REGION)
