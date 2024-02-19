@@ -11,6 +11,10 @@ from langchain_community.vectorstores.qdrant import Qdrant
 from langchain_community.embeddings.bedrock import BedrockEmbeddings
 from langchain.prompts import PromptTemplate
 from langchain.chains import RetrievalQA
+import logging
+
+logger = logging.getLogger()
+logger.setLevel(logging.INFO)
 
 COLLECTION_NAME = "cnu"  # replace with your collection name
 BEDROCK_MODEL_NAME = "anthropic.claude-v2"
@@ -19,13 +23,13 @@ AWS_REGION = "us-east-1"
 
 app = FastAPI()
 
-
 class Body(BaseModel):
 	text: str
 	temperature: float = 0.5
 
-
 load_dotenv()
+
+session = boto3.Session(region_name='us-east-1')
 
 prompt_template = """
                 Use the following pieces of context to provide a concise answer to the question at the end. 
@@ -37,11 +41,10 @@ prompt_template = """
 
                 Answer:
             """
-
-
+        
 def get_secret(secret_name):
-	session = boto3.Session(region_name=AWS_REGION)
-	client = session.client(service_name="secretsmanager", region_name=AWS_REGION)
+
+	client = session.client(service_name="secretsmanager", region_name='us-east-1')
 	try:
 		get_secret_value_response = client.get_secret_value(SecretId=secret_name)
 	except ClientError as e:
@@ -70,7 +73,7 @@ async def question(body: Body):
 	try:
 		qdrant_url = os.environ.get("QDRANT_URL")
 		qdrant_api_key = os.environ.get("QDRANT_API_KEY")
-
+  
 		bedrock_runtime = boto3.client("bedrock-runtime", region_name=AWS_REGION)
 
 		if qdrant_url is None:
@@ -78,10 +81,16 @@ async def question(body: Body):
 
 		if qdrant_api_key is None:
 			qdrant_api_key = get_secret("prod/qdrant_api_key")
+		
+		logger.info(f"Qdrant URL and API Key retrieved successfully: {qdrant_url} / {qdrant_api_key}")
 
 		client = QdrantClient(url=qdrant_url, api_key=qdrant_api_key)
+		logger.info("Qdrant client created successfully")
+  
+		logger.info("Getting embeddings from Bedrock")
 		embeddings = get_bedrock_embeddings(BEDROCK_EMBEDDINGS_MODEL_NAME, bedrock_runtime)
 
+		logger.info("Get Collection from Qdrant")
 		qdrant = Qdrant(
 			client=client,
 			embeddings=embeddings,
@@ -103,6 +112,7 @@ async def question(body: Body):
 			model_id=BEDROCK_MODEL_NAME, client=bedrock_runtime, model_kwargs=inference_modifier
 		)
 
+		logger.info("Creating RetrievalQA object")
 		qa = RetrievalQA.from_chain_type(
 			llm=llm,
 			chain_type="stuff",
@@ -111,6 +121,7 @@ async def question(body: Body):
 			chain_type_kwargs={"prompt": prompt, "verbose": False},
 		)
 
+		logger.info("Invoking the model")
 		result = qa.invoke(input={"query": body.text})
 		answer = result["result"]
 	except Exception as e:
