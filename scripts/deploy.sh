@@ -2,6 +2,8 @@
 
 # This script is used to deploy the application
 
+set -e # Exit if any command fails
+
 # Get region and account id using aws cli
 AWS_REGION=$(aws configure get region)
 AWS_ACCOUNT_ID=$(aws sts get-caller-identity --query Account --output text)
