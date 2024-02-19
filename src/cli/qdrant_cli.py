@@ -3,12 +3,6 @@ import click
 import boto3
 import os
 from dotenv import load_dotenv
-import sys
-
-module_path = ".."
-sys.path.append(os.path.abspath(module_path))
-
-from global_variables import COLLECTION_NAME, AWS_REGION, AWS_S3_BUCKET, DOCUMENTS_PATH
 from utils import (
 	get_embeddings,
 	get_documents_from_pdf,
@@ -23,6 +17,10 @@ load_dotenv()
 
 QDRANT_URL = os.environ.get("QDRANT_URL")
 QDRANT_API_KEY = os.environ.get("QDRANT_API_KEY")
+AWS_REGION = os.environ.get("AWS_DEFAULT_REGION")
+AWS_S3_BUCKET = os.environ.get("AWS_S3_BUCKET")
+DOCUMENTS_PATH = os.environ.get("DOCUMENTS_PATH")
+COLLECTION_NAME = os.environ.get("COLLECTION_NAME")
 
 boto_session = boto3.Session(region_name=AWS_REGION)
 
