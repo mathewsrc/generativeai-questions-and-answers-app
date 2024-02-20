@@ -143,6 +143,22 @@ resource "aws_security_group" "ecs_tasks" {
     cidr_blocks = [var.aws_vpc_cidr_block]
   }
 
+  # Allows outgoing TCP traffic on port 6333 to the Qdrant service
+  egress {
+    from_port   = 6333
+    to_port     = 6333
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  # Allows outgoing TCP traffic on port 6334 to the Qdrant service
+  egress {
+    from_port   = 6334
+    to_port     = 6334
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
   tags = {
     Environment = var.environment
     Name        = var.security_group_name_ecs_tasks
