@@ -41,13 +41,14 @@ module "network" {
 }
 
 module "load_balancer" {
-  source           = "./load_balancer"
-  region           = data.aws_region.current.name
-  application_name = var.name
-  environment      = var.environment
-  public_subnets   = module.network.public_subnets
-  vpc_id           = module.network.vpc_id
-  container_port   = var.container_port
+  source             = "./load_balancer"
+  region             = data.aws_region.current.name
+  application_name   = var.name
+  environment        = var.environment
+  public_subnets     = module.network.public_subnets
+  vpc_id             = module.network.vpc_id
+  container_port     = var.container_port
+  security_group_ids = [module.network.load_balancer_security_group_ids]
 }
 
 module "ecr" {
@@ -68,7 +69,7 @@ module "ecs" {
   private_subnets             = module.network.private_subnets
   lb_target_group_arn         = module.load_balancer.lb_target_group_arn
   container_port              = var.container_port
-  ecs_tasks_security_group_id = [module.network.ecs_tasks_security_group_id]
+  ecs_tasks_security_group_id = [module.network.ecs_tasks_security_group_ids]
   secrets_manager_arns        = module.secrets_manager.secrets_manager_arns_ecs
 }
 
@@ -81,7 +82,7 @@ module "api_gateway" {
   lb_arn             = module.load_balancer.lb_arn
   container_port     = var.container_port
   subnet_ids         = module.network.private_subnets
-  security_group_ids = [module.network.load_balancer_security_group_id]
+  security_group_ids = [module.network.load_balancer_security_group_ids]
   lb_listener_arn    = module.load_balancer.lb_listener_arn
 }
 
