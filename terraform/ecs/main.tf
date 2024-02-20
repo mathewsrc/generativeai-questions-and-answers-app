@@ -15,11 +15,18 @@ resource "aws_ecs_cluster" "ecs_cluster" {
   }
 }
 
-# Get the latest git commit hash (feel free to add more variables)
+
+# Get the Qdrant URL, API key and Git latest commit hash from the environment
 data "external" "envs" {
-  program = ["sh", "-c", <<-EOSCRIPT
-    jq -n '{ "sha": $SHA }' \
-      --arg SHA "$(git rev-parse HEAD)" \
+  program = ["bash", "-c", <<-EOSCRIPT
+    : "$${QDRANT_URL:?Missing environment variable QDRANT_URL}"
+    : "$${QDRANT_API_KEY:?Missing environment variable QDRANT_API_KEY}"
+    jq --arg QDRANT_URL "$(printenv QDRANT_URL)" \
+       --arg QDRANT_API_KEY "$(printenv QDRANT_API_KEY)" \
+       --arg SHA "$(git rev-parse HEAD)" \
+       -n '{ "qdrant_url": $QDRANT_URL, 
+             "qdrant_api_key": $QDRANT_API_KEY,
+             "sha": $SHA}'
   EOSCRIPT
   ]
 }
@@ -72,9 +79,9 @@ resource "aws_ecs_service" "ecs_service" {
   }
 
   network_configuration {
-    subnets = var.private_subnets # Instance under this subnet can’t be accessed from the Internet directly
-    #assign_public_ip = true
-    security_groups = var.ecs_tasks_security_group_id
+    subnets          = var.private_subnets # Instance under this subnet can’t be accessed from the Internet directly
+    assign_public_ip = true
+    security_groups  = var.ecs_tasks_security_group_id
   }
 
   tags = {
