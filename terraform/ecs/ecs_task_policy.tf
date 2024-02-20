@@ -43,7 +43,7 @@ resource "aws_iam_role" "ecs_task_role" {
         },
         Condition = {
           "ArnLike" : {
-            "aws:SourceArn" : "arn:aws:ecs:us-east-1:${data.aws_caller_identity.current.account_id}:*"
+            "aws:SourceArn" : "arn:aws:ecs:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:*"
           }
         }
       },
