@@ -13,7 +13,7 @@ resource "aws_ecr_repository" "ecr_repo" {
     scan_on_push = true
   }
 
-  force_delete = true
+  force_delete = false
 
   tags = {
     Environment = var.environment
