@@ -24,3 +24,28 @@ resource "aws_secretsmanager_secret" "qdrant_api_key" {
     Application = var.application_name
   }
 }
+
+# Get Enviroment variable from the local machine
+data "external" "envs" {
+  depends_on = [aws_secretsmanager_secret.qdrant_api_key, aws_secretsmanager_secret.qdrant_url]
+  program = ["bash", "-c", <<-EOSCRIPT
+    : "$${QDRANT_URL:?Missing environment variable QDRANT_URL}"
+    : "$${QDRANT_API_KEY:?Missing environment variable QDRANT_API_KEY}"
+    jq --arg QDRANT_URL "$(printenv QDRANT_URL)" \
+       --arg QDRANT_API_KEY "$(printenv QDRANT_API_KEY)" \
+       -n '{ "qdrant_url": $QDRANT_URL, 
+             "qdrant_api_key": $QDRANT_API_KEY}'
+  EOSCRIPT
+  ]
+}
+
+resource "null_resource" "upload_secrets" {
+  depends_on = [data.external.envs]
+  provisioner "local-exec" {
+    command     = <<EOF
+      aws secretsmanager put-secret-value --secret-id prod/qdrant_url --secret-string ${data.external.envs.result.qdrant_url}
+      aws secretsmanager put-secret-value --secret-id prod/qdrant_api_key --secret-string ${data.external.envs.result.qdrant_api_key}
+    EOF
+    interpreter = ["bash", "-c"]
+  }
+}
