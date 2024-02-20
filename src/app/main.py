@@ -81,7 +81,11 @@ async def question(body: Body):
 		if qdrant_api_key is None:
 			qdrant_api_key = get_secret("prod/qdrant_api_key")
 		
-		client = QdrantClient(url=qdrant_url, api_key=qdrant_api_key)
+		client = QdrantClient(url=qdrant_url, 
+                        api_key=qdrant_api_key,
+                        port=6333, # Make sure to add the port number to ECS security group
+                        grpc_port=6334 # Make sure to add the port number to ECS security group
+                        )
 		
 		logger.info("Qdrant client created successfully")
   
@@ -120,6 +124,7 @@ async def question(body: Body):
 		logger.info("Invoking the model")
 		result = qa.invoke(input={"query": body.text})
 		answer = result["result"]
+		#answer = "This is a test answer"
 	except Exception as e:
 		raise HTTPException(status_code=500, detail=str(e))
 	return {"answer": answer}
