@@ -39,7 +39,8 @@ aws ecr create-repository \
     --repository-name $AWS_ECR_REPOSITORY_NAME \
     --region $AWS_REGION \
     --image-scanning-configuration scanOnPush=true \
-    --image-tag-mutability MUTABLE
+    --image-tag-mutability MUTABLE \
+    --no-cli-pager
 
 # Tag the Docker image
 echo "Tagging Docker image..."
@@ -49,5 +50,4 @@ docker tag $AWS_ECR_REPOSITORY_NAME:latest $AWS_ECR_REPOSITORY_URL:$TAG
 echo "Pushing Docker image..."
 docker push $AWS_ECR_REPOSITORY_URL:$TAG
 
-echo "export LAMBDA_ECR_REPOSITORY_URL=$AWS_ECR_REPOSITORY_URL:$TAG" >> ~/.bashrc
-source ~/.bashrc
+echo $AWS_ECR_REPOSITORY_URL:$TAG
