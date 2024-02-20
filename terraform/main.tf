@@ -73,13 +73,16 @@ module "ecs" {
 }
 
 module "api_gateway" {
-  source           = "./api_gateway"
-  region           = data.aws_region.current.name
-  application_name = var.name
-  environment      = var.environment
-  lb_dns_name      = module.load_balancer.lb_dns_name
-  lb_arn           = module.load_balancer.lb_arn
-  container_port   = var.container_port
+  source             = "./api_gateway"
+  region             = data.aws_region.current.name
+  application_name   = var.name
+  environment        = var.environment
+  lb_dns_name        = module.load_balancer.lb_dns_name
+  lb_arn             = module.load_balancer.lb_arn
+  container_port     = var.container_port
+  subnet_ids         = module.network.private_subnets
+  security_group_ids = [module.network.load_balancer_security_group_id]
+  lb_listener_arn    = module.load_balancer.lb_listener_arn
 }
 
 module "s3" {
