@@ -6,7 +6,7 @@ variable "vpc_link_name" {
 
 variable "api_name" {
   description = "The name of the API"
-  default     = "bedrock-qa-api"
+  default     = "competition-notices-api"
   type        = string
 }
 
@@ -36,25 +36,25 @@ variable "period" {
 
 variable "quota_limit" {
   description = "Maximum number of requests that can be made in a given time period."
-  default     = 20
+  default     = 100
   type        = number
 }
 
 variable "quota_offset" {
   description = "Number of requests to subtract from the given limit.  "
-  default     = 2
+  default     = 12
   type        = number
 }
 
 variable "burst_limit" {
   description = "The maximum rate limit over a time ranging from one to a few seconds"
-  default     = 5
+  default     = 500 # Default value is 5.000 requests per second
   type        = number
 }
 
 variable "rate_limit" {
   description = "The API request steady-state rate limit."
-  default     = 10
+  default     = 1000 # Default value is 10.000 requests per second
   type        = number
 }
 
@@ -86,4 +86,37 @@ variable "lb_arn" {
 variable "lb_dns_name" {
   type        = string
   description = "The DNS name of the internal NLB"
+}
+
+variable "api_timeout_milliseconds" {
+  description = "The timeout for the API (25000=25s)"
+  default     = 25000
+  type        = number
+}
+
+variable "subnet_ids" {
+  description = "The subnet IDs for the VPC link"
+  type        = list(string)
+}
+
+variable "security_group_ids" {
+  description = "The security group IDs for the VPC link"
+  type        = list(string)
+}
+
+variable "throttling_burst_limit" {
+  description = "The maximum rate limit over a time ranging from one to a few seconds"
+  default     = 500 # Default value is 5.000 requests per second
+  type        = number
+}
+
+variable "throttling_rate_limit" {
+  description = "The API request steady-state rate limit."
+  default     = 1000 # Default value is 10.000 requests per second
+  type        = number
+}
+
+variable "lb_listener_arn" {
+  type        = string
+  description = "The ARN of the load balance listener"
 }
