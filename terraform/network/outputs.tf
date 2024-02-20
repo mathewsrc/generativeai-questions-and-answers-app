@@ -1,8 +1,8 @@
-output "ecs_tasks_security_group_id" {
+output "ecs_tasks_security_group_ids" {
   value = aws_security_group.ecs_tasks.id
 }
 
-output "load_balancer_security_group_id" {
+output "load_balancer_security_group_ids" {
   value = aws_security_group.lb.id
 }
 
