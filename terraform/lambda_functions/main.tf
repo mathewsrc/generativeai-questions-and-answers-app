@@ -62,7 +62,7 @@ data "aws_region" "current" {}
 # Get current AWS account ID
 data "aws_caller_identity" "current" {}
 
-resource "null_resource" "package_lambda" {
+resource "null_resource" "deploy_lambda_container" {
   triggers = {
     dockerfile_hash             = "${filebase64sha256("${path.module}/docker/Dockerfile")}"
     main_py_hash                = "${filebase64sha256("${path.module}/src/main.py")}"
@@ -96,7 +96,7 @@ resource "aws_lambda_function" "func" {
   depends_on = [
     aws_iam_role_policy_attachment.lambda_policy_attachment,
     #aws_lambda_layer_version.layer,
-    null_resource.package_lambda
+    null_resource.deploy_lambda_container
   ]
   role          = aws_iam_role.lambda_role.arn
   image_uri     = "${data.aws_caller_identity.current.account_id}.dkr.ecr.${data.aws_region.current.name}.amazonaws.com/${var.ecr_repository}:${data.external.envs.result.sha}"
