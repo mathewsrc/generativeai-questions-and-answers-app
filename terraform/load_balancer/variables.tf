@@ -36,3 +36,8 @@ variable "nlb_name" {
 variable "application_name" {
   description = "Application name"
 }
+
+variable "security_group_ids" {
+  description = "Security group ids"
+  type        = list(string)
+}
