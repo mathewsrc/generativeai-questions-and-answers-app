@@ -16,5 +16,5 @@ variable "environment" {
 
 variable "ecr_name" {
   description = "The name of ECR repository"
-  default     = "bedrock-qa-rag-ecr-tf"
+  default     = "ecs-repo"
 }
