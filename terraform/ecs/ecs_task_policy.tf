@@ -6,8 +6,9 @@ data "aws_iam_policy_document" "ecs_task_policy" {
     resources = ["*"]
   }
   statement {
-    sid       = 2
-    actions   = ["bedrock:InvokeModel", "bedrock:ListCustomModels", "bedrock:ListFoundationModels"]
+    sid = 2
+    actions = ["bedrock:InvokeModel", "bedrock:ListCustomModels",
+    "bedrock:ListFoundationModels", "bedrock:InvokeModelWithResponseStream"]
     resources = ["arn:aws:bedrock:*::foundation-model/*"]
   }
   statement {
