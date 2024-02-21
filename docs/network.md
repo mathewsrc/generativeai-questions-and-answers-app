@@ -8,6 +8,8 @@ Figure 1. Elastic Container Service Network Architecture (some features were omi
 
 ## AWS VPC
 
+Directory: `terraform/network`
+
 ```terraform
 variable "aws_vpc_cidr_block" {
   type        = string
@@ -32,6 +34,8 @@ A IP range with the CIDR notation /16 create 2^(32-16) = 2^16 = 65,536 possible 
 
 
 ## Subnets
+
+Directory: `terraform/network`
 
 The VPC has two private subnets and two public subnets. Both subnets have a CIDR which must be 
 a subset of the VPC CIDR `10.0.0.0/16`. The subnets configured in two different zones
@@ -65,16 +69,23 @@ resource "aws_subnet" "private_subnets" {
 
 ## Internet gateway
 
+Directory: `terraform/network`
+
+
 The Internet Gateway allows traffic to flow in and out of the VPC to the public internet. 
 In this case, it will allow your ECS service to make outbound connections to Qdrant service 
 hosted on Google Cloud.
 
 ## Route table 
 
+Directory: `terraform/network`
+
 The route table has a set of rules called routes that determine where the network traffic 
 is directed. The route table allow traffic between all subnets to the VPC.
 
 ## Security groups
+
+Directory: `terraform/network`
 
 The security groups controls the imbound and outbound traffic from Load Balancer and
 ECS tasks. 
@@ -164,9 +175,13 @@ resource "aws_security_group" "ecs_tasks" {
 
 VPC Endpoints
 
-The ECR Docker endpoint permits ECS to pull Docker images within the VPC without needing to traverse
-the public internet. This endpoint's network interfaces is created in the private subnets and 
-the security group rules are the same as the ECS tasks. More information: https://docs.aws.amazon.com/AmazonECR/latest/userguide/vpc-endpoints.html
+Directory: `terraform/network`
+
+VPC endpoints permit to access others AWS services from within the VPC without needing to traverse
+the public internet
+
+
+The ECR Docker endpoint permits ECS to pull Docker images. This endpoint's network interfaces is created in the private subnets and the security group rules are the same as the ECS tasks. More information: https://docs.aws.amazon.com/AmazonECR/latest/userguide/vpc-endpoints.html
 
 ```terraform
 resource "aws_vpc_endpoint" "ecr_dkr" {
@@ -183,8 +198,7 @@ resource "aws_vpc_endpoint" "ecr_dkr" {
 }
 ```
 
-The ECR API endpoint permits ECS push and pull Docker images to and from ECR within 
-the VPC without needing to traverse the public internet. This endpoint's network 
+The ECR API endpoint permits ECS push and pull Docker images to and from ECR. This endpoint's network 
 interfaces is created in the private subnets and the security group rules are the same 
 as the ECS tasks.
 
@@ -205,7 +219,7 @@ resource "aws_vpc_endpoint" "ecr_api" {
 }
 ```
 
-The  Secrests Manager Endpoint allow ECS to get secrets without leave the Amazon network
+The  Secrets Manager Endpoint allow ECS to get secrets without leave the Amazon network
 
 ```terraform
 # Create a VPC Endpoint for Secrests Manager
@@ -228,7 +242,6 @@ resource "aws_vpc_endpoint" "secretsmanager" {
 ```
 
 The Cloudwatch endpoint permit to send logs from resources within your VPC to CloudWatch 
-Logs without needing to traverse the public internet.
 
 ```terraform
 # Create a VPC Endpoint for CloudWatch
@@ -248,7 +261,7 @@ resource "aws_vpc_endpoint" "cloudwatch" {
 ```
 
 The S3 endpoint permit to access S3 from within your VPC without needing to traverse the public internet.
- The gateway endpoint is required because Amazon ECR uses Amazon S3 to store image layers. 
+The gateway endpoint is required because Amazon ECR uses Amazon S3 to store image layers. 
 
 ```terraform
 # Create a VPC Endpoint for S3
@@ -259,5 +272,48 @@ resource "aws_vpc_endpoint" "s3" {
   route_table_ids   = [aws_vpc.main.default_route_table_id]
 
 ...
+}
+```
+The  Bedrock Endpoint allow ECS to access Bedrock APIs 
+
+```terraform
+# Create a VPC endpoint for Bedrock
+resource "aws_vpc_endpoint" "bedrock" {
+  vpc_id              = aws_vpc.main.id
+  service_name        = "com.amazonaws.${var.region}.bedrock"
+  vpc_endpoint_type   = "Interface"
+  private_dns_enabled = true
+  subnet_ids          = aws_subnet.private_subnets.*.id
+
+  security_group_ids = [
+    aws_security_group.ecs_tasks.id,
+  ]
+
+  tags = {
+    Name        = "Bedrock VPC Endpoint"
+    Environment = var.environment
+  }
+}
+```
+
+The  Bedrock-runtime Endpoint allow ECS to access Bedrock inference API
+
+```terraform
+# Create a VPC endpoint for Bedrock runtime
+resource "aws_vpc_endpoint" "bedrock_runtime" {
+  vpc_id              = aws_vpc.main.id
+  service_name        = "com.amazonaws.${var.region}.bedrock-runtime"
+  vpc_endpoint_type   = "Interface"
+  private_dns_enabled = true
+  subnet_ids          = aws_subnet.private_subnets.*.id
+
+  security_group_ids = [
+    aws_security_group.ecs_tasks.id,
+  ]
+
+  tags = {
+    Name        = "Bedrock Runtime VPC Endpoint"
+    Environment = var.environment
+  }
 }
 ```
