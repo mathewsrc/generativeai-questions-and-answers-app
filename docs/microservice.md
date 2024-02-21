@@ -10,6 +10,8 @@ ECR serves as a repository, facilitating the storage of both private and public 
 
 The `scan_on_push` option helps to identify software vulnerabilities in container images and the `image_tag_mutability` allow image tags from being overwritten.
 
+Directory: `terraform/ecr`
+
 ```terraform
 # Create an ECR repository
 resource "aws_ecr_repository" "ecr_repo" {
@@ -35,6 +37,8 @@ resource "aws_ecr_repository" "ecr_repo" {
 In contrast to Lambda functions, the ECS service lacks the Environment feature for securely storing sensitive information like API keys. An alternative approach involves leveraging the AWS Secrets Manager service to securely store such confidential data. 
 
 The following code snippet shows two Terraform resources used to create Qdrant key-pair secrets:
+
+Directory: `terraform/secrets_manager`
 
 ```terraform
 resource "aws_secretsmanager_secret" "qdrant_url" {
@@ -72,18 +76,16 @@ to access the service we can set it to True.
 
 The `load_balancer_type` has three option application, gateway, or network.
 
-VPC link requires the `network` option or we get the following error:
-`Error: creating API Gateway VPC Link (vpc-link): waiting for completion: FAILED: NLB ARN is malformed`. You can
-check this link for more information: https://docs.aws.amazon.com/apigateway/latest/developerguide/set-up-nlb-for-vpclink-using-console.html
-
+Directory: `terraform/load_balancer`
 
 ```terraform
 # Create a Network Load Balancer
 resource "aws_lb" "lb" {
   name                       = var.nlb_name
   internal                   = true
-  load_balancer_type         = "network"
+  load_balancer_type         = "application"
   subnets                    = var.public_subnets
+  security_groups            = var.security_group_ids
   enable_deletion_protection = false
 
   tags = {
@@ -100,16 +102,18 @@ resource "aws_lb" "lb" {
 The target group route requests to one or more registered targets - ECS, Lambda Functions, EC2 instances.
 
 The `vpc_id` specify where the target group will be created.
-The `protocop = TCP` sets the protocol to use for routing traffic to the targets and `target_type = ip` sets the type of target that the target group routes traffic to in this case
+The `protocol = HTTP` sets the protocol to use for routing traffic to the targets and `target_type = ip` sets the type of target that the target group routes traffic to in this case
 the targets are specified by IP address. 
  
+Directory: `terraform/load_balancer`
+
 ```terraform
 # Create a target group
 resource "aws_lb_target_group" "target_group" {
   depends_on  = [aws_lb.lb]
   name        = var.target_group_name
   port        = var.container_port
-  protocol    = "TCP"
+  protocol    = "HTTP"
   vpc_id      = var.vpc_id
   target_type = "ip"
 }
@@ -117,16 +121,18 @@ resource "aws_lb_target_group" "target_group" {
 
 ## Load balancer listener
 
-The listener checks for connection requests from clients, using the protocol (TCP) and port (80) and redirect traffic from the load balancer to the target group. 
+The listener checks for connection requests from clients, using the protocol (HTTP) and port (80) and redirect traffic from the load balancer to the target group. 
 
 The `type` option defines the type of routing action. The `forward` type routes requests to one or more target groups.
+
+Directory: `terraform/load_balancer`
 
 ```terraform
 # Redirect traffic from the Load Balancer to the target group
 resource "aws_lb_listener" "listener" {
   load_balancer_arn = aws_lb.lb.arn
   port              = var.container_port
-  protocol          = "TCP"
+  protocol          = "HTTP"
 
   default_action {
     type             = "forward"
@@ -142,6 +148,8 @@ The ECS Terraform script create three required resources: cluster, task definiti
 
 The cluster is a logical grouping of tasks or services. The cluster also contains the infrastructure capacity:
 Amazon EC2 instances, AWS Fargate, and network (VPC and subnet). 
+
+Directory: `terraform/ecs`
 
 ```terraform
 # Create an ECS cluster
@@ -164,6 +172,8 @@ to each task. Additionally, the task definition outlines the IAM role utilized b
 and the chosen launch type, which determines the underlying infrastructure hosting the tasks.
 
 The following Terraform snippet is designed to fetch the latest Git commit hash, serving as a dynamic and version-specific tag for the container.
+
+Directory: `terraform/ecs`
 
 ```terraform
 # Get the latest git commit hash (feel free to add more variables)
@@ -213,6 +223,8 @@ resource "aws_ecs_task_definition" "ecs_task_definition" {
 The following Terraform code snippet defines the ECS service using the task definition, the load balancer, and
 the network configuration:
 
+Directory: `terraform/ecs`
+
 ```terraform
 # Create an ECS service
 resource "aws_ecs_service" "ecs_service" {
@@ -249,7 +261,10 @@ resource "aws_ecs_service" "ecs_service" {
 
 The ECS tasks necessitate this role for the purpose of retrieving container images and seamlessly publishing container logs to Amazon CloudWatch on your behalf.
 
+Directory: `terraform/ecs`
+
 ```terraform
+# Generates an IAM policy document for the ECS task executor role
 data "aws_iam_policy_document" "ecs_task_executor_policy" {
   statement {
     sid = 1
@@ -259,7 +274,7 @@ data "aws_iam_policy_document" "ecs_task_executor_policy" {
       "logs:CreateLogGroup"
     ]
     resources = [
-    "arn:aws:logs:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:log-group:bedrock:log-stream:*"]
+    "arn:aws:logs:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:log-group:*"]
   }
   statement {
     sid = 2
@@ -279,6 +294,8 @@ data "aws_iam_policy_document" "ecs_task_executor_policy" {
 This role is employed to grant access to your services deployed in ECS containers, facilitating seamless communication with other AWS services. The following Terraform code snippet grant access to AWS Bedrock,
 AWS S3, and AWS Secrets Mananger services.
 
+Directory: `terraform/ecs`
+
 ```terraform
 data "aws_iam_policy_document" "ecs_task_policy" {
   statement {
@@ -288,7 +305,8 @@ data "aws_iam_policy_document" "ecs_task_policy" {
   }
   statement {
     sid       = 2
-    actions   = ["bedrock:InvokeModel", "bedrock:ListCustomModels", "bedrock:ListFoundationModels"]
+    actions   = ["bedrock:InvokeModel", "bedrock:ListCustomModels", 
+    "bedrock:ListFoundationModels", "bedrock:InvokeModelWithResponseStream"]
     resources = ["arn:aws:bedrock:*::foundation-model/*"]
   }
   statement {
@@ -348,6 +366,8 @@ CMD ["poetry", "run", "uvicorn", "--host", "0.0.0.0", "--port", "80", "app.main:
 
 The following code snippet shows the two endpoints created with FastAPI library
 
+Directory: `src/app`
+
 ```python
 @app.get("/", response_class=HTMLResponse)
 async def root():
@@ -374,12 +394,30 @@ The VPC link facilitates the API Gateway's access to the Amazon ECS service runn
 
 The `target_arns` argument receives a list of network load balancer arns in the VPC targeted by the VPC link. 
 
+Directory: `terraform/api_gateway`
+
 ```terraform
 # Create a VPC Link from the API Gateway to the Load Balancer
-resource "aws_api_gateway_vpc_link" "vpc_link" {
-  name        = var.vpc_link_name
-  description = "VPC link for API Gateway"
-  target_arns = [var.lb_arn]
+resource "aws_apigatewayv2_vpc_link" "vpc_link" {
+  name               = var.vpc_link_name
+  security_group_ids = var.security_group_ids
+  subnet_ids         = var.subnet_ids
+}
+```
+
+## API Gateway
+
+The `aws_apigatewayv2_api` are used for creating and deploying HTTP APIs
+
+Directory: `terraform/api_gateway`
+
+```terraform
+resource "aws_apigatewayv2_api" "example" {
+  name          = var.api_name
+  protocol_type = "HTTP"
+  description   = "HTTP API for Question and Answer App"
+  version       = "1.0"
+
   tags = {
     Environment = var.environment
     Application = var.application_name
@@ -387,98 +425,59 @@ resource "aws_api_gateway_vpc_link" "vpc_link" {
 }
 ```
 
-## API Gateway
-
-The `aws_api_gateway_rest_api` are used for creating and deploying REST APIs
-
-The `type` can be one the following type: EDGE, REGIONAL or PRIVATE
-
-A regional API endpoint typically reduces connection latency when API requests predominantly originate 
-from services within the same region as the deployed API.
-
-```terraform
-resource "aws_api_gateway_rest_api" "api" {
-  name        = var.api_name
-  description = "API Gateway for REST API"
-
-  endpoint_configuration {
-    types = ["REGIONAL"]
-  }
-}
-
-### Resource
-
-A resource is a logical entity that an app can access through a resource path. The `path_part`
-define last path segment of this API resource and is equal to the FastAPI path `@app.post("/ask")`.
-
-```terraform
-# Resource for POST /ask
-resource "aws_api_gateway_resource" "ask_resource" {
-  rest_api_id = aws_api_gateway_rest_api.api.id
-  parent_id   = aws_api_gateway_rest_api.api.root_resource_id
-  path_part   = "ask"
-}
-```
-
-### Method
-
-A method corresponds to a REST API request that is submitted by the user. The method support HTTP verbs such as GET, POST, PUT, PATCH, and DELETE.
-
-```terraform
-# Resource for POST /ask
-resource "aws_api_gateway_method" "ask_post" {
-  rest_api_id   = aws_api_gateway_rest_api.api.id
-  resource_id   = aws_api_gateway_resource.ask_resource.id
-  http_method   = "POST"
-  authorization = "NONE"
-  request_parameters = {
-    "method.request.path.proxy" = true
-  }
-}
-```
-
 ### Integration
 
-The integration integrates the Rest API, the resource and the method. It also defines
-the integration type (AWS, AWS_PROXY, HTTP, HTTP_PROXY, and MOCK), the HTTP method, the URI,
+The integration integrates the HTTP API to the the Load balancer. It also defines
+
+the `integration_type` (AWS, AWS_PROXY, HTTP, HTTP_PROXY, and MOCK), the HTTP method, the URI,
 and the connection type.
+
+The `integration_type` argument expects the ARN from the Load balancer listener
 
 The `HTTP_PROXY` type permit API Gateway passes the incoming request from the client to the HTTP endpoint and passes the outgoing response from the HTTP endpoint to the client. Setting the integration request or integration response is not required when utilizing the HTTP proxy type. More information: https://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-api-integration-types.html
 
+Directory: `terraform/api_gateway`
+
 ```terraform
 # Integration for POST /ask
-resource "aws_api_gateway_integration" "ask_post_integration" {
-
-  rest_api_id = aws_api_gateway_rest_api.api.id
-  resource_id = aws_api_gateway_resource.ask_resource.id
-  http_method = aws_api_gateway_method.ask_post.http_method
-
-  type                    = "HTTP_PROXY"
-  integration_http_method = "POST"
-  uri                     = "http://${var.lb_dns_name}:${var.container_port}/ask"
-  connection_type         = "VPC_LINK"
-  connection_id           = aws_api_gateway_vpc_link.vpc_link.id
+resource "aws_apigatewayv2_integration" "ask_integration" {
+  api_id               = aws_apigatewayv2_api.example.id
+  integration_type     = "HTTP_PROXY"
+  integration_uri      = var.lb_listener_arn
+  integration_method   = "POST"
+  connection_type      = "VPC_LINK"
+  connection_id        = aws_apigatewayv2_vpc_link.vpc_link.id
+  timeout_milliseconds = 30000 # 30 seconds
 }
 ```
 
+### Routes
 
-### Deploy
+The `aws_apigatewayv2_route` define the HTTP method and the backend endpoint `/ask` 
 
-The `aws_api_gateway_deployment` make the API callable by users. More information: https://docs.aws.amazon.com/apigateway/latest/developerguide/how-to-deploy-api.html
-
+Directory: `terraform/api_gateway`
 
 ```terraform
-# Create a API Gateway Deployment
-resource "aws_api_gateway_deployment" "api_deployment" {
-  depends_on = [
-    aws_api_gateway_integration.ask_post_integration,
-    aws_api_gateway_integration.root_get_integration
-  ]
-  rest_api_id = aws_api_gateway_rest_api.api.id
-  description = "Deployment for the dev stage"
+resource "aws_apigatewayv2_route" "ask_route" {
+  api_id    = aws_apigatewayv2_api.example.id
+  route_key = "POST /ask"
+  target    = "integrations/${aws_apigatewayv2_integration.ask_integration.id}"
+}
+```
 
-  lifecycle {
-    create_before_destroy = true # Without enabling create_before_destroy, API Gateway can return errors such as BadRequestException:
+### CloudWatcher logs
+
+This resource create a log group to store logs from API Gateway
+
+Directory: `terraform/api_gateway`
+
+```terraform
+resource "aws_cloudwatch_log_group" "apigateway" {
+  name              = "/aws/apigateway/${var.application_name}/${var.api_name}"
+  retention_in_days = 7 
+  tags = {
+    Environment = var.environment
+    Application = var.application_name
   }
 }
 ```
@@ -487,13 +486,27 @@ resource "aws_api_gateway_deployment" "api_deployment" {
 
 Each stage is a named reference to a deployment of the API and is made available for client applications to call.
 
-```terraform
-# Create a API Gateway Stage
-resource "aws_api_gateway_stage" "api_stage" {
-  deployment_id = aws_api_gateway_deployment.api_deployment.id
-  rest_api_id   = aws_api_gateway_rest_api.api.id
-  stage_name    = var.api_stage_name
+Directory: `terraform/api_gateway`
 
+```terraform
+resource "aws_apigatewayv2_stage" "example" {
+  api_id      = aws_apigatewayv2_api.example.id
+  description = "Stage for HTTP API"
+  name        = "$default" # The $default stage is a special stage that's automatically associated with new deployments.
+  auto_deploy = true       # Whether updates to an API automatically trigger a new deployment.
+
+  access_log_settings {
+    destination_arn = aws_cloudwatch_log_group.apigateway.arn
+    format = jsonencode({
+      requestId = "$context.requestId",
+      ip        = "$context.identity.sourceIp",
+      user      = "$context.identity.user",
+      caller    = "$context.identity.caller",
+      request   = "$context.requestTime",
+      status    = "$context.status",
+      response  = "$context.responseLength"
+    })
+  }
   tags = {
     Environment = var.environment
     Application = var.application_name
@@ -504,6 +517,8 @@ resource "aws_api_gateway_stage" "api_stage" {
 ### API Gateway Usage Plan
 
 An API Gateway Usage Plan define who can access deployed API stages and methods. A quota define the maximum number of requests that can be made in a given time period and in which time period the limit applies. Throttle settings can be configured at the API or API method level, determining the maximum rate limit over a customizable time frame, ranging from one to a few seconds. Throttling initiates when the target point is reached.
+
+Directory: `terraform/api_gateway`
 
 ```terraform
 # Create a API Gateway Usage Plan
@@ -527,5 +542,161 @@ resource "aws_api_gateway_usage_plan" "usage_plan" {
     Environment = var.environment
     Application = var.application_name
   }
+}
+```
+
+## Policy for API Gateway
+
+```json
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Sid": "VisualEditor0",
+            "Effect": "Allow",
+            "Action": [
+                "apigateway:DELETE",
+                "apigateway:PUT",
+                "apigateway:PATCH",
+                "apigateway:POST",
+                "apigateway:GET"
+            ],
+            "Resource": [
+                "arn:aws:apigateway:us-east-1::/vpclinks",
+                "arn:aws:apigateway:us-east-1::/vpclinks/*",
+                "arn:aws:apigateway:us-east-1::/apis",
+                "arn:aws:apigateway:us-east-1::/apis/*"
+            ],
+            "Condition": {
+                "StringLikeIfExists": {
+                    "apigateway:Request/apiName": "competition-notices*"
+                }
+            }
+        },
+        {
+            "Sid": "VisualEditor2",
+            "Effect": "Allow",
+            "Action": [
+                "apigateway:DELETE",
+                "apigateway:PUT",
+                "apigateway:PATCH",
+                "apigateway:POST",
+                "apigateway:GET"
+            ],
+            "Resource": [
+                "arn:aws:apigateway:us-east-1::/account",
+                "arn:aws:apigateway:us-east-1::/usageplans/*",
+                "arn:aws:apigateway:us-east-1::/tags/*",
+                "arn:aws:apigateway:us-east-1::/usageplans",
+                "arn:aws:apigateway:us-east-1::/vpclinks",
+                "arn:aws:apigateway:us-east-1::/vpclinks/*"
+            ],
+            "Condition": {
+                "StringLikeIfExists": {
+                    "apigateway:Request/apiName": "competition-notices*"
+                }
+            }
+        },
+        {
+            "Sid": "VisualEditor3",
+            "Effect": "Allow",
+            "Action": [
+                "apigateway:DELETE",
+                "apigateway:PUT",
+                "apigateway:PATCH",
+                "apigateway:POST",
+                "apigateway:GET"
+            ],
+            "Resource": [
+                "arn:aws:apigateway:us-east-1::/apis",
+                "arn:aws:apigateway:us-east-1::/apis/*"
+            ],
+            "Condition": {
+                "StringLikeIfExists": {
+                    "apigateway:Request/apiName": "competition-notices*"
+                }
+            }
+        },
+        {
+            "Sid": "VisualEditor7",
+            "Effect": "Allow",
+            "Action": [
+                "logs:DescribeLogStreams",
+                "logs:GetLogEvents",
+                "logs:FilterLogEvents"
+            ],
+            "Resource": "arn:aws:logs:us-east-1:*:log-group:*"
+        },
+        {
+            "Sid": "VisualEditor8",
+            "Effect": "Allow",
+            "Action": [
+                "logs:CreateLogDelivery",
+                "logs:PutResourcePolicy",
+                "logs:UpdateLogDelivery",
+                "logs:DeleteLogDelivery",
+                "logs:CreateLogGroup",
+                "logs:DescribeResourcePolicies",
+                "logs:GetLogDelivery",
+                "logs:ListLogDeliveries",
+                "logs:TagResource",
+                "logs:PutRetentionPolicy"
+            ],
+            "Resource": "*"
+        },
+        {
+            "Sid": "VisualEditor9",
+            "Effect": "Allow",
+            "Action": "apigateway:TagResource",
+            "Resource": [
+                "arn:aws:apigateway:us-east-1::/account",
+                "arn:aws:apigateway:us-east-1::/usageplans",
+                "arn:aws:apigateway:us-east-1::/usageplans/*",
+                "arn:aws:apigateway:us-east-1::/tags/*",
+                "arn:aws:apigateway:us-east-1::/restapis",
+                "arn:aws:apigateway:us-east-1::/vpclinks",
+                "arn:aws:apigateway:us-east-1::/vpclinks/*",
+                "arn:aws:apigateway:us-east-1::/apis/*",
+                "arn:aws:apigateway:us-east-1::/apis"
+            ],
+            "Condition": {
+                "StringLikeIfExists": {
+                    "apigateway:Request/apiName": "competition-notices*"
+                }
+            }
+        },
+        {
+            "Sid": "VisualEditor10",
+            "Effect": "Allow",
+            "Action": "apigateway:TagResource",
+            "Resource": [
+                "arn:aws:apigateway:us-east-1::/account",
+                "arn:aws:apigateway:us-east-1::/usageplans/*",
+                "arn:aws:apigateway:us-east-1::/tags/*",
+                "arn:aws:apigateway:us-east-1::/usageplans",
+                "arn:aws:apigateway:us-east-1::/vpclinks",
+                "arn:aws:apigateway:us-east-1::/apis",
+                "arn:aws:apigateway:us-east-1::/apis/*",
+                "arn:aws:apigateway:us-east-1::/vpclinks/*"
+            ],
+            "Condition": {
+                "StringLikeIfExists": {
+                    "apigateway:Request/apiName": "competition-notices*"
+                }
+            }
+        },
+        {
+            "Sid": "VisualEditor11",
+            "Effect": "Allow",
+            "Action": [
+                "logs:DescribeLogGroups",
+                "logs:ListTagsLogGroup",
+                "logs:DeleteLogGroup"
+            ],
+            "Resource": [
+                "arn:aws:logs:us-east-1:*:log-group:*"
+            ]
+        }
+    ]
 }
 ```
