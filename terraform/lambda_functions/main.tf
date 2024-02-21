@@ -1,61 +1,3 @@
-# resource "null_resource" "package_lambda" {
-#   triggers = {
-#     files = "${filebase64sha256("${path.module}/../../scripts/package_lambda.sh")}"
-#   }
-#   provisioner "local-exec" {
-#     command     = "chmod +x ${path.module}/../../scripts/package_lambda.sh; ${path.module}/../../scripts/package_lambda.sh"
-#     interpreter = ["bash", "-c"]
-#   }
-# }
-
-# # Archive the Lambda function 
-# data "archive_file" "lambda" {
-#   type        = "zip"
-#   source_dir  = "${path.module}/src"
-#   output_path = "${path.module}/../../files/lambda_payload.zip"
-#   depends_on  = [null_resource.package_lambda]
-# }
-
-# # Archive layer
-# data "archive_file" "layer" {
-#   type        = "zip"
-#   source_dir  = "${path.module}/temp"
-#   output_path = "${path.module}/../../files/lambda_layer.zip"
-
-#   depends_on = [null_resource.package_lambda]
-# }
-
-# # Create bucket
-# resource "aws_s3_bucket" "layers" {
-#   bucket        = var.bucket_name
-#   force_destroy = true
-
-#   tags = {
-#     Name        = "${var.bucket_name} Bucket"
-#     Environment = var.environment
-#     Application = var.application_name
-#   }
-# }
-
-# # Upload zip to S3
-# resource "aws_s3_object" "object" {
-#   bucket = aws_s3_bucket.layers.id
-#   key    = var.s3_key
-#   source = data.archive_file.layer.output_path
-#   etag   = filemd5(data.archive_file.layer.output_path)
-
-#   depends_on = [null_resource.package_lambda]
-# }
-
-# # Create layer
-# resource "aws_lambda_layer_version" "layer" {
-#   s3_bucket           = aws_s3_bucket.layers.bucket
-#   s3_key              = aws_s3_object.object.key
-#   layer_name          = var.layer_name
-#   description         = "Lambda layer for Qdrant"
-#   compatible_runtimes = [var.python_version]
-# }
-
 # Get current AWS region
 data "aws_region" "current" {}
 
@@ -79,13 +21,13 @@ resource "null_resource" "deploy_lambda_container" {
 # Get the Qdrant URL and API key from the environment
 data "external" "envs" {
   program = ["bash", "-c", <<-EOSCRIPT
-    : "$${QDRANT_URL:?Missing environment variable QDRANT_URL}"
-    : "$${QDRANT_API_KEY:?Missing environment variable QDRANT_API_KEY}"
-    jq --arg QDRANT_URL "$(printenv QDRANT_URL)" \
-       --arg QDRANT_API_KEY "$(printenv QDRANT_API_KEY)" \
+    : "$${QDRANT_URL_AWS:?Missing environment variable QDRANT_URL_AWS}"
+    : "$${QDRANT_API_KEY_AWS:?Missing environment variable QDRANT_API_KEY_AWS}"
+    jq --arg QDRANT_URL_AWS "$(printenv QDRANT_URL_AWS)" \
+       --arg QDRANT_API_KEY_AWS "$(printenv QDRANT_API_KEY_AWS)" \
        --arg SHA "$(git rev-parse HEAD)" \
-       -n '{ "qdrant_url": $QDRANT_URL, 
-             "qdrant_api_key": $QDRANT_API_KEY,
+       -n '{ "qdrant_url": $QDRANT_URL_AWS, 
+             "qdrant_api_key": $QDRANT_API_KEY_AWS,
              "sha": $SHA}'
   EOSCRIPT
   ]
