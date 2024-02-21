@@ -16,7 +16,7 @@ data "aws_iam_policy_document" "lambda_policy" {
       "logs:PutLogEvents",
     ]
 
-    resources = ["arn:aws:logs:${data.aws_region.current.name}:*:*"]
+    resources = ["arn:aws:logs:*:*:*"]
   }
 
   statement {
