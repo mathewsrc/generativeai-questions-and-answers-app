@@ -25,7 +25,7 @@ variable "lb_target_group_arn" {
 
 variable "logs_group_name" {
   description = "The name of the logs group"
-  default     = "bedrock"
+  default     = "/aws/ecs/question-answer-app"
 }
 
 variable "ecs_cluster_name" {
