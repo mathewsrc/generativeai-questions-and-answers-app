@@ -6,7 +6,7 @@ from botocore.exceptions import ClientError
 from langchain_community.llms.bedrock import Bedrock
 import os
 from dotenv import load_dotenv
-from qdrant_client import QdrantClient
+from qdrant_client import AsyncQdrantClient
 from langchain_community.vectorstores.qdrant import Qdrant
 from langchain_community.embeddings.bedrock import BedrockEmbeddings
 from langchain.prompts import PromptTemplate
@@ -19,6 +19,7 @@ logger.setLevel(logging.INFO)
 COLLECTION_NAME = "cnu"  # replace with your collection name
 BEDROCK_MODEL_NAME = "anthropic.claude-v2"
 BEDROCK_EMBEDDINGS_MODEL_NAME = "amazon.titan-embed-text-v1"
+AWS_DEFAULT_REGION = "us-east-1"
 
 app = FastAPI()
 
@@ -28,7 +29,7 @@ class Body(BaseModel):
 
 load_dotenv()
 
-session = boto3.Session(region_name='us-east-1')
+session = boto3.Session(region_name=AWS_DEFAULT_REGION)
 
 prompt_template = """
                 Use the following pieces of context to provide a concise answer to the question at the end. 
@@ -43,7 +44,7 @@ prompt_template = """
         
 def get_secret(secret_name):
 
-	client = session.client(service_name="secretsmanager", region_name='us-east-1')
+	client = session.client(service_name="secretsmanager", region_name=AWS_DEFAULT_REGION)
 	try:
 		get_secret_value_response = client.get_secret_value(SecretId=secret_name)
 	except ClientError as e:
@@ -66,38 +67,44 @@ async def root():
     """
 	)
 
-
 @app.post("/ask")
 async def question(body: Body):
 	try:
+		answer = ""
+		
+		# Get the Qdrant URL and API key from the environment variables
 		qdrant_url = os.environ.get("QDRANT_URL")
 		qdrant_api_key = os.environ.get("QDRANT_API_KEY")
-  
-		bedrock_runtime = boto3.client("bedrock-runtime", region_name=os.environ.get("AWS_DEFAULT_REGION"))
 
+		# Create a Bedrock runtime client
+		bedrock_runtime = boto3.client("bedrock-runtime", region_name=AWS_DEFAULT_REGION)
+
+		# If the environment variables are not set, get the secrets from AWS Secrets Manager		
 		if qdrant_url is None:
 			qdrant_url = get_secret("prod/qdrant_url")
 
 		if qdrant_api_key is None:
 			qdrant_api_key = get_secret("prod/qdrant_api_key")
-		
-		client = QdrantClient(url=qdrant_url, 
-                        api_key=qdrant_api_key,
-                        port=6333, # Make sure to add the port number to ECS security group
-                        grpc_port=6334 # Make sure to add the port number to ECS security group
-                        )
+
+		# Create a Qdrant client
+		client = AsyncQdrantClient(url=qdrant_url, 
+						api_key=qdrant_api_key,
+						port=6333, 
+						grpc_port=6334)
 		
 		logger.info("Qdrant client created successfully")
-  
+
+		# Get a Bedrock embeddings model
 		embeddings = get_bedrock_embeddings(BEDROCK_EMBEDDINGS_MODEL_NAME, bedrock_runtime)
 
-		logger.info("Get Collection from Qdrant")
+		# Create a Qdrant retriever
 		qdrant = Qdrant(
-			client=client,
+			async_client=client,
 			embeddings=embeddings,
 			collection_name=COLLECTION_NAME,
 		)
 
+		# Create a prompt
 		prompt = PromptTemplate(template=prompt_template, input_variables=["context", "question"])
 
 		# Bedrock Hyperparameters
@@ -109,10 +116,12 @@ async def question(body: Body):
 			"stop_sequences": ["\n\nHuman"],
 		}
 
+		# Get Bedrock LLM
 		llm = Bedrock(
 			model_id=BEDROCK_MODEL_NAME, client=bedrock_runtime, model_kwargs=inference_modifier
 		)
 
+		# Create a retrieval QA chain
 		qa = RetrievalQA.from_chain_type(
 			llm=llm,
 			chain_type="stuff",
@@ -122,9 +131,10 @@ async def question(body: Body):
 		)
 
 		logger.info("Invoking the model")
-		result = qa.invoke(input={"query": body.text})
+	
+		# Invoke the model
+		result = await qa.ainvoke(input={"query": body.text})
 		answer = result["result"]
-		#answer = "This is a test answer"
 	except Exception as e:
 		raise HTTPException(status_code=500, detail=str(e))
 	return {"answer": answer}
