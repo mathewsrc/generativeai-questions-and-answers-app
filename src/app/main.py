@@ -99,10 +99,10 @@ async def question(body: Body):
 
 		# Create a Qdrant retriever
 		qdrant = Qdrant(
-			async_client=client,
+			client=client,
 			embeddings=embeddings,
 			collection_name=COLLECTION_NAME,
-		)
+		).as_retriever(search_kwargs={"k": 2})
 
 		# Create a prompt
 		prompt = PromptTemplate(template=prompt_template, input_variables=["context", "question"])
@@ -125,7 +125,7 @@ async def question(body: Body):
 		qa = RetrievalQA.from_chain_type(
 			llm=llm,
 			chain_type="stuff",
-			retriever=qdrant.as_retriever(search_kwargs={"k": 2}),
+			retriever=qdrant,
 			return_source_documents=False,
 			chain_type_kwargs={"prompt": prompt, "verbose": False},
 		)
