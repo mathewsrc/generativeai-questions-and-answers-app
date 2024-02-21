@@ -32,6 +32,38 @@ resource "aws_ecr_repository" "ecr_repo" {
 }
 ```
 
+### ECR Policy
+
+Set of actions to create ECR repository
+
+```json
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Sid": "Statement1",
+            "Effect": "Allow",
+            "Action": [
+                "ecr:*"
+            ],
+            "Resource": [
+                "arn:aws:ecr:us-east-1:*:repository/*"
+            ]
+        },
+        {
+            "Sid": "Statement2",
+            "Effect": "Allow",
+            "Action": [
+                "ecr:GetAuthorizationToken"
+            ],
+            "Resource": [
+                "*"
+            ]
+        }
+    ]
+}
+```
+
 ## Secrets Manager 
 
 In contrast to Lambda functions, the ECS service lacks the Environment feature for securely storing sensitive information like API keys. An alternative approach involves leveraging the AWS Secrets Manager service to securely store such confidential data. 
@@ -64,6 +96,23 @@ resource "aws_secretsmanager_secret" "qdrant_api_key" {
     Environment = var.environment
     Application = var.application_name
   }
+}
+```
+
+### Secrets Manager policy
+
+```json
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Effect": "Allow",
+            "Action": [
+                "secretsmanager:*"
+            ],
+            "Resource": "*"
+        }
+    ]
 }
 ```
 
@@ -322,7 +371,6 @@ data "aws_iam_policy_document" "ecs_task_policy" {
 }
 ```
 
-
 ## Docker image
 
 The following Docker image defines the container that will be running in ECS:
@@ -387,6 +435,170 @@ async def question(body: Body):
     ...
 ```
 
+### ECS policy
+
+Set of actions to create ECS resources
+
+```json
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Sid": "VisualEditor0",
+            "Effect": "Allow",
+            "Action": [
+                "ec2:Describe*",
+                "ec2:DeleteSubnet",
+                "ec2:CreateSecurityGroup",
+                "ec2:CreateTags",
+                "ec2:CreateVpc",
+                "ec2:RunInstances",
+                "ec2:ModifyVpcAttribute",
+                "ec2:DeleteVpc",
+                "ec2:CreateSubnet",
+                "ec2:ModifySubnetAttribute",
+                "ec2:CreateDefaultSubnet",
+                "ec2:AssociateRouteTable",
+                "ec2:CreateLocalGatewayRouteTable",
+                "ec2:CreateRouteTable",
+                "ec2:DeleteRouteTable",
+                "ec2:DeleteLocalGatewayRouteTable",
+                "ec2:DisassociateRouteTable",
+                "ec2:CreateInternetGateway",
+                "ec2:DeleteInternetGateway",
+                "ec2:AttachInternetGateway",
+                "ec2:CreateEgressOnlyInternetGateway",
+                "ec2:DeleteEgressOnlyInternetGateway",
+                "ec2:DetachInternetGateway",
+                "ec2:CreateRoute",
+                "ec2:DeleteRoute",
+                "ec2:DeleteVpnConnectionRoute",
+                "ec2:CreateVpnConnection",
+                "ec2:CreateVpnConnectionRoute"
+            ],
+            "Resource": "*"
+        },
+        {
+            "Sid": "VisualEditor1",
+            "Effect": "Allow",
+            "Action": [
+                "ec2:AuthorizeSecurityGroupEgress",
+                "ec2:AuthorizeSecurityGroupIngress",
+                "ec2:RevokeSecurityGroupEgress",
+                "ec2:DeleteSecurityGroup"
+            ],
+            "Resource": "arn:aws:ec2:us-east-1:*:security-group/*"
+        },
+        {
+            "Sid": "VisualEditor2",
+            "Effect": "Allow",
+            "Action": "ec2:CreateTags",
+            "Resource": [
+                "arn:aws:ec2:us-east-1:*:subnet/*",
+                "arn:aws:ec2:us-east-1:*:vpc/*"
+            ]
+        },
+        {
+            "Sid": "VisualEditor3",
+            "Effect": "Allow",
+            "Action": [
+                "ecs:DeregisterTaskDefinition",
+                "ecs:RegisterTaskDefinition",
+                "ecs:DescribeTaskDefinition",
+                "ecs:DescribeClusters",
+                "ecs:ListClusters"
+            ],
+            "Resource": "*"
+        },
+        {
+            "Sid": "VisualEditor4",
+            "Effect": "Allow",
+            "Action": [
+                "ecs:UpdateCluster",
+                "ecs:UpdateClusterSettings",
+                "ecs:DeleteCluster",
+                "ecs:CreateCluster"
+            ],
+            "Resource": "*"
+        },
+        {
+            "Sid": "VisualEditor5",
+            "Effect": "Allow",
+            "Action": [
+                "ecs:UpdateService",
+                "ecs:CreateService",
+                "ecs:DeleteService",
+                "ecs:DescribeServices",
+                "ecs:ListServices",
+                "ecs:ListServicesByNamespace"
+            ],
+            "Resource": "arn:aws:ecs:us-east-1:*:service/*/*"
+        },
+        {
+            "Sid": "VisualEditor6",
+            "Effect": "Allow",
+            "Action": [
+                "elasticloadbalancing:DescribeLoadBalancerAttributes",
+                "elasticloadbalancing:DescribeLoadBalancers",
+                "elasticloadbalancing:DescribeTargetGroupAttributes",
+                "elasticloadbalancing:DescribeListeners",
+                "elasticloadbalancing:DescribeTags",
+                "elasticloadbalancing:DescribeTargetGroups",
+                "elasticloadbalancing:DescribeRules",
+                "elasticloadbalancing:DescribeInstanceHealth"
+            ],
+            "Resource": "*"
+        },
+        {
+            "Sid": "VisualEditor7",
+            "Effect": "Allow",
+            "Action": [
+                "elasticloadbalancing:SetSecurityGroups",
+                "elasticloadbalancing:SetSubnets",
+                "elasticloadbalancing:DeleteLoadBalancer",
+                "elasticloadbalancing:CreateListener",
+                "elasticloadbalancing:CreateLoadBalancer",
+                "elasticloadbalancing:AddTags",
+                "elasticloadbalancing:CreateTargetGroup",
+                "elasticloadbalancing:CreateRule",
+                "elasticloadbalancing:DeleteTargetGroup",
+                "elasticloadbalancing:ModifyTargetGroupAttributes",
+                "elasticloadbalancing:ModifyLoadBalancerAttributes",
+                "elasticloadbalancing:DeleteListener"
+            ],
+            "Resource": [
+                "arn:aws:elasticloadbalancing:us-east-1:*:targetgroup/*/*",
+                "arn:aws:elasticloadbalancing:us-east-1:*:loadbalancer/app/*/*",
+                "arn:aws:elasticloadbalancing:us-east-1:*:listener/app/*/*/*",
+                "arn:aws:elasticloadbalancing:us-east-1:*:loadbalancer/net/*/*",
+                "arn:aws:elasticloadbalancing:us-east-1:*:listener/net/*/*/*"
+            ]
+        },
+        {
+            "Sid": "VisualEditor8",
+            "Effect": "Allow",
+            "Action": [
+                "logs:DescribeLogGroups",
+                "logs:FilterLogEvents",
+                "logs:CreateLogGroup"
+            ],
+            "Resource": "*"
+        },
+        {
+            "Sid": "VisualEditor11",
+            "Effect": "Allow",
+            "Action": [
+                "ec2:CreateDefaultVpc",
+                "ec2:CreateDefaultSubnet"
+            ],
+            "Resource": [
+                "arn:aws:ec2:us-east-1:*:subnet/*",
+                "arn:aws:ec2:us-east-1:*:vpc/*"
+            ]
+        }
+    ]
+}
+```
 
 ## VPC Link
 
