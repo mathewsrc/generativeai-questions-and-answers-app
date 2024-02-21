@@ -17,21 +17,61 @@ resource "aws_apigatewayv2_vpc_link" "vpc_link" {
 }
 
 resource "aws_apigatewayv2_integration" "root_integration" {
-  api_id             = aws_apigatewayv2_api.example.id
-  integration_type   = "HTTP_PROXY"
-  integration_uri    = var.lb_listener_arn
-  integration_method = "ANY"
-  connection_type    = "VPC_LINK"
-  connection_id      = aws_apigatewayv2_vpc_link.vpc_link.id
+  api_id               = aws_apigatewayv2_api.example.id
+  integration_type     = "HTTP_PROXY"
+  integration_uri      = var.lb_listener_arn
+  integration_method   = "ANY"
+  connection_type      = "VPC_LINK"
+  connection_id        = aws_apigatewayv2_vpc_link.vpc_link.id
+  timeout_milliseconds = 30000 # 30 seconds
+
+  request_parameters = {
+    "append:header.authforintegration" = "$context.authorizer.authorizerResponse"
+    "overwrite:path"                   = "staticValueForIntegration"
+  }
+
+  response_parameters {
+    status_code = 403
+    mappings = {
+      "append:header.auth" = "$context.authorizer.authorizerResponse"
+    }
+  }
+
+  response_parameters {
+    status_code = 200
+    mappings = {
+      "overwrite:statuscode" = "204"
+    }
+  }
 }
 
 resource "aws_apigatewayv2_integration" "ask_integration" {
-  api_id             = aws_apigatewayv2_api.example.id
-  integration_type   = "HTTP_PROXY"
-  integration_uri    = var.lb_listener_arn
-  integration_method = "POST"
-  connection_type    = "VPC_LINK"
-  connection_id      = aws_apigatewayv2_vpc_link.vpc_link.id
+  api_id               = aws_apigatewayv2_api.example.id
+  integration_type     = "HTTP_PROXY"
+  integration_uri      = var.lb_listener_arn
+  integration_method   = "POST"
+  connection_type      = "VPC_LINK"
+  connection_id        = aws_apigatewayv2_vpc_link.vpc_link.id
+  timeout_milliseconds = 30000 # 30 seconds
+
+  request_parameters = {
+    "append:header.authforintegration" = "$context.authorizer.authorizerResponse"
+    "overwrite:path"                   = "staticValueForIntegration"
+  }
+
+  response_parameters {
+    status_code = 403
+    mappings = {
+      "append:header.auth" = "$context.authorizer.authorizerResponse"
+    }
+  }
+
+  response_parameters {
+    status_code = 200
+    mappings = {
+      "overwrite:statuscode" = "204"
+    }
+  }
 }
 
 resource "aws_apigatewayv2_route" "root_route" {
