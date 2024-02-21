@@ -8,8 +8,8 @@ load_dotenv()
 EMBEDDING_MODEL = "amazon.titan-embed-text-v1"
 COLLECTION_NAME = "cnu"
 
-QDRANT_URL = os.environ.get("QDRANT_URL")
-QDRANT_API_KEY = os.environ.get("QDRANT_API_KEY")
+QDRANT_URL = os.environ.get("QDRANT_URL_AWS")
+QDRANT_API_KEY = os.environ.get("QDRANT_API_KEY_AWS")
 BUCKET_NAME = os.environ.get("BUCKET_NAME")
 AWS_REGION = os.environ.get("REGION")
 
