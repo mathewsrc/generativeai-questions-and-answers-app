@@ -9,6 +9,8 @@ Qdrant cluster. The documents are located in the `documents/` directory.
 
 ## Docker Image
 
+Directory: `terraform/lambda_functions/docker`
+
 The Lambda Function relies on a Docker image stored in ECR. Here are the details of the image 
 employed by Lambda:
 
@@ -42,6 +44,8 @@ This Docker image uses a base image provided by AWS which comes with `python 3.1
 The dependencies are installed into a directory provided by the base image as well the Python code
 required. The CMD is set to call the `main.py` module and its entrypoint function `lambda_handle(event, context)`.
 The `lambda_handler(event, context)` function call the `create_vectorstore(...)` from `create_vector_store` module.
+
+Directory: `terraform/lambda_functions/src`
 
 ```python
 import json
@@ -80,6 +84,8 @@ def lambda_handler(event, context):
 
 
 The `create_vectorstore(...)` function initiates the get_documents_from_pdf function, which, in turn, downloads the uploaded PDF file from S3 to the Lambda `/tmp` directory—the exclusive location with write permissions. Subsequently, it divides the document into smaller sections, referred to as chunks, converts these chunks into a vector representation, also known as embedding, and uploads the resulting data to Qdrant Cloud via Langchain.
+
+Directory: `terraform/lambda_functions/src`
 
 ```python
 
@@ -127,6 +133,8 @@ Amazon `amazon.titan-embed-text-v1` model for embedding documents.
 
 **Terraform Policy Document**
 
+Directory: `terraform/lambda_functions`
+
 ```terraform
 data "aws_iam_policy_document" "lambda_policy" {
   statement {
@@ -170,5 +178,64 @@ data "aws_iam_policy_document" "lambda_policy" {
     actions   = ["bedrock:InvokeModel", "bedrock:ListCustomModels", "bedrock:ListFoundationModels"]
     resources = ["arn:aws:bedrock:*::foundation-model/*"]
   }
+}
+```
+
+## User Policy
+
+Set of actions to create Lambda Functions
+
+```json
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Effect": "Allow",
+            "Action": [
+                "cloudformation:DescribeStacks",
+                "cloudformation:ListStackResources",
+                "cloudwatch:ListMetrics",
+                "cloudwatch:GetMetricData",
+                "ec2:DescribeSecurityGroups",
+                "ec2:DescribeSubnets",
+                "ec2:DescribeVpcs",
+                "kms:ListAliases",
+                "iam:GetPolicy",
+                "iam:GetPolicyVersion",
+                "iam:GetRole",
+                "iam:GetRolePolicy",
+                "iam:ListAttachedRolePolicies",
+                "iam:ListRolePolicies",
+                "iam:ListRoles",
+                "lambda:*",
+                "logs:DescribeLogGroups",
+                "states:DescribeStateMachine",
+                "states:ListStateMachines",
+                "tag:GetResources",
+                "xray:GetTraceSummaries",
+                "xray:BatchGetTraces"
+            ],
+            "Resource": "*"
+        },
+        {
+            "Effect": "Allow",
+            "Action": "iam:PassRole",
+            "Resource": "*",
+            "Condition": {
+                "StringEquals": {
+                    "iam:PassedToService": "lambda.amazonaws.com"
+                }
+            }
+        },
+        {
+            "Effect": "Allow",
+            "Action": [
+                "logs:DescribeLogStreams",
+                "logs:GetLogEvents",
+                "logs:FilterLogEvents"
+            ],
+            "Resource": "arn:aws:logs:*:*:log-group:/aws/lambda/*"
+        }
+    ]
 }
 ```
