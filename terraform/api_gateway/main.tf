@@ -1,7 +1,7 @@
 resource "aws_apigatewayv2_api" "example" {
   name          = var.api_name
   protocol_type = "HTTP"
-  description   = "Example HTTP API"
+  description   = "HTTP API for Question and Answer App"
   version       = "1.0"
 
   tags = {
@@ -24,25 +24,6 @@ resource "aws_apigatewayv2_integration" "root_integration" {
   connection_type      = "VPC_LINK"
   connection_id        = aws_apigatewayv2_vpc_link.vpc_link.id
   timeout_milliseconds = 30000 # 30 seconds
-
-  request_parameters = {
-    "append:header.authforintegration" = "$context.authorizer.authorizerResponse"
-    "overwrite:path"                   = "staticValueForIntegration"
-  }
-
-  response_parameters {
-    status_code = 403
-    mappings = {
-      "append:header.auth" = "$context.authorizer.authorizerResponse"
-    }
-  }
-
-  response_parameters {
-    status_code = 200
-    mappings = {
-      "overwrite:statuscode" = "204"
-    }
-  }
 }
 
 resource "aws_apigatewayv2_integration" "ask_integration" {
@@ -53,25 +34,6 @@ resource "aws_apigatewayv2_integration" "ask_integration" {
   connection_type      = "VPC_LINK"
   connection_id        = aws_apigatewayv2_vpc_link.vpc_link.id
   timeout_milliseconds = 30000 # 30 seconds
-
-  request_parameters = {
-    "append:header.authforintegration" = "$context.authorizer.authorizerResponse"
-    "overwrite:path"                   = "staticValueForIntegration"
-  }
-
-  response_parameters {
-    status_code = 403
-    mappings = {
-      "append:header.auth" = "$context.authorizer.authorizerResponse"
-    }
-  }
-
-  response_parameters {
-    status_code = 200
-    mappings = {
-      "overwrite:statuscode" = "204"
-    }
-  }
 }
 
 resource "aws_apigatewayv2_route" "root_route" {
