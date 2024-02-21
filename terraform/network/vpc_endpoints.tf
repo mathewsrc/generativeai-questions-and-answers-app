@@ -85,3 +85,39 @@ resource "aws_vpc_endpoint" "s3" {
     Environment = var.environment
   }
 }
+
+# Create a VPC endpoint for Bedrock
+resource "aws_vpc_endpoint" "bedrock" {
+  vpc_id              = aws_vpc.main.id
+  service_name        = "com.amazonaws.${var.region}.bedrock"
+  vpc_endpoint_type   = "Interface"
+  private_dns_enabled = true
+  subnet_ids          = aws_subnet.private_subnets.*.id
+
+  security_group_ids = [
+    aws_security_group.ecs_tasks.id,
+  ]
+
+  tags = {
+    Name        = "Bedrock VPC Endpoint"
+    Environment = var.environment
+  }
+}
+
+# Create a VPC endpoint for Bedrock runtime
+resource "aws_vpc_endpoint" "bedrock_runtime" {
+  vpc_id              = aws_vpc.main.id
+  service_name        = "com.amazonaws.${var.region}.bedrock-runtime"
+  vpc_endpoint_type   = "Interface"
+  private_dns_enabled = true
+  subnet_ids          = aws_subnet.private_subnets.*.id
+
+  security_group_ids = [
+    aws_security_group.ecs_tasks.id,
+  ]
+
+  tags = {
+    Name        = "Bedrock Runtime VPC Endpoint"
+    Environment = var.environment
+  }
+}
