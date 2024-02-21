@@ -173,7 +173,7 @@ resource "aws_security_group" "ecs_tasks" {
 }
 ```
 
-VPC Endpoints
+## VPC Endpoints
 
 Directory: `terraform/network`
 
@@ -315,5 +315,44 @@ resource "aws_vpc_endpoint" "bedrock_runtime" {
     Name        = "Bedrock Runtime VPC Endpoint"
     Environment = var.environment
   }
+}
+```
+
+### VPC endpoint policy
+
+Set of actions to create VPC endpoints
+
+```json
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Sid": "Statement1",
+            "Effect": "Allow",
+            "Action": [
+                "ec2:CreateVpcEndpoint",
+                "ec2:DescribeVpcEndpoints",
+                "ec2:DeleteVpcEndpoints"
+            ],
+            "Resource": [
+                "arn:aws:ec2:us-east-1:*:route-table/*",
+                "arn:aws:ec2:us-east-1:*:vpc-endpoint/*",
+                "arn:aws:ec2:us-east-1:*:vpc/*",
+                "arn:aws:ec2:us-east-1:*:subnet/*",
+                "arn:aws:ec2:us-east-1:*:security-group/*"
+            ]
+        },
+        {
+            "Sid": "Statement2",
+            "Effect": "Allow",
+            "Action": [
+                "ec2:RevokeSecurityGroupIngress",
+                "ec2:AuthorizeSecurityGroupIngress"
+            ],
+            "Resource": [
+                "arn:aws:ec2:us-east-1:*:security-group/*"
+            ]
+        }
+    ]
 }
 ```
