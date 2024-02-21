@@ -9,7 +9,7 @@ data "aws_iam_policy_document" "ecs_task_executor_policy" {
       "logs:CreateLogGroup"
     ]
     resources = [
-    "arn:aws:logs:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:log-group:bedrock:log-stream:*"]
+    "arn:aws:logs:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:log-group:*"]
   }
   statement {
     sid = 2
