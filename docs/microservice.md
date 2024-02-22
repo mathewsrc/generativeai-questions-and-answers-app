@@ -421,6 +421,7 @@ Directory: `src/app`
 async def root():
     """
     Endpoint for handling GET requests at the root path ("/").
+    Return a welcome message
     """
     ...
 ```
@@ -431,8 +432,19 @@ async def question(body: Body):
     """
     Endpoint for handling POST requests at the "/ask" path.
     Receives a request body parameter named 'body' of type 'Body'.
+    Return the model answer
     """    
     ...
+```
+
+```python
+@app.get("/collectioninfo")
+async def collection_info():
+  """
+  Endpoint for handling GET requests at the root path ("/collectioninfo")
+  Returns Qdrant collection information
+  """
+  ...
 ```
 
 ### ECS policy
