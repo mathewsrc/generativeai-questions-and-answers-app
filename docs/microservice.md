@@ -738,37 +738,6 @@ resource "aws_apigatewayv2_stage" "example" {
 }
 ```
 
-### API Gateway Usage Plan
-
-An API Gateway Usage Plan define who can access deployed API stages and methods. A quota define the maximum number of requests that can be made in a given time period and in which time period the limit applies. Throttle settings can be configured at the API or API method level, determining the maximum rate limit over a customizable time frame, ranging from one to a few seconds. Throttling initiates when the target point is reached.
-
-Directory: `terraform/api_gateway`
-
-```terraform
-# Create a API Gateway Usage Plan
-resource "aws_api_gateway_usage_plan" "usage_plan" {
-  name        = var.usage_plan_name
-  description = "QA Usage Plan"
-
-  quota_settings {
-    limit  = var.quota_limit  # Maximum number of requests that can be made in a given time period.
-    offset = var.quota_offset # Number of requests to subtract from the given limit.   
-    period = var.period       # Time period in which the limit applies. Valid values are "DAY", "WEEK" or "MONTH".
-  }
-
-  throttle_settings {
-    burst_limit = var.burst_limit # The maximum rate limit over a time ranging from one to a few seconds
-    rate_limit  = var.rate_limit  # The API request steady-state rate limit.
-  }
-
-  tags = {
-    Name        = var.usage_plan_name
-    Environment = var.environment
-    Application = var.application_name
-  }
-}
-```
-
 ## Policy for API Gateway
 
 ```json
