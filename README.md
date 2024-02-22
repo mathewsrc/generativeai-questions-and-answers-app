@@ -46,7 +46,7 @@ Muitas pessoas acabam por desistir de ler editais de concursos devidos a diferen
 
 [AWS network details](https://github.com/mathewsrc/generativeai-questions-and-answers-app/blob/main/docs/network.md)
 
-[Create a vector store with Lambda and s3](https://github.com/mathewsrc/generativeai-questions-and-answers-app/blob/main/docs/vector_store.md)
+[How to create a vector store with Lambda, s3, Bedrock and Qdrant Cloud](https://github.com/mathewsrc/generativeai-questions-and-answers-app/blob/main/docs/vector_store.md)
 
 [Microservice with ECS details](https://github.com/mathewsrc/generativeai-questions-and-answers-app/blob/main/docs/microservice.md)
 
