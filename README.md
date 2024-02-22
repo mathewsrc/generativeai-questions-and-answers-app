@@ -119,25 +119,18 @@ rm -rf awscliv2.zip aws
 
 # Verify the AWS CLI
 aws --version
-
-# Configure the AWS CLI
-aws configure
 ```
 
 Alternatively, you can run the provided Bash script `install_aws_cli.sh` in the terminal to streamline the installation process.
 
 ### Configure AWS CLI
 
-We have two alternatives for setting up the AWS Command Line Interface (CLI):
+In the terminal run the following command:
 
-- Configure as an Administrator (less secure): This option provides broad permissions but is less secure as it grants extensive access.
-- Create a new user with restricted permissions: For enhanced security, this alternative involves creating a new user with limited permissions.
-
-For this project, a new user has been created in AWS Identity and Access Management (IAM), and policies 
-with minimal permissions have been defined. You can review the necessary policies in [policies](tutorials/iam_user_policies.md).
-
-Finally, in the terminal, execute the command `aws configure` and provide the Access Key and Secret Access Key that were just created. 
-Set the default region as well.
+```bash
+# Configure the AWS CLI
+aws configure
+```
 
 To verify your credentials, you can use one of the following commands in the terminal:
 
@@ -160,29 +153,17 @@ This command will retrieve details about the user, including user ID and account
 
 To access Qdrant Cloud via the Client SDK, you need to create a cluster in Qdrant Cloud and obtain a Token and the cluster URL.
 
-1. Follow the instructions on how to set up a free cluster by visiting the following link: [Qdrant-cluster](https://qdrant.tech/documentation/cloud/quickstart-cloud/)
+1. Follow the instructions on how to set up a free cluster by visiting the following link:
 
-2. Create a new file to store sensitive data
+[Qdrant-cluster](https://qdrant.tech/documentation/cloud/quickstart-cloud/)
 
-```bash
-touch .env
-```
-
-3. Store the Qdrant token and cluster URL inside `.env` file:
+3. Export the Qdrant token and cluster URL
    
-QDRANT_URL = "YOUR CLUSTER URL"
-
-QDRANT_API_KEY = "YOUR TOKEN"
-
-### To create a collection in Qdrant Cloud using the Command-Line Interface (CLI), follow these steps:
-
-1. Create a collection
-
-First, open your terminal and select one of the methods below. Then specify a collection name, and choose an embedding model (this process typically takes 10-15 minutes):
+Use the following command in the terminal to export secrets:
 
 ```bash
-make qdrant-create
-poetry run python src/cli/qdrant_cli.py create
+export QDRANT_URL="<YOUR QDRANT CLOUD URL>"
+export QDRANT_API_KEY="<YOUR API KEY>"
 ```
 
 ### Qdrant cluster
@@ -228,23 +209,7 @@ Terraform. This command will invoke Terraform to configure all the necessary inf
 make tf-apply
 ```
 
-2. Upload Qdrant url and key to AWS Secrets Manager
-
-Would not be secure to use Qdrant URL and Key locally, so we need to
-use AWS Secrets Manager to keep this information safe, and retrieve both
-secrets using the Secrets Manager API.
-
-We could either create AWS Secrets manually using AWS console, AWS CLI, or delegate
-to Terraform. As I am already using Terraform to create other AWS
-resources I decided to use it for AWS Secrets Manager too.
-
-Run the following Bash script to send Qdrant URL and Key to AWS:
-
-```bash
-scripts/upload_secrets.sh
-```
-
-Now, to deploy the application to ECS use the make command:
+2. Deploy the application to ECS using the make command:
 
 ```bash
 make aws-deploy
