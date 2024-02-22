@@ -47,7 +47,7 @@ resource "aws_internet_gateway" "main" {
 }
 
 # Create a Route Table
-resource "aws_route_table" "main" {
+resource "aws_route_table" "public_route_table" {
   vpc_id = aws_vpc.main.id
 
   route {
@@ -56,10 +56,64 @@ resource "aws_route_table" "main" {
   }
 
   tags = {
-    Name        = "main-route-table"
+    Name        = "public-route-table"
     Application = var.application_name
     Environment = var.environment
   }
+}
+
+resource "aws_route_table_association" "public_route_table_association" {
+  count          = length(var.aws_public_subnet_cidr_blocks)
+  subnet_id      = element(aws_subnet.public_subnets.*.id, count.index)
+  route_table_id = element(aws_route_table.public_route_table.*.id, count.index)
+}
+
+# Create an Elastic IP address for the NAT Gateway
+resource "aws_eip" "nat" {
+  count      = length(var.aws_public_subnet_cidr_blocks)
+  domain     = "vpc"
+  depends_on = [aws_internet_gateway.main]
+}
+
+# Create a NAT Gateway for the public subnets
+# Required to allow the ECS tasks to access the internet and communicate with Qdrant Cloud
+resource "aws_nat_gateway" "nat_gateway" {
+  count         = length(var.aws_public_subnet_cidr_blocks)
+  allocation_id = element(aws_eip.nat.*.id, count.index)
+  subnet_id     = element(aws_subnet.public_subnets.*.id, count.index)
+
+  tags = {
+    Name        = "nat-gateway"
+    Subnet      = "public"
+    Application = var.application_name
+    Environment = var.environment
+  }
+
+  # To ensure proper ordering, it is recommended to add an explicit dependency
+  # on the Internet Gateway for the VPC.
+  depends_on = [aws_internet_gateway.main]
+}
+
+resource "aws_route_table" "private_route_table" {
+  count  = length(var.aws_private_subnet_cidr_blocks)
+  vpc_id = aws_vpc.main.id
+
+  route {
+    cidr_block     = "0.0.0.0/0"
+    nat_gateway_id = element(aws_nat_gateway.nat_gateway.*.id, count.index)
+  }
+
+  tags = {
+    Name        = "private-route-table-${count.index}"
+    Application = var.application_name
+    Environment = var.environment
+  }
+}
+
+resource "aws_route_table_association" "private_route_table_association" {
+  count          = length(var.aws_private_subnet_cidr_blocks)
+  subnet_id      = element(aws_subnet.private_subnets.*.id, count.index)
+  route_table_id = element(aws_route_table.private_route_table.*.id, count.index)
 }
 
 # Create a security group for the load balancer
@@ -143,101 +197,9 @@ resource "aws_security_group" "ecs_tasks" {
     cidr_blocks = [var.aws_vpc_cidr_block]
   }
 
-  ingress {
-    from_port   = 6333
-    to_port     = 6333
-    protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-
-  ingress {
-    from_port   = 6334
-    to_port     = 6334
-    protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-
-  egress {
-    from_port   = 6333
-    to_port     = 6333
-    protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-
-  egress {
-    from_port   = 6334
-    to_port     = 6334
-    protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-
   tags = {
     Environment = var.environment
     Name        = var.security_group_name_ecs_tasks
     Application = var.application_name
-  }
-}
-
-resource "aws_network_acl" "qdrant_acl" {
-  vpc_id = aws_vpc.main.id
-
-  ingress {
-    protocol   = "tcp"
-    rule_no    = 100
-    action     = "allow"
-    cidr_block = "0.0.0.0/0"
-    from_port  = 443
-    to_port    = 443
-  }
-
-  ingress {
-    protocol   = "tcp"
-    rule_no    = 200
-    action     = "allow"
-    cidr_block = "0.0.0.0/0"
-    from_port  = 6333
-    to_port    = 6333
-  }
-
-  ingress {
-    protocol   = "tcp"
-    rule_no    = 300
-    action     = "allow"
-    cidr_block = "0.0.0.0/0"
-    from_port  = 6334
-    to_port    = 6334
-  }
-
-  egress {
-    protocol   = "tcp"
-    rule_no    = 400
-    action     = "allow"
-    cidr_block = "0.0.0.0/0"
-    from_port  = 443
-    to_port    = 443
-  }
-
-  egress {
-    protocol   = "tcp"
-    rule_no    = 500
-    action     = "allow"
-    cidr_block = "0.0.0.0/0"
-    from_port  = 6333
-    to_port    = 6333
-  }
-
-  egress {
-    protocol   = "tcp"
-    rule_no    = 600
-    action     = "allow"
-    cidr_block = "0.0.0.0/0"
-    from_port  = 6334
-    to_port    = 6334
-  }
-
-  tags = {
-    Name        = "qdrant-acl"
-    Application = var.application_name
-    Environment = var.environment
   }
 }
