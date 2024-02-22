@@ -36,7 +36,7 @@ Muitas pessoas acabam por desistir de ler editais de concursos devidos a diferen
 16. Integrate the AWS Bedrock Foundation Model and the embeddings from Qdrant Cloud using Langchain.
 17. Generate an answer about the documents for the user using the embeddings from Qdrant Cloud via the LLM.
 
-# Here is more details about this project
+## Here is more details about this project
 
 [Setup Bedrock](https://github.com/mathewsrc/generativeai-questions-and-answers-app/blob/main/docs/bedrock_tutorial.md)
 
