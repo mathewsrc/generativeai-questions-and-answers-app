@@ -12,9 +12,7 @@ PT-BR
 
 Muitas pessoas acabam por desistir de ler editais de concursos devidos a diferentes fatores como: muitas informações, tamanho de letras não acessíveis e dificuldade de interpretação. Este projeto tem como objetivo construir uma aplicação de IA generativa para auxiliar candidados a compreender de forma facil e rápida editais de concursos.
 
-<p align="center">
-<img src="https://github.com/mathewsrc/GenerativeAI-Questions-and-Answers-app-with-Bedrock-Langchain-and-FastAPI/assets/94936606/0066112b-0ec9-4174-83cf-fca44a91af16" width=50% height=50%>
-</p>
+Overview
 
 ![Generative AI - RAG](https://github.com/mathewsrc/generativeai-questions-and-answers-app/assets/94936606/ca9c3927-65b2-443e-a936-310a70de87e7)
 
