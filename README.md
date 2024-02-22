@@ -1,4 +1,4 @@
-[![CI](https://github.com/mathewsrc/GenerativeAI-Questions-and-Answers-app-with-Bedrock-Langchain-and-FastAPI/actions/workflows/ci.yml/badge.svg)](https://github.com/mathewsrc/GenerativeAI-Questions-and-Answers-app-with-Bedrock-Langchain-and-FastAPI/actions/workflows/ci.yml)
+[![CI](https://github.com/mathewsrc/generativeai-questions-and-answers-app/actions/workflows/ci.yml/badge.svg)](https://github.com/mathewsrc/generativeai-questions-and-answers-app/actions/workflows/ci.yml)
 [![Deploy](https://github.com/mathewsrc/generativeai-questions-and-answers-app/actions/workflows/cd.yml/badge.svg)](https://github.com/mathewsrc/generativeai-questions-and-answers-app/actions/workflows/cd.yml)
 
 # Generative AI: Questions and Answers app for competition notices
