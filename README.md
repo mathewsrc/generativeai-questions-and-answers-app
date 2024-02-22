@@ -254,6 +254,7 @@ Directory: `src/app/main/py`
 
 ```python
 AWS_DEFAULT_REGION = "us-east-1"  # Set this to your preferred AWS region, e.g. us-west-1
+```
 
 Congratulations! You are now ready to deploy this application using CI/CD
 
