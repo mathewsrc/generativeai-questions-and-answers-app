@@ -16,7 +16,7 @@ Muitas pessoas acabam por desistir de ler editais de concursos devidos a diferen
 <img src="https://github.com/mathewsrc/GenerativeAI-Questions-and-Answers-app-with-Bedrock-Langchain-and-FastAPI/assets/94936606/0066112b-0ec9-4174-83cf-fca44a91af16" width=50% height=50%>
 </p>
 
-![Generative AI - RAG](https://github.com/mathewsrc/GenerativeAI-Questions-and-Answers-app-with-Bedrock-Langchain-and-FastAPI/assets/94936606/ae5f125b-fa1c-4198-96af-0c2eb31fcb08)
+![Generative AI - RAG](https://github.com/mathewsrc/generativeai-questions-and-answers-app/assets/94936606/ca9c3927-65b2-443e-a936-310a70de87e7)
 
 ## Steps
 
@@ -224,7 +224,7 @@ If you want to deploy this application to AWS ECS using GitHub actions you will 
 
 Congratulations! You are now ready to deploy this application using CI/CD
 
-## Tear Down the AWS Resources
+## Tear down the AWS resources
 
 Terraform excels in this aspect, eliminating the need for manual navigation through the console to locate each created resource. With Terraform we can just use `terraform destroy` or `make tf-destroy` in the terminal:
 
@@ -240,7 +240,18 @@ make tf-destroy
 
 ### Bedrock
 
+Amazon Bedrock is a fully managed service that provides a selection of high-performing foundation models (FMs) from leading AI companies such as AI21 Labs, Anthropic, Cohere, Meta, Stability AI, and Amazon. It offers a single API and a wide range of capabilities for building generative AI applications with a focus on security, privacy, and responsible AI.
 
+Key benefits
+
+- Offers a choice of high-performing FMs from leading AI companies, allowing users to experiment with and evaluate the best models for their use case.
+
+- Provides the ability to privately customize FMs with user data using techniques such as fine-tuning and Retrieval Augmented Generation (RAG).
+
+- As a serverless service, Amazon Bedrock eliminates the need for users to manage any infrastructure.
+
+- Allows for secure integration and deployment of generative AI capabilities into user applications using familiar AWS services such 
+as Lambda Functions and Elastic Container Service (ECS).
 
 ### Terraform
 
@@ -270,7 +281,6 @@ Fargate
 - It eliminates the need to choose EC2 instances, cluster capacity, and scaling
 - Fargate has native integration with AWS VPC which permits to control of connectivity
 
-
 ### Amazon ECR (Elastic Container Register)
 
 Amazon ECR is a managed container registry service designed to store Docker images, supporting public and private repositories.
@@ -280,7 +290,6 @@ Key benefits:
 - Image Scanning for vulnerabilities within your container images 
 - Effectively manage image lifecycles with customizable policies
 - Cross-Region and Cross-Account Replication: Facilitate seamless replication of images across regions and accounts for enhanced accessibility and redundancy
-
 
 ### API Gateway
 
@@ -295,7 +304,6 @@ Key benefits:
 - Handles traffic management and throttling
 - Handles authorization and access control
 - Monitoring, and API version management
-
 
 ### GitHub Actions
 
@@ -330,19 +338,61 @@ Key benefits:
 - Comprehensive Monitoring and Logging for Cluster Performance
 - Availability on Major Cloud Platforms: AWS, GCP, and Azure
 
-
 ### Lambda Functions
 
+Lambda Function is a serverless computing service that allows you to run code without provisioning or managing servers. It provides automatic scaling based on workload.
+
+Key benefits
+
+- Eliminates the need to provision or manage servers, allowing you to focus on writing code.
+
+- Automatically scales your applications in response to incoming requests or events, handling any scale of traffic.
+
+- Supports various programming languages including Python, Go, Java, and more.
+
+- Works with serverless and container tools such as Docker CLI for building, testing, and deploying functions.
 
 ### S3
+Amazon S3 is an object storage service that offers industry-leading scalability, data availability, security, and performance. It caters to customers of all sizes and industries, providing storage solutions for a wide range of use cases.
 
+Key benefits
+
+- Offers industry-leading scalability to store and protect any amount of data.
+
+- Provides cost-effective storage classes to help optimize costs.
 
 ### Secrets Manager
 
+AWS Secrets Manager is a service that helps manage, retrieve, and rotate database credentials, API keys, and other secrets throughout their lifecycles.
 
-### Network Load Balancer
+Key benefits
 
+- Provides a centralized service to manage secrets, such as database credentials and API keys.
+
+- Allows for secure and easy retrieval of secrets when needed.
+
+- Supports automatic rotation of secrets to enhance security.
+
+### Elastic Load Balancer
+
+Elastic Load Balancing is a service that automatically distributes incoming traffic across multiple targets in one or more Availability Zones, ensuring high availability and fault tolerance in your applications.
+
+Key benefits
+
+- Automatically distributes incoming traffic across multiple targets, such as EC2 instances, containers, and IP addresses.
+
+- Monitors the health of its registered targets and routes traffic only to the healthy ones.
+
+- Scales as incoming traffic changes over time.
 
 ### Langchain
+
+LangChain is a robust framework designed for developing applications powered by language models. It enables the creation of context-aware applications that can reason based on the provided context.
+
+Key benefits
+
+- Allows the development of applications that can connect a language model to sources of context such as prompt instructions, few-shot examples, and content to ground its response in.
+
+- Includes Python and JavaScript libraries and integrations such as Qdrant for a myriad of components, a basic runtime for combining these components into chains and agents.
 
 
