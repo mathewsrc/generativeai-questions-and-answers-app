@@ -1,4 +1,4 @@
-resource "aws_apigatewayv2_api" "example" {
+resource "aws_apigatewayv2_api" "apigateway" {
   name          = var.api_name
   protocol_type = "HTTP"
   description   = "HTTP API for Question and Answer App"
@@ -17,7 +17,7 @@ resource "aws_apigatewayv2_vpc_link" "vpc_link" {
 }
 
 resource "aws_apigatewayv2_integration" "root_integration" {
-  api_id               = aws_apigatewayv2_api.example.id
+  api_id               = aws_apigatewayv2_api.apigateway.id
   integration_type     = "HTTP_PROXY"
   integration_uri      = var.lb_listener_arn
   integration_method   = "ANY"
@@ -27,7 +27,7 @@ resource "aws_apigatewayv2_integration" "root_integration" {
 }
 
 resource "aws_apigatewayv2_integration" "ask_integration" {
-  api_id               = aws_apigatewayv2_api.example.id
+  api_id               = aws_apigatewayv2_api.apigateway.id
   integration_type     = "HTTP_PROXY"
   integration_uri      = var.lb_listener_arn
   integration_method   = "POST"
@@ -36,14 +36,24 @@ resource "aws_apigatewayv2_integration" "ask_integration" {
   timeout_milliseconds = 30000 # 30 seconds
 }
 
+# Use {proxy+} to capture all requests to the API, and route them to the root integration.
+# Only for testing purposes
+# resource "aws_apigatewayv2_route" "root_route" {
+#   api_id    = aws_apigatewayv2_api.apigateway.id
+#   route_key = "ANY /{proxy+}"
+#   target    = "integrations/${aws_apigatewayv2_integration.root_integration.id}"
+# }
+
+# Production route
 resource "aws_apigatewayv2_route" "root_route" {
-  api_id    = aws_apigatewayv2_api.example.id
-  route_key = "ANY /{proxy+}"
+  api_id    = aws_apigatewayv2_api.apigateway.id
+  route_key = "GET /"
   target    = "integrations/${aws_apigatewayv2_integration.root_integration.id}"
 }
 
+# Production route
 resource "aws_apigatewayv2_route" "ask_route" {
-  api_id    = aws_apigatewayv2_api.example.id
+  api_id    = aws_apigatewayv2_api.apigateway.id
   route_key = "POST /ask"
   target    = "integrations/${aws_apigatewayv2_integration.ask_integration.id}"
 }
@@ -57,8 +67,8 @@ resource "aws_cloudwatch_log_group" "apigateway" {
   }
 }
 
-resource "aws_apigatewayv2_stage" "example" {
-  api_id      = aws_apigatewayv2_api.example.id
+resource "aws_apigatewayv2_stage" "apigateway" {
+  api_id      = aws_apigatewayv2_api.apigateway.id
   description = "Stage for HTTP API"
   name        = "$default" # The $default stage is a special stage that's automatically associated with new deployments.
   auto_deploy = true       # Whether updates to an API automatically trigger a new deployment.
