@@ -12,17 +12,29 @@ PT-BR
 
 Muitas pessoas acabam por desistir de ler editais de concursos devidos a diferentes fatores como: muitas informações, tamanho de letras não acessíveis e dificuldade de interpretação. Este projeto tem como objetivo construir uma aplicação de IA generativa para auxiliar candidados a compreender de forma facil e rápida editais de concursos.
 
-Overview
+## Overview
 
-![Generative AI - RAG](https://github.com/mathewsrc/generativeai-questions-and-answers-app/assets/94936606/ca9c3927-65b2-443e-a936-310a70de87e7)
+![Generative AI - RAG](https://github.com/mathewsrc/generativeai-questions-and-answers-app/assets/94936606/e5ea6499-e52e-4a44-a478-78355dd4839a)
 
-## Steps
+## Step by step
 
-1. Load PDF documents
-2. Chunk documents
-3. Embedding documents and store them in the Vector Store
-4. Build a retrieval-augmented generation pipeline for querying data
-5. Build a question answer that answers questions about the documents
+1. Upload the Terraform state file to AWS S3.
+2. Push the code and Terraform scripts to GitHub.
+3. Trigger GitHub Actions.
+4. Use GitHub Actions to leverage Terraform for creating S3 and Lambda Function infrastructure, and for uploading documents.
+5. Trigger the Lambda Function via S3 to process documents.
+6. Utilize a container image stored in ECR within the Lambda Function. This image contains all the necessary code to convert PDFs to embeddings using Langchain and the AWS Bedrock embeddings model.
+7. Upload the embeddings to Qdrant Cloud using the Python API client.
+8. Use GitHub Actions and AWS CLI to upload the Qdrant URL and API key to AWS Secrets Manager.
+9. Use GitHub Actions and Terraform to create an ECR repository and all other required resources such as AWS network (VPC, Subnets, Internet gateway, NAT gateway, Routes, security groups, etc), AWS CloudWatcher, Elastic Load Balancer, API Gateway, and VPC link. Log in to ECR and use AWS aws-actions to build, tag, and push the Docker image to ECR.
+10. Pull the Docker image from ECR using ECS.
+11. Make a call to the AWS API Gateway from the user's end.
+12. Route the request from the AWS API Gateway to the VPC link, enabling communication between the API Gateway and the Amazon ECS service within the Amazon VPC.
+13. Redirect traffic via the Elastic Load Balancer to the least used node, ensuring a balanced load across each container running the same service.
+14. Retrieve the Qdrant Cloud credentials from the AWS Secrets Manager using the ECS service.
+15. Access Qdrant Cloud using its API to get the document collection via the ECS Service.
+16. Integrate the AWS Bedrock Foundation Model and the embeddings from Qdrant Cloud using Langchain.
+17. Generate an answer about the documents for the user using the embeddings from Qdrant Cloud via the LLM.
 
 
 ## Requirements
