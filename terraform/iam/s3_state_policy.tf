@@ -1,5 +1,4 @@
 
-# <<< S3 >>>
 data "aws_iam_policy_document" "s3_state" {
   statement {
     sid    = "bucket"
@@ -12,7 +11,8 @@ data "aws_iam_policy_document" "s3_state" {
     ]
     resources = [
       "arn:aws:s3:::terraform-bucket-state-tf",
-    "arn:aws:s3:::terraform-bucket-state-tf/*/*"]
+      "arn:aws:s3:::terraform-bucket-state-tf/*/*"
+    ]
   }
 }
 
