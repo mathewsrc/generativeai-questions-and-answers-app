@@ -104,13 +104,13 @@ jobs:
         docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
         echo "image=$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG" >> $GITHUB_OUTPUT
     
-    - name: Upload Qdrant secrets to AWS Secrets Manager
-      env:
-        QDRANT_URL: ${{ secrets.QDRANT_URL }}
-        QDRANT_API_KEY: ${{ secrets.QDRANT_API_KEY }}
-      run: |
-          aws secretsmanager put-secret-value --secret-id prod/qdrant_url --secret-string $QDRANT_URL
-          aws secretsmanager put-secret-value --secret-id prod/qdrant_api_key --secret-string $QDRANT_API_KEY
+    # - name: Upload Qdrant secrets to AWS Secrets Manager
+    #   env:
+    #     QDRANT_URL: ${{ secrets.QDRANT_URL }}
+    #     QDRANT_API_KEY: ${{ secrets.QDRANT_API_KEY }}
+    #   run: |
+    #       aws secretsmanager put-secret-value --secret-id prod/qdrant_url --secret-string $QDRANT_URL
+    #       aws secretsmanager put-secret-value --secret-id prod/qdrant_api_key --secret-string $QDRANT_API_KEY
 
     - name: Pass values to .aws/task-definition-actions.json placeholders
       env:
