@@ -12,11 +12,11 @@ PT-BR
 
 Muitas pessoas acabam por desistir de ler editais de concursos devidos a diferentes fatores como: muitas informações, tamanho de letras não acessíveis e dificuldade de interpretação. Este projeto tem como objetivo construir uma aplicação de IA generativa para auxiliar candidados a compreender de forma facil e rápida editais de concursos.
 
-Overview
+## Overview
 
-![Generative AI - RAG](https://github.com/mathewsrc/generativeai-questions-and-answers-app/assets/94936606/ca9c3927-65b2-443e-a936-310a70de87e7)
+![Generative AI - RAG](https://github.com/mathewsrc/generativeai-questions-and-answers-app/assets/94936606/e5ea6499-e52e-4a44-a478-78355dd4839a)
 
-## Steps
+## Step by step
 
 1. Upload the Terraform state file to AWS S3.
 2. Push the code and Terraform scripts to GitHub.
