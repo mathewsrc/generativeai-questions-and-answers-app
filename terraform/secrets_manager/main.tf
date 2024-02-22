@@ -39,6 +39,7 @@ data "external" "envs" {
   ]
 }
 
+# Upload the secrets to AWS Secrets Manager
 resource "null_resource" "upload_secrets" {
   depends_on = [data.external.envs]
   provisioner "local-exec" {
