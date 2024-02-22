@@ -118,7 +118,7 @@ resource "aws_secretsmanager_secret" "qdrant_api_key" {
 
 ## Load Balancer
 
-The Load Balancer is a service that helps to redirect the traffic to least used node to make sure load is always balanced between each container holding same service.
+The Load Balancer is a service that helps to redirect the traffic to the least used node to make sure load is always balanced between each container holding the same service.
 
 The `internal` option when set to True block the direct access to the services, as this project uses API Gateway
 to access the service we can set it to True.
@@ -170,7 +170,7 @@ resource "aws_lb_target_group" "target_group" {
 
 ## Load balancer listener
 
-The listener checks for connection requests from clients, using the protocol (HTTP) and port (80) and redirect traffic from the load balancer to the target group. 
+The listener checks for connection requests from clients, using the protocol (HTTP) and port (80) and redirects the  traffic from the load balancer to the target group. 
 
 The `type` option defines the type of routing action. The `forward` type routes requests to one or more target groups.
 
