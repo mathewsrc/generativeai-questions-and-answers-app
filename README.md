@@ -165,7 +165,7 @@ To access Qdrant Cloud via the Client SDK, you need to create a cluster in Qdran
 
 1. Follow the instructions on how to set up a free cluster by visiting the following link:
 
-[Qdrant-cluster](https://qdrant.tech/documentation/cloud/quickstart-cloud/)
+https://qdrant.tech/documentation/cloud/quickstart-cloud/
 
 3. Export the Qdrant token and cluster URL
    
