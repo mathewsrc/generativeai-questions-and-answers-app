@@ -143,6 +143,34 @@ resource "aws_security_group" "ecs_tasks" {
     cidr_blocks = [var.aws_vpc_cidr_block]
   }
 
+  ingress {
+    from_port   = 6333
+    to_port     = 6333
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  ingress {
+    from_port   = 6334
+    to_port     = 6334
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  egress {
+    from_port   = 6333
+    to_port     = 6333
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  egress {
+    from_port   = 6334
+    to_port     = 6334
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
   tags = {
     Environment = var.environment
     Name        = var.security_group_name_ecs_tasks
@@ -150,20 +178,66 @@ resource "aws_security_group" "ecs_tasks" {
   }
 }
 
-resource "aws_security_group_rule" "qdrant_tcp_6333" {
-  type              = "ingress"
-  from_port         = 6333
-  to_port           = 6333
-  protocol          = "tcp"
-  security_group_id = aws_security_group.ecs_tasks.id
-  cidr_blocks       = [var.aws_vpc_cidr_block]
-}
+resource "aws_network_acl" "qdrant_acl" {
+  vpc_id = aws_vpc.main.id
 
-resource "aws_security_group_rule" "qdrant_tcp_6334" {
-  type              = "ingress"
-  from_port         = 6334
-  to_port           = 6334
-  protocol          = "tcp"
-  security_group_id = aws_security_group.ecs_tasks.id
-  cidr_blocks       = [var.aws_vpc_cidr_block]
+  ingress {
+    protocol   = "tcp"
+    rule_no    = 100
+    action     = "allow"
+    cidr_block = "0.0.0.0/0"
+    from_port  = 443
+    to_port    = 443
+  }
+
+  ingress {
+    protocol   = "tcp"
+    rule_no    = 200
+    action     = "allow"
+    cidr_block = "0.0.0.0/0"
+    from_port  = 6333
+    to_port    = 6333
+  }
+
+  ingress {
+    protocol   = "tcp"
+    rule_no    = 300
+    action     = "allow"
+    cidr_block = "0.0.0.0/0"
+    from_port  = 6334
+    to_port    = 6334
+  }
+
+  egress {
+    protocol   = "tcp"
+    rule_no    = 400
+    action     = "allow"
+    cidr_block = "0.0.0.0/0"
+    from_port  = 443
+    to_port    = 443
+  }
+
+  egress {
+    protocol   = "tcp"
+    rule_no    = 500
+    action     = "allow"
+    cidr_block = "0.0.0.0/0"
+    from_port  = 6333
+    to_port    = 6333
+  }
+
+  egress {
+    protocol   = "tcp"
+    rule_no    = 600
+    action     = "allow"
+    cidr_block = "0.0.0.0/0"
+    from_port  = 6334
+    to_port    = 6334
+  }
+
+  tags = {
+    Name        = "qdrant-acl"
+    Application = var.application_name
+    Environment = var.environment
+  }
 }
