@@ -47,7 +47,7 @@ Set of actions to create ECR repository
                 "ecr:*"
             ],
             "Resource": [
-                "arn:aws:ecr:us-east-1:*:repository/*"
+                "arn:aws:ecr:us-east-1:account-id:repository/*"
             ]
         },
         {
@@ -499,15 +499,15 @@ Set of actions to create ECS resources
                 "ec2:RevokeSecurityGroupEgress",
                 "ec2:DeleteSecurityGroup"
             ],
-            "Resource": "arn:aws:ec2:us-east-1:*:security-group/*"
+            "Resource": "arn:aws:ec2:us-east-1:account-id:security-group/*"
         },
         {
             "Sid": "VisualEditor2",
             "Effect": "Allow",
             "Action": "ec2:CreateTags",
             "Resource": [
-                "arn:aws:ec2:us-east-1:*:subnet/*",
-                "arn:aws:ec2:us-east-1:*:vpc/*"
+                "arn:aws:ec2:us-east-1:account-id:subnet/*",
+                "arn:aws:ec2:us-east-1:account-id:vpc/*"
             ]
         },
         {
@@ -544,7 +544,7 @@ Set of actions to create ECS resources
                 "ecs:ListServices",
                 "ecs:ListServicesByNamespace"
             ],
-            "Resource": "arn:aws:ecs:us-east-1:*:service/*/*"
+            "Resource": "arn:aws:ecs:us-east-1:account-id:service/*/*"
         },
         {
             "Sid": "VisualEditor6",
@@ -579,11 +579,11 @@ Set of actions to create ECS resources
                 "elasticloadbalancing:DeleteListener"
             ],
             "Resource": [
-                "arn:aws:elasticloadbalancing:us-east-1:*:targetgroup/*/*",
-                "arn:aws:elasticloadbalancing:us-east-1:*:loadbalancer/app/*/*",
-                "arn:aws:elasticloadbalancing:us-east-1:*:listener/app/*/*/*",
-                "arn:aws:elasticloadbalancing:us-east-1:*:loadbalancer/net/*/*",
-                "arn:aws:elasticloadbalancing:us-east-1:*:listener/net/*/*/*"
+                "arn:aws:elasticloadbalancing:us-east-1:account-id:targetgroup/*/*",
+                "arn:aws:elasticloadbalancing:us-east-1:account-id:loadbalancer/app/*/*",
+                "arn:aws:elasticloadbalancing:us-east-1:account-id:listener/app/*/*/*",
+                "arn:aws:elasticloadbalancing:us-east-1:account-id:loadbalancer/net/*/*",
+                "arn:aws:elasticloadbalancing:us-east-1:account-id:listener/net/*/*/*"
             ]
         },
         {
@@ -604,8 +604,8 @@ Set of actions to create ECS resources
                 "ec2:CreateDefaultSubnet"
             ],
             "Resource": [
-                "arn:aws:ec2:us-east-1:*:subnet/*",
-                "arn:aws:ec2:us-east-1:*:vpc/*"
+                "arn:aws:ec2:us-east-1:account-id:subnet/*",
+                "arn:aws:ec2:us-east-1:account-id:vpc/*"
             ]
         }
     ]
@@ -849,7 +849,7 @@ resource "aws_api_gateway_usage_plan" "usage_plan" {
                 "logs:GetLogEvents",
                 "logs:FilterLogEvents"
             ],
-            "Resource": "arn:aws:logs:us-east-1:*:log-group:*"
+            "Resource": "arn:aws:logs:us-east-1:account-id:log-group:*"
         },
         {
             "Sid": "VisualEditor8",
@@ -918,7 +918,7 @@ resource "aws_api_gateway_usage_plan" "usage_plan" {
                 "logs:DeleteLogGroup"
             ],
             "Resource": [
-                "arn:aws:logs:us-east-1:*:log-group:*"
+                "arn:aws:logs:us-east-1:account-id:log-group:*"
             ]
         }
     ]

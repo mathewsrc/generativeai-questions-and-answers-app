@@ -234,7 +234,7 @@ Set of actions to create Lambda Functions
                 "logs:GetLogEvents",
                 "logs:FilterLogEvents"
             ],
-            "Resource": "arn:aws:logs:*:*:log-group:/aws/lambda/*"
+            "Resource": "arn:aws:logs:*:account-id:log-group:/aws/lambda/*"
         }
     ]
 }

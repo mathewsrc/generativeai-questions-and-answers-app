@@ -458,14 +458,15 @@ Set of actions to create VPC endpoints
             "Action": [
                 "ec2:CreateVpcEndpoint",
                 "ec2:DescribeVpcEndpoints",
-                "ec2:DeleteVpcEndpoints"
+                "ec2:DeleteVpcEndpoints",
+                "ec2:ModifyVpcEndpoint"
             ],
             "Resource": [
-                "arn:aws:ec2:us-east-1:*:route-table/*",
-                "arn:aws:ec2:us-east-1:*:vpc-endpoint/*",
-                "arn:aws:ec2:us-east-1:*:vpc/*",
-                "arn:aws:ec2:us-east-1:*:subnet/*",
-                "arn:aws:ec2:us-east-1:*:security-group/*"
+                "arn:aws:ec2:us-east-1:078090784717:route-table/*",
+                "arn:aws:ec2:us-east-1:078090784717:vpc-endpoint/*",
+                "arn:aws:ec2:us-east-1:078090784717:vpc/*",
+                "arn:aws:ec2:us-east-1:078090784717:subnet/*",
+                "arn:aws:ec2:us-east-1:078090784717:security-group/*"
             ]
         },
         {
@@ -476,7 +477,7 @@ Set of actions to create VPC endpoints
                 "ec2:AuthorizeSecurityGroupIngress"
             ],
             "Resource": [
-                "arn:aws:ec2:us-east-1:*:security-group/*"
+                "arn:aws:ec2:us-east-1:078090784717:security-group/*"
             ]
         }
     ]
