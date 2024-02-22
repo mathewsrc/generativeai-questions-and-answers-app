@@ -3,6 +3,8 @@ name: CI
 
 env:
   AWS_REGION: us-east-1                  # set this to your preferred AWS region, e.g. us-west-1
+  QDRANT_URL: ${{ secrets.QDRANT_URL }}  # set this to your Qdrant URL, e.g. https://qdrant.yourdomain.com
+  QDRANT_API_KEY: ${{ secrets.QDRANT_API_KEY }}  # set this to your Qdrant API key, e.g. 1234567890abcdef1234567890abcdef
 
 on:
   push:
