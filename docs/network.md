@@ -77,6 +77,58 @@ Directory: `terraform/network`
 The route table has a set of rules called routes that determine where the network traffic 
 is directed. The route table allow traffic between all subnets to the VPC.
 
+### Route table for public networks
+
+```terraform
+# Create a Route Table
+resource "aws_route_table" "public_route_table" {
+  vpc_id = aws_vpc.main.id
+
+  route {
+    cidr_block = "0.0.0.0/0"
+    gateway_id = aws_internet_gateway.main.id
+  }
+
+  tags = {
+    Name        = "public-route-table"
+    Application = var.application_name
+    Environment = var.environment
+  }
+}
+
+resource "aws_route_table_association" "public_route_table_association" {
+  count          = length(var.aws_public_subnet_cidr_blocks)
+  subnet_id      = element(aws_subnet.public_subnets.*.id, count.index)
+  route_table_id = element(aws_route_table.public_route_table.*.id, count.index)
+}
+```
+
+### Route table for private subnets
+
+```terraform
+resource "aws_route_table" "private_route_table" {
+  count  = length(var.aws_private_subnet_cidr_blocks)
+  vpc_id = aws_vpc.main.id
+
+  route {
+    cidr_block     = "0.0.0.0/0"
+    nat_gateway_id = element(aws_nat_gateway.nat_gateway.*.id, count.index)
+  }
+
+  tags = {
+    Name        = "private-route-table-${count.index}"
+    Application = var.application_name
+    Environment = var.environment
+  }
+}
+
+resource "aws_route_table_association" "private_route_table_association" {
+  count          = length(var.aws_private_subnet_cidr_blocks)
+  subnet_id      = element(aws_subnet.private_subnets.*.id, count.index)
+  route_table_id = element(aws_route_table.private_route_table.*.id, count.index)
+}
+``` 
+
 ## NAT gateway
 
 <p align="center">
@@ -84,6 +136,44 @@ is directed. The route table allow traffic between all subnets to the VPC.
 <p/>
 
 Figure 2. Elastic Container Service communication with Qdrant Cloud using NAT gateway 
+
+### Elastic IP
+
+The elastic IP address is a static, IPv4 address designed for dynamic cloud computing.
+The elastic IP provides a fixes, public IP address that routes to the NAT gateway.
+
+```terrafom
+# Create an Elastic IP address for the NAT Gateway
+resource "aws_eip" "nat" {
+  count      = length(var.aws_public_subnet_cidr_blocks)
+  domain     = "vpc"
+  depends_on = [aws_internet_gateway.main]
+}
+```
+### NAT gateway
+The NAT gateway enables instances in a private subnet to connect to the internet, but prevents the internet
+from initiating a connection with those instances. We need a NAT gateway to connect to the Qdrant Cloud service.
+
+```terraform
+# Create a NAT Gateway for the public subnets
+# Required to allow the ECS tasks to access the internet and communicate with Qdrant Cloud
+resource "aws_nat_gateway" "nat_gateway" {
+  count         = length(var.aws_public_subnet_cidr_blocks)
+  allocation_id = element(aws_eip.nat.*.id, count.index)
+  subnet_id     = element(aws_subnet.public_subnets.*.id, count.index)
+
+  tags = {
+    Name        = "nat-gateway"
+    Subnet      = "public"
+    Application = var.application_name
+    Environment = var.environment
+  }
+
+  # To ensure proper ordering, it is recommended to add an explicit dependency
+  # on the Internet Gateway for the VPC.
+  depends_on = [aws_internet_gateway.main]
+}
+```
 
 ## Security groups
 
