@@ -96,7 +96,7 @@ Alternatively, run the Bash script `install_terraform.sh` in the terminal.
 
 4. Enable Bedrock Foundation Models
 
-Then, navigate to the AWS console, access Amazon Bedrock, and go to Template Access. Enable the base templates that you wish to utilize. I created a [bedrock_tutorial](tutorials/bedrock_tutorial.md) tutorial for you on how to request model access.
+Then, navigate to the AWS console, access Amazon Bedrock, and go to Template Access. Enable the base templates that you wish to utilize. I created a [bedrock_tutorial](docs/bedrock_tutorial.md) tutorial for you on how to request model access.
 
 5. Install AWS CLI
 
@@ -219,11 +219,8 @@ make aws-deploy
 
 If you want to deploy this application to AWS ECS using GitHub actions you will need to follow some more steps:
 
-1. Generate a Terraform API Token and a secret key in GitHub. Refer to the [Terraform API token](tutorials/terraform.md) inside this project
-2. Set up secret keys by providing your AWS credentials. Check out the  [Github Actions Secret Keys](tutorials/aws_secret_keys.md)
-3. Setup up secret keys for ECS access Qdrant URL and API key using AWS Secret Manager. You can follow the same steps from step 2.
-
-# TODO: image
+1. Generate a Terraform API Token and a secret key in GitHub. Refer to the [Terraform API token](docs/terraform.md) inside this project
+2. Save secret keys in GitHub Actions by providing your AWS credentials, and Qdrant credentials. Check out the  [Github Actions Secret Keys](docs/github_actions_secret_keys.md)
 
 Congratulations! You are now ready to deploy this application using CI/CD
 
@@ -349,10 +346,3 @@ Key benefits:
 ### Langchain
 
 
-
-
-## Some useful turorials and documents
-
-AWS Lambda Layers Step by Step Tutorial | Python Libraries Management by Felix Yu in Youtube
-
-https://repost.aws/knowledge-center/lambda-import-module-error-python
