@@ -1,11 +1,5 @@
 # AWS Network
 
-<p align="center">
-<img src="https://github.com/mathewsrc/GenerativeAI-Questions-and-Answers-app-with-Bedrock-Langchain-and-FastAPI/assets/94936606/c083e363-e8fb-44ea-83b3-2b2696e0a078" width=80%>
-<p/>
-
-Figure 1. Elastic Container Service Network Architecture (some features were omitted for better visualization)
-
 ## AWS VPC
 
 Directory: `terraform/network`
@@ -82,6 +76,14 @@ Directory: `terraform/network`
 
 The route table has a set of rules called routes that determine where the network traffic 
 is directed. The route table allow traffic between all subnets to the VPC.
+
+## NAT gateway
+
+<p align="center">
+<img src="https://github.com/mathewsrc/generativeai-questions-and-answers-app/assets/94936606/41e4d8de-5b0b-4636-83de-efc009ba4177" width=80%>
+<p/>
+
+Figure 2. Elastic Container Service communication with Qdrant Cloud using NAT gateway 
 
 ## Security groups
 
@@ -179,6 +181,12 @@ Directory: `terraform/network`
 
 VPC endpoints permit to access others AWS services from within the VPC without needing to traverse
 the public internet
+
+<p align="center">
+<img src="https://github.com/mathewsrc/generativeai-questions-and-answers-app/assets/94936606/ec947f0c-d003-47b9-83b3-a7efd31b3548" width=80%>
+<p/>
+
+Figure 3. VPC endpoint example 
 
 
 The ECR Docker endpoint permits ECS to pull Docker images. This endpoint's network interfaces is created in the private subnets and the security group rules are the same as the ECS tasks. More information: https://docs.aws.amazon.com/AmazonECR/latest/userguide/vpc-endpoints.html
