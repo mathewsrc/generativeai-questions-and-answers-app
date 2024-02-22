@@ -212,14 +212,22 @@ make tf-upload
 
 Follow the steps below to create the AWS infrastructure:
 
-1. Use the following command in the terminal to create all AWS resources using
+1. First update the AWS region in the `src/app/mai.py` file if you are using another region
+
+Directory: `src/app/main/py`
+
+```python
+AWS_DEFAULT_REGION = "us-east-1"  # Set this to your preferred AWS region, e.g. us-west-1
+```
+
+2. Use the following command in the terminal to create all AWS resources using
 Terraform. This command will invoke Terraform to configure all the necessary infrastructure.
 
 ```bash
 make tf-apply
 ```
 
-2. Deploy the application to ECS using the make command:
+3. Deploy the application to ECS using the make command:
 
 ```bash
 make aws-deploy
@@ -231,6 +239,21 @@ If you want to deploy this application to AWS ECS using GitHub actions you will 
 
 1. Generate a Terraform API Token and a secret key in GitHub. Refer to the [Terraform API token](docs/terraform.md) inside this project
 2. Save secret keys in GitHub Actions by providing your AWS credentials, and Qdrant credentials. Check out the  [Github Actions Secret Keys](docs/github_actions_secret_keys.md)
+
+3. Replace the following environment variables in `.github/workflows/ci.yml`, `.github/workflows/cd.yml`, `src/app/main.py` files if you are using a different
+   AWS region 
+
+Directory: `.github/workflows`
+
+```yaml
+env:
+  AWS_REGION: us-east-1   # Set this to your preferred AWS region, e.g. us-west-1
+```
+
+Directory: `src/app/main/py`
+
+```python
+AWS_DEFAULT_REGION = "us-east-1"  # Set this to your preferred AWS region, e.g. us-west-1
 
 Congratulations! You are now ready to deploy this application using CI/CD
 
