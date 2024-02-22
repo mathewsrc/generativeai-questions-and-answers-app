@@ -1,187 +1,164 @@
+import boto3
+import logging
+import os
+import time
+from botocore.exceptions import ClientError
+from dotenv import load_dotenv
 from fastapi import FastAPI, HTTPException
 from fastapi.responses import HTMLResponse
-from pydantic import BaseModel
-import boto3
-from botocore.exceptions import ClientError
-from langchain_community.llms.bedrock import Bedrock
-import os
-from dotenv import load_dotenv
-from qdrant_client import AsyncQdrantClient, QdrantClient
-from langchain_community.vectorstores.qdrant import Qdrant
-from langchain_community.embeddings.bedrock import BedrockEmbeddings
-from langchain.prompts import PromptTemplate
 from langchain.chains import RetrievalQA
-import logging
-import time
+from langchain.prompts import PromptTemplate
+from langchain_community.embeddings.bedrock import BedrockEmbeddings
+from langchain_community.llms.bedrock import Bedrock
+from langchain_community.vectorstores.qdrant import Qdrant
+from pydantic import BaseModel
+from qdrant_client import AsyncQdrantClient, QdrantClient
 
-logger = logging.getLogger()
-logger.setLevel(logging.INFO)
-
-COLLECTION_NAME = "cnu"  # replace with your Qdrant collection name
+COLLECTION_NAME = "cnu"
 BEDROCK_MODEL_NAME = "anthropic.claude-v2"
 BEDROCK_EMBEDDINGS_MODEL_NAME = "amazon.titan-embed-text-v1"
 AWS_DEFAULT_REGION = "us-east-1"
 
+# Logging setup
+logger = logging.getLogger()
+logger.setLevel(logging.INFO)
+
 app = FastAPI()
 
 class Body(BaseModel):
-	text: str
-	temperature: float = 0.5
+    text: str
+    temperature: float = 0.5
 
+# Load environment variables
 load_dotenv()
 
 session = boto3.Session(region_name=AWS_DEFAULT_REGION)
 
 prompt_template = """
-                Use the following pieces of context to provide a concise answer to the question at the end. 
-                If you don't know the answer, just say that you don't know, don't try to make up an answer.
-                                
-                Human: {question}
-                                
-                {context}
+    Use the following pieces of context to provide a concise answer to the question at the end. 
+    If you don't know the answer, just say that you don't know, don't try to make up an answer.
+    Human: {question}
+    {context}
+    Assistant:
+"""
 
-                Assistant:
-            """
-        
 def get_secret(secret_name):
-
-	client = session.client(service_name="secretsmanager", region_name=AWS_DEFAULT_REGION)
-	try:
-		get_secret_value_response = client.get_secret_value(SecretId=secret_name)
-	except ClientError as e:
-		raise e
-	secret = get_secret_value_response["SecretString"]
- 
-	if not isinstance(secret, str):
-		secret = str(secret)
-	return secret
-
+    """ Get the secret from AWS Secrets Manager."""
+    client = session.client(service_name="secretsmanager", region_name=AWS_DEFAULT_REGION)
+    try:
+        get_secret_value_response = client.get_secret_value(SecretId=secret_name)
+    except ClientError as e:
+        raise e
+    secret = get_secret_value_response["SecretString"]
+    if not isinstance(secret, str):
+        secret = str(secret)
+    return secret
 
 def get_bedrock_embeddings(model_name: str, bedrock_runtime) -> BedrockEmbeddings:
-	embeddings = BedrockEmbeddings(client=bedrock_runtime, model_id=model_name)
-	return embeddings
-
+    """Get the Bedrock embeddings Model"""
+    embeddings = BedrockEmbeddings(client=bedrock_runtime, model_id=model_name)
+    return embeddings
 
 @app.get("/", response_class=HTMLResponse)
 async def root():
-	return HTMLResponse(
-		"""
-    <h1>Welcome to our Question/Answering application where you can ask 
-    questions about the Concurso Nacional Unificado</h1><br>
-    <p>Use the /ask endpoint to ask a question.</p>
-    """
-	)
- 
+    """Root endpoint."""
+    return HTMLResponse(
+        """
+        <h1>Welcome to our Question/Answering application where you can ask 
+        questions about the Concurso Nacional Unificado</h1><br>
+        <p>Use the /ask endpoint to ask a question.</p>
+        """
+    )
+
 @app.get("/collectioninfo")
 async def collection_info():
+    """Get the collection info from Qdrant."""
     try:
-        # Get the Qdrant URL and API key from the environment variables
-        qdrant_url = os.environ.get("QDRANT_URL")
-        qdrant_api_key = os.environ.get("QDRANT_API_KEY")
-
-	    # If the environment variables are not set, get the secrets from AWS Secrets Manager		
-        if qdrant_url is None:
-            qdrant_url = get_secret("prod/qdrant_url")
-
-        if qdrant_api_key is None:
-            qdrant_api_key = get_secret("prod/qdrant_api_key")
-            
-        asyncClient = AsyncQdrantClient(url=qdrant_url, 
-					api_key=qdrant_api_key,
-					port=6333, 
-					grpc_port=6334,
-     				timeout=10)
+        qdrant_url = os.getenv("QDRANT_URL") or get_secret("prod/qdrant_url")
+        qdrant_api_key = os.getenv("QDRANT_API_KEY") or get_secret("prod/qdrant_api_key")
         
-        info = await asyncClient.get_collection(collection_name=COLLECTION_NAME)
+        async_client = AsyncQdrantClient(
+            url=qdrant_url, 
+            api_key=qdrant_api_key,
+            port=6333, 
+            grpc_port=6334,
+            timeout=10
+        )
+        
+        info = await async_client.get_collection(collection_name=COLLECTION_NAME)
         
         logger.info(f"Collection info: {info}")
         return {"collection_info": info}
     except Exception as e:
-        logger.info(f"Error: {e}")
+        logger.error(f"Error: {e}")
         raise HTTPException(status_code=500, detail=f"Error getting collection info:{e}")
 
 @app.post("/ask")
 async def question(body: Body):
-	try:
-		start_time = time.time()
-		
-		# Get the Qdrant URL and API key from the environment variables
-		qdrant_url = os.environ.get("QDRANT_URL")
-		qdrant_api_key = os.environ.get("QDRANT_API_KEY")
+    """Ask a question and get an answer from the model."""
+    try:
+        start_time = time.time()
+        
+        qdrant_url = os.getenv("QDRANT_URL") or get_secret("prod/qdrant_url")
+        qdrant_api_key = os.getenv("QDRANT_API_KEY") or get_secret("prod/qdrant_api_key")
 
-		# Create a Bedrock runtime client
-		bedrock_runtime = boto3.client("bedrock-runtime", region_name=AWS_DEFAULT_REGION)
+        bedrock_runtime = boto3.client("bedrock-runtime", region_name=AWS_DEFAULT_REGION)
 
-		# If the environment variables are not set, get the secrets from AWS Secrets Manager		
-		if qdrant_url is None:
-			qdrant_url = get_secret("prod/qdrant_url")
+        async_client = AsyncQdrantClient(
+            url=qdrant_url, 
+            api_key=qdrant_api_key,
+            port=6333, 
+            grpc_port=6334
+        )
 
-		if qdrant_api_key is None:
-			qdrant_api_key = get_secret("prod/qdrant_api_key")
+        client = QdrantClient(
+            url=qdrant_url, 
+            api_key=qdrant_api_key,
+            port=6333, 
+            grpc_port=6334
+        )
+        
+        logger.info("Qdrant client created successfully")
 
-		# Create a Qdrant client
-		asyncClient = AsyncQdrantClient(url=qdrant_url, 
-						api_key=qdrant_api_key,
-						port=443, 
-						grpc_port=6334)
+        embeddings = get_bedrock_embeddings(BEDROCK_EMBEDDINGS_MODEL_NAME, bedrock_runtime)
 
-		client = QdrantClient(url=qdrant_url, 
-						api_key=qdrant_api_key,
-						port=443, 
-						grpc_port=6334)
-		
-		logger.info("Qdrant client created successfully")
+        qdrant = Qdrant(
+            client=client,
+            async_client=async_client,
+            embeddings=embeddings,
+            collection_name=COLLECTION_NAME,
+        ).as_retriever(search_kwargs={"k": 2})
 
-		# Get a Bedrock embeddings model
-		embeddings = get_bedrock_embeddings(BEDROCK_EMBEDDINGS_MODEL_NAME, bedrock_runtime)
+        prompt = PromptTemplate(template=prompt_template, input_variables=["context", "question"])
 
-		# Create a Qdrant retriever
-		qdrant = Qdrant(
-			client=client,
-			async_client=asyncClient,
-			embeddings=embeddings,
-			collection_name=COLLECTION_NAME,
-		).as_retriever(search_kwargs={"k": 2})
+        inference_modifier = {
+            "max_tokens_to_sample": 100,
+            "temperature": body.temperature,
+            "top_k": 250,
+            "top_p": 1,
+            "stop_sequences": ["\n\nHuman"],
+        }
 
-		# Create a prompt
-		prompt = PromptTemplate(template=prompt_template, input_variables=["context", "question"])
+        llm = Bedrock(
+            model_id=BEDROCK_MODEL_NAME, client=bedrock_runtime, model_kwargs=inference_modifier
+        )
+    
+        qa = RetrievalQA.from_chain_type(
+            llm=llm,
+            chain_type="stuff",
+            retriever=qdrant,
+            return_source_documents=False,
+            chain_type_kwargs={"prompt": prompt, "verbose": False},
+        )
 
-		# Bedrock Hyperparameters
-		inference_modifier = {
-			"max_tokens_to_sample": 100,
-			"temperature": body.temperature,
-			"top_k": 250,
-			"top_p": 1,
-			"stop_sequences": ["\n\nHuman"],
-		}
+        logger.info("Invoking the model")
 
-		# Get Bedrock LLM
-		llm = Bedrock(
-			model_id=BEDROCK_MODEL_NAME, client=bedrock_runtime, model_kwargs=inference_modifier
-		)
-	
-		# Create a retrieval QA chain
-		qa = RetrievalQA.from_chain_type(
-			llm=llm,
-			chain_type="stuff",
-			retriever=qdrant,
-			return_source_documents=False,
-			chain_type_kwargs={"prompt": prompt, "verbose": False},
-		)
+        result = await qa.ainvoke(input={"query": body.text})
+        answer = result["result"]
+        elapsed_time = time.time() - start_time
 
-		logger.info("Invoking the model")
-
-		# Invoke the model
-		result = await qa.ainvoke(input={"query": body.text})
-		answer = result["result"]
-		end_time = time.time()
-
-		elapsed_time = end_time - start_time
-
-		logger.info(f"{elapsed_time:.2} seconds to complete.")
-		return {"answer": answer,"time": f"{elapsed_time:.2} seconds."}
-	except Exception as e:
-		logger.info(f"Error: {e}")
-		raise HTTPException(status_code=500, detail=f"{e}")
-
-	
+        logger.info(f"{elapsed_time:.2f} seconds to complete.")
+        return {"answer": answer,"time": f"{elapsed_time:.2f} seconds."}
+    except Exception as e:
+        logger.error(f"Error: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
