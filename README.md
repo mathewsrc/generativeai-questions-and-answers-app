@@ -36,6 +36,15 @@ Muitas pessoas acabam por desistir de ler editais de concursos devidos a diferen
 16. Integrate the AWS Bedrock Foundation Model and the embeddings from Qdrant Cloud using Langchain.
 17. Generate an answer about the documents for the user using the embeddings from Qdrant Cloud via the LLM.
 
+# Here are more useful documentation
+
+[Setup Bedrock](https://github.com/mathewsrc/generativeai-questions-and-answers-app/blob/main/docs/bedrock_tutorial.md)
+[Setup GitHub Actions secrets](https://github.com/mathewsrc/generativeai-questions-and-answers-app/blob/main/docs/github_actions_secret_keys.md)
+[Setup Terraform Cloud](https://github.com/mathewsrc/generativeai-questions-and-answers-app/blob/main/docs/terraform.md)
+[AWS network details](https://github.com/mathewsrc/generativeai-questions-and-answers-app/blob/main/docs/network.md)
+[Create a vector store with Lambda and s3](https://github.com/mathewsrc/generativeai-questions-and-answers-app/blob/main/docs/vector_store.md)
+[Microservice with ECS details](https://github.com/mathewsrc/generativeai-questions-and-answers-app/blob/main/docs/microservice.md)
+[How to upload the Terraform state file and PDFs](https://github.com/mathewsrc/generativeai-questions-and-answers-app/blob/main/docs/s3.md)
 
 ## Requirements
 - [Python](https://www.python.org/downloads/)
