@@ -5,7 +5,7 @@ data "aws_caller_identity" "current" {}
 data "aws_region" "current" {}
 
 # IAM role for Bedrock
-resource "aws_iam_role" "bedrock" {
+resource "aws_iam_role" "teraform_state" {
   name               = var.bedrock_role_name
   assume_role_policy = <<POLICY
 {
@@ -24,41 +24,7 @@ resource "aws_iam_role" "bedrock" {
   POLICY
 }
 
-# <<< IAM role for ECS task executor >>>
-
-
-
-# resource "aws_iam_role_policy_attachment" "bedrock-ecs" {
-#   policy_arn = aws_iam_policy.ecs.arn
-#   role       = aws_iam_role.bedrock.name
-# }
-
-# resource "aws_iam_role_policy_attachment" "bedrock-iam" {
-#   policy_arn = aws_iam_policy.iam.arn
-#   role       = aws_iam_role.bedrock.name
-# }
-
-# resource "aws_iam_role_policy_attachment" "bedrock-s3" {
-#   policy_arn = aws_iam_policy.s3.arn
-#   role       = aws_iam_role.bedrock.name
-# }
-
-# resource "aws_iam_role_policy_attachment" "bedrock-opensearch" {
-#   policy_arn = aws_iam_policy.opensearch.arn
-#   role       = aws_iam_role.bedrock.name
-# }
-
-# resource "aws_iam_role_policy_attachment" "bedrock-ecr" {
-#   policy_arn = aws_iam_policy.ecr.arn
-#   role       = aws_iam_role.bedrock.name
-# }
-
-# resource "aws_iam_role_policy_attachment" "bedrock-s3-state" {
-#   policy_arn = aws_iam_policy.s3_state.arn
-#   role       = aws_iam_role.bedrock.name
-# }
-
-# resource "aws_iam_role_policy_attachment" "bedrock-role" {
-#   policy_arn = aws_iam_policy.bedrock.arn
-#   role       = aws_iam_role.bedrock.name
-# }
+resource "aws_iam_role_policy_attachment" "s3-state" {
+  policy_arn = aws_iam_policy.s3_state.arn
+  role       = aws_iam_role.teraform_state.name
+}
