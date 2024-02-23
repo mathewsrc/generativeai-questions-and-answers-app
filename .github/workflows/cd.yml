@@ -19,6 +19,9 @@ env:
   ECS_EXECUTION_ROLE_NAME: bedrock-qa-rag-ecs-execution-role-tf
   ECS_TASK_ROLE_NAME: bedrock-qa-rag-ecs-task-role-tf
 
+  QDRANT_URL: ${{ secrets.QDRANT_URL }}
+  QDRANT_API_KEY: ${{ secrets.QDRANT_API_KEY }}
+
 permissions:
   contents: read
 
@@ -55,12 +58,8 @@ jobs:
       # Initialize a new or existing Terraform working directory by creating initial files, loading any remote state, downloading modules, etc.
       - name: Terraform Init
         run: |
-            AWS_ACCOUNT_ID=$(aws sts get-caller-identity --query Account --output text) && \
-            echo "AWS_ACCOUNT_ID=$AWS_ACCOUNT_ID" >> $GITHUB_ENV && \
-            cd terraform && terraform init \
-               -backend-config="region=$AWS_REGION" \
-               -backend-config='assume_role={"role_arn":"arn:aws:iam::'$AWS_ACCOUNT_ID':role/terraform_state_role"}'
-
+            make tf-init
+            
       # Checks that all Terraform configuration files adhere to a canonical format
       - name: Terraform Format
         run: make tf-fmt
