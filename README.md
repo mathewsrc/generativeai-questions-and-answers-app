@@ -52,6 +52,16 @@ Muitas pessoas acabam por desistir de ler editais de concursos devidos a diferen
 
 [How to upload the Terraform state file and PDFs](https://github.com/mathewsrc/generativeai-questions-and-answers-app/blob/main/docs/s3.md)
 
+## Endpoints output
+
+/
+
+![root_endpoint](https://github.com/mathewsrc/generativeai-questions-and-answers-app/assets/94936606/113d1f7c-206b-4836-b6db-42e0787507c4)
+
+/ask
+
+![ask_endpoint](https://github.com/mathewsrc/generativeai-questions-and-answers-app/assets/94936606/8cd84883-76f7-4cfb-9b73-121cadae7f03)
+
 
 ## Requirements
 - [Python](https://www.python.org/downloads/)
