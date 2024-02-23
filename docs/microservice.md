@@ -2,7 +2,7 @@
 
 This project application employs the microservices architecture, featuring a Rest API developed with the FastAPI library. The application is containerized using Docker and deployed in the cloud through AWS ECS.
 
-![microservice drawio (5)](https://github.com/mathewsrc/generativeai-questions-and-answers-app/assets/94936606/4e84ce55-65f0-44a5-9a43-fc7632c764d4)
+![microservice drawio (6)](https://github.com/mathewsrc/generativeai-questions-and-answers-app/assets/94936606/1c915b53-d635-4bbe-898c-7c81e43491cf)
 
 ## ECR
 
