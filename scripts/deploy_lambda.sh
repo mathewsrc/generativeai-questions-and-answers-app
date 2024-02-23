@@ -19,7 +19,7 @@ aws ecr get-login-password \
 
 # Build the Docker image
 echo "Building Docker image..."
-docker build --platform linux/amd64 -t $AWS_ECR_REPOSITORY_NAME -f ./lambda/docker/Dockerfile .
+docker build --platform linux/amd64 -t $AWS_ECR_REPOSITORY_NAME -f ./lambda_functions/docker/Dockerfile .
 
 # Check if the ECR repository exists
 echo "Checking if ECR repository exists..."
