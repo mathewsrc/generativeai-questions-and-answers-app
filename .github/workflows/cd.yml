@@ -122,7 +122,7 @@ jobs:
         # Build a docker container and
         # push it to ECR so that it can
         # be deployed to Lambda Functions.
-        docker build --platform linux/amd64 -t $ECR_REGISTRY/$ECR_REPOSITORY_LAMBDA:$IMAGE_TAG .
+        docker build --platform linux/amd64 -t $ECR_REGISTRY/$ECR_REPOSITORY_LAMBDA:$IMAGE_TAG -f ./lambda_functions/docker/Dockerfile .
         docker push $ECR_REGISTRY/$ECR_REPOSITORY_LAMBDA:$IMAGE_TAG
         echo "image_lambda=$ECR_REGISTRY/$ECR_REPOSITORY_LAMBDA:$IMAGE_TAG" >> $GITHUB_OUTPUT
   
