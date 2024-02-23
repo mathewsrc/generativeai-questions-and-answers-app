@@ -280,6 +280,60 @@ resource "aws_security_group" "ecs_tasks" {
 }
 ```
 
+### Network policy
+
+```json
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Sid": "EC2Permissions",
+            "Effect": "Allow",
+            "Action": [
+                "ec2:AllocateAddress",
+                "ec2:AssociateRouteTable",
+                "ec2:AttachInternetGateway",
+                "ec2:AuthorizeSecurityGroupEgress",
+                "ec2:AuthorizeSecurityGroupIngress",
+                "ec2:CreateDefaultSubnet",
+                "ec2:CreateDefaultVpc",
+                "ec2:CreateEgressOnlyInternetGateway",
+                "ec2:CreateInternetGateway",
+                "ec2:CreateLocalGatewayRouteTable",
+                "ec2:CreateNatGateway",
+                "ec2:CreateRoute",
+                "ec2:CreateRouteTable",
+                "ec2:CreateSecurityGroup",
+                "ec2:CreateSubnet",
+                "ec2:CreateTags",
+                "ec2:CreateVpc",
+                "ec2:DeleteEgressOnlyInternetGateway",
+                "ec2:DeleteInternetGateway",
+                "ec2:DeleteLocalGatewayRouteTable",
+                "ec2:DeleteNatGateway",
+                "ec2:DeleteRoute",
+                "ec2:DeleteRouteTable",
+                "ec2:DeleteSecurityGroup",
+                "ec2:DeleteSubnet",
+                "ec2:DeleteVpc",
+                "ec2:Describe*",
+                "ec2:DescribeNatGateways",
+                "ec2:DescribeNetworkAcls",
+                "ec2:DetachInternetGateway",
+                "ec2:DisassociateAddress",
+                "ec2:DisassociateRouteTable",
+                "ec2:ModifySubnetAttribute",
+                "ec2:ModifyVpcAttribute",
+                "ec2:ReleaseAddress",
+                "ec2:RevokeSecurityGroupEgress",
+                "ec2:RunInstances"
+            ],
+            "Resource": "arn:aws:logs:us-east-1:account-id:*"
+        }
+    ]
+}
+```
+
 ## VPC Endpoints
 
 VPC endpoints permit to access others AWS services from within the VPC without needing to traverse
@@ -462,11 +516,11 @@ Set of actions to create VPC endpoints
                 "ec2:ModifyVpcEndpoint"
             ],
             "Resource": [
-                "arn:aws:ec2:us-east-1:078090784717:route-table/*",
-                "arn:aws:ec2:us-east-1:078090784717:vpc-endpoint/*",
-                "arn:aws:ec2:us-east-1:078090784717:vpc/*",
-                "arn:aws:ec2:us-east-1:078090784717:subnet/*",
-                "arn:aws:ec2:us-east-1:078090784717:security-group/*"
+                "arn:aws:ec2:us-east-1:account-id:route-table/*",
+                "arn:aws:ec2:us-east-1:account-id:vpc-endpoint/*",
+                "arn:aws:ec2:us-east-1:account-id:vpc/*",
+                "arn:aws:ec2:us-east-1:account-id:subnet/*",
+                "arn:aws:ec2:us-east-1:account-id:security-group/*"
             ]
         },
         {
@@ -477,7 +531,7 @@ Set of actions to create VPC endpoints
                 "ec2:AuthorizeSecurityGroupIngress"
             ],
             "Resource": [
-                "arn:aws:ec2:us-east-1:078090784717:security-group/*"
+                "arn:aws:ec2:us-east-1:account-id:security-group/*"
             ]
         }
     ]
