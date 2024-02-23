@@ -9,7 +9,7 @@ on:
 
 env:
   AWS_REGION: us-east-1                  # set this to your preferred AWS region, e.g. us-west-1
-  ECR_REPOSITORY: ecs-repo           # set this to your Amazon ECR repository name
+  ECR_REPOSITORY_ECS: ecs-repo           # set this to your Amazon ECR repository name
   ECS_SERVICE: bedrock-qa-rag-service-tf                # set this to your Amazon ECS service name
   ECS_CLUSTER: bedrock-qa-rag-cluster-tf                 # set this to your Amazon ECS cluster name
   ECS_TASK_DEFINITION: .aws/task-definition-actions.json # set this to the path to your Amazon ECS task definition file, e.g. .aws/task-definition.json
@@ -21,6 +21,8 @@ env:
 
   QDRANT_URL: ${{ secrets.QDRANT_URL }}
   QDRANT_API_KEY: ${{ secrets.QDRANT_API_KEY }}
+
+  ECR_REPOSITORY_LAMBDA: lambda-repo
 
 permissions:
   contents: read
@@ -98,8 +100,8 @@ jobs:
       id: login-ecr
       uses: aws-actions/amazon-ecr-login@v1
 
-    - name: Build, tag, and push image to Amazon ECR
-      id: build-image
+    - name: Build, tag, and push image to Amazon ECR (ECS)
+      id: build-image-ecs
       env:
         ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
         IMAGE_TAG: ${{ github.sha }}
@@ -107,10 +109,23 @@ jobs:
         # Build a docker container and
         # push it to ECR so that it can
         # be deployed to ECS.
-        docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
-        docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
-        echo "image=$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG" >> $GITHUB_OUTPUT
-    
+        docker build -t $ECR_REGISTRY/$ECR_REPOSITORY_ECS:$IMAGE_TAG .
+        docker push $ECR_REGISTRY/$ECR_REPOSITORY_ECS:$IMAGE_TAG
+        echo "image_ecs=$ECR_REGISTRY/$ECR_REPOSITORY_ECS:$IMAGE_TAG" >> $GITHUB_OUTPUT
+   
+    - name: Build, tag, and push image to Amazon ECR (Lambda Functions)
+      id: build-image-lambda
+      env:
+        ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+        IMAGE_TAG: ${{ github.sha }}
+      run: |
+        # Build a docker container and
+        # push it to ECR so that it can
+        # be deployed to Lambda Functions.
+        docker build --platform linux/amd64 -t $ECR_REGISTRY/$ECR_REPOSITORY_LAMBDA:$IMAGE_TAG .
+        docker push $ECR_REGISTRY/$ECR_REPOSITORY_LAMBDA:$IMAGE_TAG
+        echo "image_lambda=$ECR_REGISTRY/$ECR_REPOSITORY_LAMBDA:$IMAGE_TAG" >> $GITHUB_OUTPUT
+  
     - name: Upload Qdrant secrets to AWS Secrets Manager
       env:
         QDRANT_URL: ${{ secrets.QDRANT_URL }}
