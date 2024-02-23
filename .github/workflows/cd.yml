@@ -61,7 +61,7 @@ jobs:
   
     - name: Build, tag, and push image to Amazon ECR (Lambda Functions)
       id: build-image
-      uses: docker/build-push-action@v2
+      uses: docker/build-push-action@v3
       with:
         context: .
         file: ./lambda_functions/docker/Dockerfile
@@ -78,7 +78,6 @@ jobs:
         run:
           shell: bash
       
-      if: ${{ github.event.workflow_run.conclusion == 'success' }}
       steps:
       # Checkout the repository to the GitHub Actions runner
       - name: Checkout
