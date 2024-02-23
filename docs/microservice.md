@@ -34,7 +34,7 @@ resource "aws_ecr_repository" "ecr_repo" {
 }
 ```
 
-### ECR Policy
+### ECR policy
 
 Set of actions to create ECR repository
 
@@ -108,11 +108,29 @@ resource "aws_secretsmanager_secret" "qdrant_api_key" {
     "Version": "2012-10-17",
     "Statement": [
         {
+            "Sid": "secretsmanager",
             "Effect": "Allow",
             "Action": [
-                "secretsmanager:*"
+                "secretsmanager:CreateSecret",
+                "secretsmanager:ListSecrets",
+                "secretsmanager:BatchGetSecretValue",
+                "secretsmanager:DescribeSecret",
+                "secretsmanager:GetSecretValue",
+                "secretsmanager:ListSecretVersionIds",
+                "secretsmanager:DeleteSecret",
+                "secretsmanager:PutSecretValue",
+                "secretsmanager:RestoreSecret",
+                "secretsmanager:UpdateSecret",
+                "secretsmanager:TagResource",
+                "secretsmanager:UntagResource",
+                "secretsmanager:GetResourcePolicy",
+                "secretsmanager:DeleteResourcePolicy",
+                "secretsmanager:PutResourcePolicy",
+                "secretsmanager:ValidateResourcePolicy"
             ],
-            "Resource": "*"
+            "Resource": [
+                "*"
+            ]
         }
     ]
 }
@@ -148,6 +166,88 @@ resource "aws_lb" "lb" {
 }
 ```
 
+## Load balancer listener
+
+The listener checks for connection requests from clients, using the protocol (HTTP) and port (80) and redirects the  traffic from the load balancer to the target group. 
+
+The `type` option defines the type of routing action. The `forward` type routes requests to one or more target groups.
+
+Directory: `terraform/load_balancer`
+
+```terraform
+# Redirect traffic from the Load Balancer to the target group
+resource "aws_lb_listener" "listener" {
+  load_balancer_arn = aws_lb.lb.arn
+  port              = var.container_port
+  protocol          = "HTTP"
+
+  default_action {
+    type             = "forward"
+    target_group_arn = aws_lb_target_group.target_group.arn
+  }
+}
+```
+
+### Load balancer and Load balancer listener policy
+
+```json
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Sid": "ELBPermissions1",
+            "Effect": "Allow",
+            "Action": [
+                "iam:CreateServiceLinkedRole"
+            ],
+            "Resource": [
+                "arn:aws:iam::account-id:role/aws-service-role/elasticloadbalancing.amazonaws.com/AWSServiceRoleForElasticLoadBalancing"
+            ]
+        },
+        {
+            "Sid": "ELBPermissions2",
+            "Effect": "Allow",
+            "Action": [
+              "elasticloadbalancing:DescribeLoadBalancerAttributes",
+              "elasticloadbalancing:DescribeLoadBalancers",
+              "elasticloadbalancing:DescribeTargetGroupAttributes",
+              "elasticloadbalancing:DescribeListeners",
+              "elasticloadbalancing:DescribeTags",
+              "elasticloadbalancing:DescribeTargetGroups",
+              "elasticloadbalancing:DescribeRules",
+              "elasticloadbalancing:DescribeInstanceHealth"
+            ],
+            "Resource": "*"
+      },
+      {
+            "Sid": "ELBPermissions3",
+            "Effect": "Allow",
+            "Action": [
+              "elasticloadbalancing:SetSecurityGroups",
+              "elasticloadbalancing:SetSubnets",
+              "elasticloadbalancing:DeleteLoadBalancer",
+              "elasticloadbalancing:CreateListener",
+              "elasticloadbalancing:CreateLoadBalancer",
+              "elasticloadbalancing:AddTags",
+              "elasticloadbalancing:CreateTargetGroup",
+              "elasticloadbalancing:CreateRule",
+              "elasticloadbalancing:DeleteTargetGroup",
+              "elasticloadbalancing:ModifyTargetGroupAttributes",
+              "elasticloadbalancing:ModifyLoadBalancerAttributes",
+              "elasticloadbalancing:DeleteListener"
+            ],
+            "Resource": [
+              "arn:aws:elasticloadbalancing:us-east-1:account-id:targetgroup/*/*",
+              "arn:aws:elasticloadbalancing:us-east-1:account-id:loadbalancer/app/*/*",
+              "arn:aws:elasticloadbalancing:us-east-1:account-id:listener/app/*/*/*",
+              "arn:aws:elasticloadbalancing:us-east-1:account-id:loadbalancer/net/*/*",
+              "arn:aws:elasticloadbalancing:us-east-1:account-id:listener/net/*/*/*"
+            ]
+      }
+    ]
+}
+```
+
 ## Target group
 
 The target group route requests to one or more registered targets - ECS, Lambda Functions, EC2 instances.
@@ -170,27 +270,6 @@ resource "aws_lb_target_group" "target_group" {
 }
 ```
 
-## Load balancer listener
-
-The listener checks for connection requests from clients, using the protocol (HTTP) and port (80) and redirects the  traffic from the load balancer to the target group. 
-
-The `type` option defines the type of routing action. The `forward` type routes requests to one or more target groups.
-
-Directory: `terraform/load_balancer`
-
-```terraform
-# Redirect traffic from the Load Balancer to the target group
-resource "aws_lb_listener" "listener" {
-  load_balancer_arn = aws_lb.lb.arn
-  port              = var.container_port
-  protocol          = "HTTP"
-
-  default_action {
-    type             = "forward"
-    target_group_arn = aws_lb_target_group.target_group.arn
-  }
-}
-```
 ## ECS
 
 The ECS Terraform script create three required resources: cluster, task definition, and service 
@@ -458,158 +537,41 @@ Set of actions to create ECS resources
     "Version": "2012-10-17",
     "Statement": [
         {
-            "Sid": "VisualEditor0",
+            "Sid": "ECSPermissions1",
             "Effect": "Allow",
             "Action": [
-                "ec2:Describe*",
-                "ec2:DeleteSubnet",
-                "ec2:CreateSecurityGroup",
-                "ec2:CreateTags",
-                "ec2:CreateVpc",
-                "ec2:RunInstances",
-                "ec2:ModifyVpcAttribute",
-                "ec2:DeleteVpc",
-                "ec2:CreateSubnet",
-                "ec2:ModifySubnetAttribute",
-                "ec2:CreateDefaultSubnet",
-                "ec2:AssociateRouteTable",
-                "ec2:CreateLocalGatewayRouteTable",
-                "ec2:CreateRouteTable",
-                "ec2:DeleteRouteTable",
-                "ec2:DeleteLocalGatewayRouteTable",
-                "ec2:DisassociateRouteTable",
-                "ec2:CreateInternetGateway",
-                "ec2:DeleteInternetGateway",
-                "ec2:AttachInternetGateway",
-                "ec2:CreateEgressOnlyInternetGateway",
-                "ec2:DeleteEgressOnlyInternetGateway",
-                "ec2:DetachInternetGateway",
-                "ec2:CreateRoute",
-                "ec2:DeleteRoute",
-                "ec2:DeleteVpnConnectionRoute",
-                "ec2:CreateVpnConnection",
-                "ec2:CreateVpnConnectionRoute"
+              "ecs:DeregisterTaskDefinition",
+              "ecs:RegisterTaskDefinition",
+              "ecs:DescribeTaskDefinition",
+              "ecs:DescribeClusters",
+              "ecs:ListClusters"
             ],
             "Resource": "*"
-        },
+		    },
         {
-            "Sid": "VisualEditor1",
+            "Sid": "ECSPermissions2",
             "Effect": "Allow",
             "Action": [
-                "ec2:AuthorizeSecurityGroupEgress",
-                "ec2:AuthorizeSecurityGroupIngress",
-                "ec2:RevokeSecurityGroupEgress",
-                "ec2:DeleteSecurityGroup"
+              "ecs:UpdateCluster",
+              "ecs:UpdateClusterSettings",
+              "ecs:DeleteCluster",
+              "ecs:CreateCluster"
             ],
-            "Resource": "arn:aws:ec2:us-east-1:account-id:security-group/*"
-        },
+            "Resource": "arn:aws:ecs:us-east-1:account-id:*"
+		    },
         {
-            "Sid": "VisualEditor2",
-            "Effect": "Allow",
-            "Action": "ec2:CreateTags",
-            "Resource": [
-                "arn:aws:ec2:us-east-1:account-id:subnet/*",
-                "arn:aws:ec2:us-east-1:account-id:vpc/*"
-            ]
-        },
-        {
-            "Sid": "VisualEditor3",
+            "Sid": "ECSPermissions3",
             "Effect": "Allow",
             "Action": [
-                "ecs:DeregisterTaskDefinition",
-                "ecs:RegisterTaskDefinition",
-                "ecs:DescribeTaskDefinition",
-                "ecs:DescribeClusters",
-                "ecs:ListClusters"
-            ],
-            "Resource": "*"
-        },
-        {
-            "Sid": "VisualEditor4",
-            "Effect": "Allow",
-            "Action": [
-                "ecs:UpdateCluster",
-                "ecs:UpdateClusterSettings",
-                "ecs:DeleteCluster",
-                "ecs:CreateCluster"
-            ],
-            "Resource": "*"
-        },
-        {
-            "Sid": "VisualEditor5",
-            "Effect": "Allow",
-            "Action": [
-                "ecs:UpdateService",
-                "ecs:CreateService",
-                "ecs:DeleteService",
-                "ecs:DescribeServices",
-                "ecs:ListServices",
-                "ecs:ListServicesByNamespace"
+              "ecs:UpdateService",
+              "ecs:CreateService",
+              "ecs:DeleteService",
+              "ecs:DescribeServices",
+              "ecs:ListServices",
+              "ecs:ListServicesByNamespace"
             ],
             "Resource": "arn:aws:ecs:us-east-1:account-id:service/*/*"
-        },
-        {
-            "Sid": "VisualEditor6",
-            "Effect": "Allow",
-            "Action": [
-                "elasticloadbalancing:DescribeLoadBalancerAttributes",
-                "elasticloadbalancing:DescribeLoadBalancers",
-                "elasticloadbalancing:DescribeTargetGroupAttributes",
-                "elasticloadbalancing:DescribeListeners",
-                "elasticloadbalancing:DescribeTags",
-                "elasticloadbalancing:DescribeTargetGroups",
-                "elasticloadbalancing:DescribeRules",
-                "elasticloadbalancing:DescribeInstanceHealth"
-            ],
-            "Resource": "*"
-        },
-        {
-            "Sid": "VisualEditor7",
-            "Effect": "Allow",
-            "Action": [
-                "elasticloadbalancing:SetSecurityGroups",
-                "elasticloadbalancing:SetSubnets",
-                "elasticloadbalancing:DeleteLoadBalancer",
-                "elasticloadbalancing:CreateListener",
-                "elasticloadbalancing:CreateLoadBalancer",
-                "elasticloadbalancing:AddTags",
-                "elasticloadbalancing:CreateTargetGroup",
-                "elasticloadbalancing:CreateRule",
-                "elasticloadbalancing:DeleteTargetGroup",
-                "elasticloadbalancing:ModifyTargetGroupAttributes",
-                "elasticloadbalancing:ModifyLoadBalancerAttributes",
-                "elasticloadbalancing:DeleteListener"
-            ],
-            "Resource": [
-                "arn:aws:elasticloadbalancing:us-east-1:account-id:targetgroup/*/*",
-                "arn:aws:elasticloadbalancing:us-east-1:account-id:loadbalancer/app/*/*",
-                "arn:aws:elasticloadbalancing:us-east-1:account-id:listener/app/*/*/*",
-                "arn:aws:elasticloadbalancing:us-east-1:account-id:loadbalancer/net/*/*",
-                "arn:aws:elasticloadbalancing:us-east-1:account-id:listener/net/*/*/*"
-            ]
-        },
-        {
-            "Sid": "VisualEditor8",
-            "Effect": "Allow",
-            "Action": [
-                "logs:DescribeLogGroups",
-                "logs:FilterLogEvents",
-                "logs:CreateLogGroup"
-            ],
-            "Resource": "*"
-        },
-        {
-            "Sid": "VisualEditor11",
-            "Effect": "Allow",
-            "Action": [
-                "ec2:CreateDefaultVpc",
-                "ec2:CreateDefaultSubnet"
-            ],
-            "Resource": [
-                "arn:aws:ec2:us-east-1:account-id:subnet/*",
-                "arn:aws:ec2:us-east-1:account-id:vpc/*"
-            ]
-        }
+		    },
     ]
 }
 ```
@@ -628,6 +590,46 @@ resource "aws_apigatewayv2_vpc_link" "vpc_link" {
   name               = var.vpc_link_name
   security_group_ids = var.security_group_ids
   subnet_ids         = var.subnet_ids
+}
+```
+
+### VPC link policy
+
+```json
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Effect": "Allow",
+            "Action": [
+                "apigateway:POST",
+                "apigateway:GET",
+                "apigateway:PATCH",
+                "apigateway:DELETE"
+            ],
+            "Resource": [
+                "arn:aws:apigateway:us-east-1::/vpclinks",
+                "arn:aws:apigateway:us-east-1::/vpclinks/*"
+            ]
+        },
+        {
+            "Effect": "Allow",
+            "Action": [
+                "elasticloadbalancing:DescribeLoadBalancers"
+            ],
+            "Resource": "*"
+        },
+        {
+            "Effect": "Allow",
+            "Action": [
+                "ec2:CreateVpcEndpointServiceConfiguration",
+                "ec2:DeleteVpcEndpointServiceConfigurations",
+                "ec2:DescribeVpcEndpointServiceConfigurations",
+                "ec2:ModifyVpcEndpointServicePermissions"
+            ],
+            "Resource": "*"
+        }
+    ]
 }
 ```
 
@@ -691,7 +693,7 @@ resource "aws_apigatewayv2_route" "ask_route" {
 }
 ```
 
-### CloudWatcher logs
+### CloudWatch logs
 
 This resource create a log group to store logs from API Gateway
 
@@ -705,6 +707,26 @@ resource "aws_cloudwatch_log_group" "apigateway" {
     Environment = var.environment
     Application = var.application_name
   }
+}
+```
+
+### CloudWatch policy
+
+```json
+{
+	"Version": "2012-10-17",
+	"Statement": [
+    {
+			"Sid": "CloudWatchLogsPermissions",
+			"Effect": "Allow",
+			"Action": [
+				"logs:DescribeLogGroups",
+				"logs:FilterLogEvents",
+				"logs:CreateLogGroup"
+			],
+			"Resource": "*"
+		}
+  ]
 }
 ```
 
@@ -743,48 +765,30 @@ resource "aws_apigatewayv2_stage" "example" {
 ## Policy for API Gateway
 
 ```json
+### API Gateway policy
+
+```json
 {
     "Version": "2012-10-17",
     "Statement": [
         {
-            "Sid": "VisualEditor0",
+            "Sid": "APIGatewayPermissions",
             "Effect": "Allow",
             "Action": [
                 "apigateway:DELETE",
-                "apigateway:PUT",
+                "apigateway:GET",
                 "apigateway:PATCH",
                 "apigateway:POST",
-                "apigateway:GET"
-            ],
-            "Resource": [
-                "arn:aws:apigateway:us-east-1::/vpclinks",
-                "arn:aws:apigateway:us-east-1::/vpclinks/*",
-                "arn:aws:apigateway:us-east-1::/apis",
-                "arn:aws:apigateway:us-east-1::/apis/*"
-            ],
-            "Condition": {
-                "StringLikeIfExists": {
-                    "apigateway:Request/apiName": "competition-notices*"
-                }
-            }
-        },
-        {
-            "Sid": "VisualEditor2",
-            "Effect": "Allow",
-            "Action": [
-                "apigateway:DELETE",
                 "apigateway:PUT",
-                "apigateway:PATCH",
-                "apigateway:POST",
-                "apigateway:GET"
+                "apigateway:TagResource"
             ],
             "Resource": [
                 "arn:aws:apigateway:us-east-1::/account",
-                "arn:aws:apigateway:us-east-1::/usageplans/*",
+                "arn:aws:apigateway:us-east-1::/apis",
+                "arn:aws:apigateway:us-east-1::/apis/*",
                 "arn:aws:apigateway:us-east-1::/tags/*",
                 "arn:aws:apigateway:us-east-1::/usageplans",
-                "arn:aws:apigateway:us-east-1::/vpclinks",
-                "arn:aws:apigateway:us-east-1::/vpclinks/*"
+                "arn:aws:apigateway:us-east-1::/usageplans/*",
             ],
             "Condition": {
                 "StringLikeIfExists": {
@@ -793,100 +797,25 @@ resource "aws_apigatewayv2_stage" "example" {
             }
         },
         {
-            "Sid": "VisualEditor3",
-            "Effect": "Allow",
-            "Action": [
-                "apigateway:DELETE",
-                "apigateway:PUT",
-                "apigateway:PATCH",
-                "apigateway:POST",
-                "apigateway:GET"
-            ],
-            "Resource": [
-                "arn:aws:apigateway:us-east-1::/apis",
-                "arn:aws:apigateway:us-east-1::/apis/*"
-            ],
-            "Condition": {
-                "StringLikeIfExists": {
-                    "apigateway:Request/apiName": "competition-notices*"
-                }
-            }
-        },
-        {
-            "Sid": "VisualEditor7",
-            "Effect": "Allow",
-            "Action": [
-                "logs:DescribeLogStreams",
-                "logs:GetLogEvents",
-                "logs:FilterLogEvents"
-            ],
-            "Resource": "arn:aws:logs:us-east-1:account-id:log-group:*"
-        },
-        {
-            "Sid": "VisualEditor8",
+            "Sid": "LogsPermissions",
             "Effect": "Allow",
             "Action": [
                 "logs:CreateLogDelivery",
-                "logs:PutResourcePolicy",
-                "logs:UpdateLogDelivery",
-                "logs:DeleteLogDelivery",
                 "logs:CreateLogGroup",
-                "logs:DescribeResourcePolicies",
-                "logs:GetLogDelivery",
-                "logs:ListLogDeliveries",
-                "logs:TagResource",
-                "logs:PutRetentionPolicy"
-            ],
-            "Resource": "*"
-        },
-        {
-            "Sid": "VisualEditor9",
-            "Effect": "Allow",
-            "Action": "apigateway:TagResource",
-            "Resource": [
-                "arn:aws:apigateway:us-east-1::/account",
-                "arn:aws:apigateway:us-east-1::/usageplans",
-                "arn:aws:apigateway:us-east-1::/usageplans/*",
-                "arn:aws:apigateway:us-east-1::/tags/*",
-                "arn:aws:apigateway:us-east-1::/restapis",
-                "arn:aws:apigateway:us-east-1::/vpclinks",
-                "arn:aws:apigateway:us-east-1::/vpclinks/*",
-                "arn:aws:apigateway:us-east-1::/apis/*",
-                "arn:aws:apigateway:us-east-1::/apis"
-            ],
-            "Condition": {
-                "StringLikeIfExists": {
-                    "apigateway:Request/apiName": "competition-notices*"
-                }
-            }
-        },
-        {
-            "Sid": "VisualEditor10",
-            "Effect": "Allow",
-            "Action": "apigateway:TagResource",
-            "Resource": [
-                "arn:aws:apigateway:us-east-1::/account",
-                "arn:aws:apigateway:us-east-1::/usageplans/*",
-                "arn:aws:apigateway:us-east-1::/tags/*",
-                "arn:aws:apigateway:us-east-1::/usageplans",
-                "arn:aws:apigateway:us-east-1::/vpclinks",
-                "arn:aws:apigateway:us-east-1::/apis",
-                "arn:aws:apigateway:us-east-1::/apis/*",
-                "arn:aws:apigateway:us-east-1::/vpclinks/*"
-            ],
-            "Condition": {
-                "StringLikeIfExists": {
-                    "apigateway:Request/apiName": "competition-notices*"
-                }
-            }
-        },
-        {
-            "Sid": "VisualEditor11",
-            "Effect": "Allow",
-            "Action": [
+                "logs:DeleteLogDelivery",
+                "logs:DeleteLogGroup",
                 "logs:DescribeLogGroups",
+                "logs:DescribeLogStreams",
+                "logs:DescribeResourcePolicies",
+                "logs:FilterLogEvents",
+                "logs:GetLogDelivery",
+                "logs:GetLogEvents",
+                "logs:ListLogDeliveries",
                 "logs:ListTagsLogGroup",
-                "logs:DeleteLogGroup"
+                "logs:PutResourcePolicy",
+                "logs:PutRetentionPolicy",
+                "logs:TagResource",
+                "logs:UpdateLogDelivery"
             ],
             "Resource": [
                 "arn:aws:logs:us-east-1:account-id:log-group:*"
