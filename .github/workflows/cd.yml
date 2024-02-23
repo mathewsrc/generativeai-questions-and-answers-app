@@ -10,19 +10,9 @@ on:
 env:
   AWS_REGION: us-east-1                  # set this to your preferred AWS region, e.g. us-west-1
   ECR_REPOSITORY_ECS: ecs-repo           # set this to your Amazon ECR repository name
-  ECS_SERVICE: bedrock-qa-rag-service-tf                # set this to your Amazon ECS service name
-  ECS_CLUSTER: bedrock-qa-rag-cluster-tf                 # set this to your Amazon ECS cluster name
-  ECS_TASK_DEFINITION: .aws/task-definition-actions.json # set this to the path to your Amazon ECS task definition file, e.g. .aws/task-definition.json
-  CONTAINER_NAME: bedrock-qa-rag-service-tf          # set this to the name of the container in the containerDefinitions section of your task definition
-  LOGS_GROUP_NAME: "/aws/ecs/question-answer-app"
-  ECS_TASK_FAMILY_NAME: bedrock-qa-rag-task-tf
-  ECS_EXECUTION_ROLE_NAME: bedrock-qa-rag-ecs-execution-role-tf
-  ECS_TASK_ROLE_NAME: bedrock-qa-rag-ecs-task-role-tf
-
+  ECR_REPOSITORY_LAMBDA: lambda-repo
   QDRANT_URL: ${{ secrets.QDRANT_URL }}
   QDRANT_API_KEY: ${{ secrets.QDRANT_API_KEY }}
-
-  ECR_REPOSITORY_LAMBDA: lambda-repo
 
 permissions:
   contents: read
@@ -83,7 +73,6 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
 
-      # Configure AWS credentials for the AWS CLI
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v1
         with:
@@ -91,13 +80,11 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ env.AWS_REGION }}
 
-      # Install the latest version of Terraform CLI and configure the Terraform CLI configuration file with a Terraform Cloud user API token
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v1
         with:
           cli_config_credentials_token: ${{ secrets.TF_API_TOKEN }}
 
-      # Initialize a new or existing Terraform working directory by creating initial files, loading any remote state, downloading modules, etc.
       - name: Terraform Init
         run: |
             AWS_ACCOUNT_ID=$(aws sts get-caller-identity --query Account --output text) && \
@@ -105,11 +92,9 @@ jobs:
                -backend-config="region=$AWS_REGION" \
                -backend-config='assume_role={"role_arn":"arn:aws:iam::'$AWS_ACCOUNT_ID':role/terraform_state_role"}'
 
-      # Checks that all Terraform configuration files adhere to a canonical format
       - name: Terraform Format
         run: make tf-fmt
 
-      # Generates an execution plan for Terraform
       - name: Terraform Plan
         run: make tf-plan
 
@@ -185,33 +170,3 @@ jobs:
         docker build -t $ECR_REGISTRY/$ECR_REPOSITORY_ECS:$IMAGE_TAG .
         docker push $ECR_REGISTRY/$ECR_REPOSITORY_ECS:$IMAGE_TAG
         echo "image=$ECR_REGISTRY/$ECR_REPOSITORY_ECS:$IMAGE_TAG" >> $GITHUB_OUTPUT
-
-    - name: Pass values to .aws/task-definition-actions.json placeholders
-      env:
-        image: ${{ steps.build-image.outputs.image }}
-      run: |
-        sed -i "s|{tag}|$image|g" .aws/task-definition-actions.json
-        sed -i "s|{name}|${{ env.CONTAINER_NAME }}|g" .aws/task-definition-actions.json
-        sed -i "s|{region}|${{ env.AWS_REGION }}|g" .aws/task-definition-actions.json
-        sed -i "s|{ecr}|${{ env.ECR_REPOSITORY_ECS }}|g" .aws/task-definition-actions.json
-        sed -i "s|{account_id}|${{ secrets.AWS_ACCOUNT_ID }}|g" .aws/task-definition-actions.json
-        sed -i "s|{logs_group_name}|${{ env.LOGS_GROUP_NAME }}|g" .aws/task-definition-actions.json
-        sed -i "s|{ecs_task_family_name}|${{ env.ECS_TASK_FAMILY_NAME }}|g" .aws/task-definition-actions.json
-        sed -i "s|{ecs_execution_role_name}|${{ env.ECS_EXECUTION_ROLE_NAME }}|g" .aws/task-definition-actions.json
-        sed -i "s|{ecs_task_role_name}|${{ env.ECS_TASK_ROLE_NAME }}|g" .aws/task-definition-actions.json
-
-    - name: Fill in the new image ID in the Amazon ECS task definition
-      id: task-def
-      uses: aws-actions/amazon-ecs-render-task-definition@v1
-      with:
-        task-definition: ${{ env.ECS_TASK_DEFINITION }}
-        container-name: ${{ env.CONTAINER_NAME }}
-        image: ${{ steps.build-image.outputs.image }}
-
-    - name: Deploy Amazon ECS task definition
-      uses: aws-actions/amazon-ecs-deploy-task-definition@v1
-      with:
-        task-definition: ${{ steps.task-def.outputs.task-definition }}
-        service: ${{ env.ECS_SERVICE }}
-        cluster: ${{ env.ECS_CLUSTER }}
-        wait-for-service-stability: true
