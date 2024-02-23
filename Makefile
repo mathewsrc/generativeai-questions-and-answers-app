@@ -41,11 +41,16 @@ docker-run:
 	chmod +x ./scripts/docker_run.sh
 	./scripts/docker_run.sh
 
+deploy-lambda:
+	@echo "Building Lambda container"
+	chmod +x ./scripts/deploy_lambda.sh
+	./scripts/deploy_lambda.sh
+
 lambda-test:
 	@echo "Testing Lambda function"
 	curl -XPOST "http://localhost:9000/2015-03-31/functions/function/invocations" -d '{"payload":"hello world!"}'
 
-aws-deploy:
+deploy-ecs:
 	@echo "Deploying to AWS"
 	chmod +x ./scripts/deploy.sh
 	./scripts/deploy.sh
