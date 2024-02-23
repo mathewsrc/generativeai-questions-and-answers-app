@@ -49,6 +49,3 @@ docker tag $AWS_ECR_REPOSITORY_NAME:latest $AWS_ECR_REPOSITORY_URL:$TAG
 # Push the Docker image
 echo "Pushing Docker image..."
 docker push $AWS_ECR_REPOSITORY_URL:$TAG
-
-echo $AWS_ECR_REPOSITORY_URL:$TAG
-echo "image=$AWS_ECR_REPOSITORY_NAME/$AWS_ECR_REPOSITORY_URL:$TAG" >> $GITHUB_OUTPUT
