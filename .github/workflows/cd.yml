@@ -50,9 +50,56 @@ jobs:
         # Build a docker container and
         # push it to ECR so that it can
         # be deployed to Lambda Functions.
-        make deploy-lambda
-        echo "tag=$IMAGE_TAG" >> $GITHUB_OUTPUT
+        # Get region and account id using aws cli
+        AWS_REGION=$(aws configure get region)
+        AWS_ACCOUNT_ID=$(aws sts get-caller-identity --query Account --output text)
+        AWS_ECR_REPOSITORY_NAME=lambda-repo # Replace with your ECR repository name
+        AWS_ECR_REPOSITORY_URL=$AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$AWS_ECR_REPOSITORY_NAME
+        TAG=$(git rev-parse HEAD) # Get current short commit hash
 
+        # Login to AWS ECR
+        echo "Logging in to AWS ECR..."
+        aws ecr get-login-password \
+            --region $AWS_REGION | docker login \
+            --username AWS \
+            --password-stdin $AWS_ECR_REPOSITORY_URL
+
+        # Build the Docker image
+        echo "Building Docker image..."
+        docker build --platform linux/amd64 -t $AWS_ECR_REPOSITORY_NAME -f ./lambda_functions/docker/Dockerfile .
+
+        # Check if the ECR repository exists
+        echo "Checking if ECR repository exists..."
+        if aws ecr describe-repositories \
+            --repository-names $AWS_ECR_REPOSITORY_NAME \
+            --region $AWS_REGION > /dev/null 2>&1; then
+            echo "ECR repository exists, deleting..."
+            aws ecr delete-repository \
+            --repository-name $AWS_ECR_REPOSITORY_NAME \
+            --region $AWS_REGION \
+            --force
+        fi
+
+        # Create the ECR repository
+        echo "Creating ECR repository..."
+        aws ecr create-repository \
+            --repository-name $AWS_ECR_REPOSITORY_NAME \
+            --region $AWS_REGION \
+            --image-scanning-configuration scanOnPush=true \
+            --image-tag-mutability MUTABLE \
+            --no-cli-pager
+
+        # Tag the Docker image
+        echo "Tagging Docker image..."
+        docker tag $AWS_ECR_REPOSITORY_NAME:latest $AWS_ECR_REPOSITORY_URL:$TAG
+
+        # Push the Docker image
+        echo "Pushing Docker image..."
+        docker push $AWS_ECR_REPOSITORY_URL:$TAG
+
+        echo $AWS_ECR_REPOSITORY_URL:$TAG
+        echo "image=$AWS_ECR_REPOSITORY_NAME/$AWS_ECR_REPOSITORY_URL:$TAG" >> $GITHUB_OUTPUT
+  
   terraform:
       name: 'Terraform (IaC)'
       needs: deploy-lambda
@@ -153,8 +200,55 @@ jobs:
         # Build a docker container and
         # push it to ECR so that it can
         # be deployed to ECS.
-        make deploy-ecs
-        echo "tag=$IMAGE_TAG" >> $GITHUB_OUTPUT
+        # Get region and account id using aws cli
+        AWS_REGION=$(aws configure get region)
+        AWS_ACCOUNT_ID=$(aws sts get-caller-identity --query Account --output text)
+        AWS_ECR_REPOSITORY_NAME=ecs-repo # Replace with your ECR repository name
+        AWS_ECR_REPOSITORY_URL=$AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$AWS_ECR_REPOSITORY_NAME
+        TAG=$(git rev-parse HEAD) # Get current short commit hash
+
+        # Login to AWS ECR
+        echo "Logging in to AWS ECR..."
+        aws ecr get-login-password \
+            --region $AWS_REGION | docker login \
+            --username AWS \
+            --password-stdin $AWS_ECR_REPOSITORY_URL
+
+        # Build the Docker image
+        echo "Building Docker image..."
+        docker build -t $AWS_ECR_REPOSITORY_NAME .
+
+        Check if the ECR repository exists
+        echo "Checking if ECR repository exists..."
+        if aws ecr describe-repositories \
+            --repository-names $AWS_ECR_REPOSITORY_NAME \
+            --region $AWS_REGION > /dev/null 2>&1; then
+            echo "ECR repository exists, deleting..."
+            aws ecr delete-repository \
+            --repository-name $AWS_ECR_REPOSITORY_NAME \
+            --region $AWS_REGION \
+            --force
+        fi
+
+        # Create the ECR repository
+        echo "Creating ECR repository..."
+        aws ecr create-repository \
+            --repository-name $AWS_ECR_REPOSITORY_NAME \
+            --region $AWS_REGION \
+            --image-scanning-configuration scanOnPush=true \
+            --image-tag-mutability MUTABLE \
+            --no-cli-pager
+
+        # Tag the Docker image
+        echo "Tagging Docker image..."
+        docker tag $AWS_ECR_REPOSITORY_NAME:latest $AWS_ECR_REPOSITORY_URL:$TAG
+
+        # Push the Docker image
+        echo "Pushing Docker image..."
+        docker push $AWS_ECR_REPOSITORY_URL:$TAG
+
+        echo $AWS_ECR_REPOSITORY_URL:$TAG
+        echo "image=$AWS_ECR_REPOSITORY_NAME/$AWS_ECR_REPOSITORY_URL:$TAG" >> $GITHUB_OUTPUT
 
     - name: Pass values to .aws/task-definition-actions.json placeholders
       env:
