@@ -412,7 +412,7 @@ CMD ["poetry", "run", "uvicorn", "--host", "0.0.0.0", "--port", "80", "app.main:
 
 ## Rest API
 
-The following code snippet shows the two endpoints created with FastAPI library
+The following code snippet shows the endpoints created with FastAPI library
 
 Directory: `src/app`
 
