@@ -231,9 +231,6 @@ make tf-init
 ```bash
 make tf-upload
 ```
-
-3. Deploying using Terminal and GitHub Actions
-
 ### Manually deploy using the terminal
 
 Follow the steps below to create the AWS infrastructure:
