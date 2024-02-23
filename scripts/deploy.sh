@@ -21,26 +21,26 @@ aws ecr get-login-password \
 echo "Building Docker image..."
 docker build -t $AWS_ECR_REPOSITORY_NAME .
 
-# Check if the ECR repository exists
-# echo "Checking if ECR repository exists..."
-# if aws ecr describe-repositories \
-#     --repository-names $AWS_ECR_REPOSITORY_NAME \
-#     --region $AWS_REGION > /dev/null 2>&1; then
-#     echo "ECR repository exists, deleting..."
-#     aws ecr delete-repository \
-#     --repository-name $AWS_ECR_REPOSITORY_NAME \
-#     --region $AWS_REGION \
-#     --force
-# fi
+Check if the ECR repository exists
+echo "Checking if ECR repository exists..."
+if aws ecr describe-repositories \
+    --repository-names $AWS_ECR_REPOSITORY_NAME \
+    --region $AWS_REGION > /dev/null 2>&1; then
+    echo "ECR repository exists, deleting..."
+    aws ecr delete-repository \
+    --repository-name $AWS_ECR_REPOSITORY_NAME \
+    --region $AWS_REGION \
+    --force
+fi
 
-# # Create the ECR repository
-# echo "Creating ECR repository..."
-# aws ecr create-repository \
-#     --repository-name $AWS_ECR_REPOSITORY_NAME \
-#     --region $AWS_REGION \
-#     --image-scanning-configuration scanOnPush=true \
-#     --image-tag-mutability MUTABLE \
-#     --no-cli-pager
+# Create the ECR repository
+echo "Creating ECR repository..."
+aws ecr create-repository \
+    --repository-name $AWS_ECR_REPOSITORY_NAME \
+    --region $AWS_REGION \
+    --image-scanning-configuration scanOnPush=true \
+    --image-tag-mutability MUTABLE \
+    --no-cli-pager
 
 # Tag the Docker image
 echo "Tagging Docker image..."
