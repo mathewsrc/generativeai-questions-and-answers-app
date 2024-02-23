@@ -4,20 +4,6 @@ data "aws_region" "current" {}
 # Get current AWS account ID
 data "aws_caller_identity" "current" {}
 
-resource "null_resource" "deploy_lambda_container" {
-  triggers = {
-    dockerfile_hash             = "${filebase64sha256("${path.module}/docker/Dockerfile")}"
-    main_py_hash                = "${filebase64sha256("${path.module}/src/main.py")}"
-    create_vector_store_py_hash = "${filebase64sha256("${path.module}/src/create_vector_store.py")}"
-    utils_py_hash               = "${filebase64sha256("${path.module}/src/utils.py")}"
-    deploy_lambda_sh_hash       = "${filebase64sha256("${path.module}/../../scripts/deploy_lambda.sh")}"
-  }
-  provisioner "local-exec" {
-    command     = "chmod +x ${path.module}/../../scripts/deploy_lambda.sh; ${path.module}/../../scripts/deploy_lambda.sh"
-    interpreter = ["bash", "-c"]
-  }
-}
-
 # Get the Qdrant URL and API key from the environment
 data "external" "envs" {
   program = ["bash", "-c", <<-EOSCRIPT
@@ -38,7 +24,6 @@ resource "aws_lambda_function" "func" {
   depends_on = [
     aws_iam_role_policy_attachment.lambda_policy_attachment,
     #aws_lambda_layer_version.layer,
-    null_resource.deploy_lambda_container
   ]
   role          = aws_iam_role.lambda_role.arn
   image_uri     = "${data.aws_caller_identity.current.account_id}.dkr.ecr.${data.aws_region.current.name}.amazonaws.com/${var.ecr_repository}:${data.external.envs.result.sha}"
