@@ -2,6 +2,8 @@
 
 This project application employs the microservices architecture, featuring a Rest API developed with the FastAPI library. The application is containerized using Docker and deployed in the cloud through AWS ECS.
 
+![microservice drawio (5)](https://github.com/mathewsrc/generativeai-questions-and-answers-app/assets/94936606/4e84ce55-65f0-44a5-9a43-fc7632c764d4)
+
 ## ECR
 
 Unlike Lambda functions, the ECS service is a Platform as a Service (PaaS) but can used as Serveless 
