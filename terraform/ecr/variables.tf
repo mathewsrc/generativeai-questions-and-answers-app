@@ -14,7 +14,12 @@ variable "environment" {
   }
 }
 
-variable "ecr_name" {
+variable "ecr_name_ecs" {
   description = "The name of ECR repository"
   default     = "ecs-repo"
+}
+
+variable "ecr_name_lambda" {
+  description = "The name of ECR repository"
+  default     = "lambda-repo"
 }
