@@ -121,7 +121,7 @@ jobs:
         run: make tf-deploy
 
   deploy-secrets:
-    name: Deploy (Amazon ECR - ECS)
+    name: Deploy secrets to AWS Secrets Manager
     needs: [terraform, deploy-lambda]
     runs-on: ubuntu-latest
     environment: production
@@ -183,9 +183,9 @@ jobs:
         # Build a docker container and
         # push it to ECR so that it can
         # be deployed to ECS.
-        docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
-        docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
-        echo "image=$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG" >> $GITHUB_OUTPUT
+        docker build -t $ECR_REGISTRY/$ECR_REPOSITORY_ECS:$IMAGE_TAG .
+        docker push $ECR_REGISTRY/$ECR_REPOSITORY_ECS:$IMAGE_TAG
+        echo "image=$ECR_REGISTRY/$ECR_REPOSITORY_ECS:$IMAGE_TAG" >> $GITHUB_OUTPUT
 
     - name: Pass values to .aws/task-definition-actions.json placeholders
       env:
