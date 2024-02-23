@@ -1,6 +1,6 @@
 FROM python:3.12-slim-bullseye
 
-# Install curl and curl the poetry installer
+# Install curl and the poetry installer
 RUN apt-get update && \
   DEBIAN_FRONTEND=noninteractive && \
   apt install -y curl && \
