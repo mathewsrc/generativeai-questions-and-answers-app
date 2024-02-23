@@ -28,8 +28,40 @@ permissions:
   contents: read
 
 jobs:
+  deploy-lambda:
+    name: Deploy (Amazon ECR - Lambda Functions)
+    runs-on: ubuntu-latest
+    environment: production
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+
+    - name: Configure AWS credentials
+      uses: aws-actions/configure-aws-credentials@v1
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: ${{ env.AWS_REGION }}
+
+    - name: Login to Amazon ECR
+      id: login-ecr
+      uses: aws-actions/amazon-ecr-login@v1
+   
+    - name: Build, tag, and push image to Amazon ECR (Lambda Functions)
+      id: build-image-lambda
+      env:
+        ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+        IMAGE_TAG: ${{ github.sha }}
+      run: |
+        # Build a docker container and
+        # push it to ECR so that it can
+        # be deployed to Lambda Functions.
+        make deploy-lambda
+
   terraform:
       name: 'Terraform (IaC)'
+      needs: deploy-lambda
       runs-on: ubuntu-latest
       environment: production
 
@@ -79,12 +111,25 @@ jobs:
         # if: github.ref == 'refs/heads/"main"' && github.event_name == 'push'
         run: make tf-deploy
 
-  deploy:
-    name: Deploy (Amazon ECS)
-    needs: terraform
+  deploy-secrets:
+    name: Deploy (Amazon ECR - ECS)
+    needs: [terraform, deploy-lambda]
     runs-on: ubuntu-latest
     environment: production
+    steps:
+      - name: Upload Qdrant secrets to AWS Secrets Manager
+        env:
+          QDRANT_URL: ${{ secrets.QDRANT_URL }}
+          QDRANT_API_KEY: ${{ secrets.QDRANT_API_KEY }}
+        run: |
+            aws secretsmanager put-secret-value --secret-id prod/qdrant_url --secret-string $QDRANT_URL
+            aws secretsmanager put-secret-value --secret-id prod/qdrant_api_key --secret-string $QDRANT_API_KEY
 
+  deploy-ecs:
+    name: Deploy (Amazon ECR - ECS)
+    needs: [terraform, deploy-lambda, deploy-secrets]
+    runs-on: ubuntu-latest
+    environment: production
     steps:
     - name: Checkout
       uses: actions/checkout@v3
@@ -109,41 +154,17 @@ jobs:
         # Build a docker container and
         # push it to ECR so that it can
         # be deployed to ECS.
-        docker build -t $ECR_REGISTRY/$ECR_REPOSITORY_ECS:$IMAGE_TAG .
-        docker push $ECR_REGISTRY/$ECR_REPOSITORY_ECS:$IMAGE_TAG
-        echo "image_ecs=$ECR_REGISTRY/$ECR_REPOSITORY_ECS:$IMAGE_TAG" >> $GITHUB_OUTPUT
-   
-    - name: Build, tag, and push image to Amazon ECR (Lambda Functions)
-      id: build-image-lambda
-      env:
-        ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-        IMAGE_TAG: ${{ github.sha }}
-      run: |
-        # Build a docker container and
-        # push it to ECR so that it can
-        # be deployed to Lambda Functions.
-        docker build --platform linux/amd64 -t $ECR_REGISTRY/$ECR_REPOSITORY_LAMBDA:$IMAGE_TAG -f ./lambda_functions/docker/Dockerfile .
-        docker push $ECR_REGISTRY/$ECR_REPOSITORY_LAMBDA:$IMAGE_TAG
-        echo "image_lambda=$ECR_REGISTRY/$ECR_REPOSITORY_LAMBDA:$IMAGE_TAG" >> $GITHUB_OUTPUT
-  
-    - name: Upload Qdrant secrets to AWS Secrets Manager
-      env:
-        QDRANT_URL: ${{ secrets.QDRANT_URL }}
-        QDRANT_API_KEY: ${{ secrets.QDRANT_API_KEY }}
-      run: |
-          aws secretsmanager put-secret-value --secret-id prod/qdrant_url --secret-string $QDRANT_URL
-          aws secretsmanager put-secret-value --secret-id prod/qdrant_api_key --secret-string $QDRANT_API_KEY
+        make deploy-ecs
 
     - name: Pass values to .aws/task-definition-actions.json placeholders
       env:
         image: ${{ steps.build-image.outputs.image }}
-        account_id: ${{ secrets.AWS_ACCOUNT_ID }}
       run: |
         sed -i "s|{tag}|$image|g" .aws/task-definition-actions.json
         sed -i "s|{name}|${{ env.CONTAINER_NAME }}|g" .aws/task-definition-actions.json
         sed -i "s|{region}|${{ env.AWS_REGION }}|g" .aws/task-definition-actions.json
-        sed -i "s|{ecr}|${{ env.ECR_REPOSITORY }}|g" .aws/task-definition-actions.json
-        sed -i "s|{account_id}|$account_id|g" .aws/task-definition-actions.json
+        sed -i "s|{ecr}|${{ env.ECR_REPOSITORY_ECS }}|g" .aws/task-definition-actions.json
+        sed -i "s|{account_id}|${{ secrets.AWS_ACCOUNT_ID }}|g" .aws/task-definition-actions.json
         sed -i "s|{logs_group_name}|${{ env.LOGS_GROUP_NAME }}|g" .aws/task-definition-actions.json
         sed -i "s|{ecs_task_family_name}|${{ env.ECS_TASK_FAMILY_NAME }}|g" .aws/task-definition-actions.json
         sed -i "s|{ecs_execution_role_name}|${{ env.ECS_EXECUTION_ROLE_NAME }}|g" .aws/task-definition-actions.json
