@@ -72,10 +72,10 @@ jobs:
 
   deploy:
     name: Deploy (Amazon ECS)
+    needs: terraform
     runs-on: ubuntu-latest
     environment: production
 
-    if: ${{ github.event.workflow_run.conclusion == 'success' }}
     steps:
     - name: Checkout
       uses: actions/checkout@v3
@@ -104,35 +104,28 @@ jobs:
         docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
         echo "image=$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG" >> $GITHUB_OUTPUT
     
-    # - name: Upload Qdrant secrets to AWS Secrets Manager
-    #   env:
-    #     QDRANT_URL: ${{ secrets.QDRANT_URL }}
-    #     QDRANT_API_KEY: ${{ secrets.QDRANT_API_KEY }}
-    #   run: |
-    #       aws secretsmanager put-secret-value --secret-id prod/qdrant_url --secret-string $QDRANT_URL
-    #       aws secretsmanager put-secret-value --secret-id prod/qdrant_api_key --secret-string $QDRANT_API_KEY
+    - name: Upload Qdrant secrets to AWS Secrets Manager
+      env:
+        QDRANT_URL: ${{ secrets.QDRANT_URL }}
+        QDRANT_API_KEY: ${{ secrets.QDRANT_API_KEY }}
+      run: |
+          aws secretsmanager put-secret-value --secret-id prod/qdrant_url --secret-string $QDRANT_URL
+          aws secretsmanager put-secret-value --secret-id prod/qdrant_api_key --secret-string $QDRANT_API_KEY
 
     - name: Pass values to .aws/task-definition-actions.json placeholders
       env:
         image: ${{ steps.build-image.outputs.image }}
-        comtainer_name: ${{ env.CONTAINER_NAME }}
-        region: ${{ env.AWS_REGION }}
-        ecr_repository: ${{ env.ECR_REPOSITORY }}
         account_id: ${{ secrets.AWS_ACCOUNT_ID }}
-        logs_group_name: ${{ env.LOGS_GROUP_NAME }}
-        ecs_task_family_name: ${{ env.ECS_TASK_FAMILY_NAME }}
-        ecs_execution_role_name: ${{ env.ECS_EXECUTION_ROLE_NAME }}
-        ecs_task_role_name: ${{ env.ECS_TASK_ROLE_NAME }}
       run: |
         sed -i "s|{tag}|$image|g" .aws/task-definition-actions.json
-        sed -i "s|{name}|$comtainer_name|g" .aws/task-definition-actions.json
-        sed -i "s|{region}|$region|g" .aws/task-definition-actions.json
-        sed -i "s|{ecr}|$ecr_repository|g" .aws/task-definition-actions.json
+        sed -i "s|{name}|${{ env.CONTAINER_NAME }}|g" .aws/task-definition-actions.json
+        sed -i "s|{region}|${{ env.AWS_REGION }}|g" .aws/task-definition-actions.json
+        sed -i "s|{ecr}|${{ env.ECR_REPOSITORY }}|g" .aws/task-definition-actions.json
         sed -i "s|{account_id}|$account_id|g" .aws/task-definition-actions.json
-        sed -i "s|{logs_group_name}|$logs_group_name|g" .aws/task-definition-actions.json
-        sed -i "s|{ecs_task_family_name}|$ecs_task_family_name|g" .aws/task-definition-actions.json
-        sed -i "s|{ecs_execution_role_name}|$ecs_execution_role_name|g" .aws/task-definition-actions.json
-        sed -i "s|{ecs_task_role_name}|$ecs_task_role_name|g" .aws/task-definition-actions.json
+        sed -i "s|{logs_group_name}|${{ env.LOGS_GROUP_NAME }}|g" .aws/task-definition-actions.json
+        sed -i "s|{ecs_task_family_name}|${{ env.ECS_TASK_FAMILY_NAME }}|g" .aws/task-definition-actions.json
+        sed -i "s|{ecs_execution_role_name}|${{ env.ECS_EXECUTION_ROLE_NAME }}|g" .aws/task-definition-actions.json
+        sed -i "s|{ecs_task_role_name}|${{ env.ECS_TASK_ROLE_NAME }}|g" .aws/task-definition-actions.json
 
     - name: Fill in the new image ID in the Amazon ECS task definition
       id: task-def
