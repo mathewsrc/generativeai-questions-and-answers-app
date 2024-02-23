@@ -1,5 +1,5 @@
 import pytest
-from terraform.lambda_functions.src.utils import get_embeddings, Embedding, Embeddings
+from lambda_functions.src.utils import get_embeddings, Embedding, Embeddings
 from langchain_community.embeddings import BedrockEmbeddings
 
 
