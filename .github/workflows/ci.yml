@@ -10,9 +10,21 @@ on:
   push:
     branches:
       - main
+    paths-ignore:
+      - 'README.md'
+      - 'docs/**'
+      - 'files/**'
+      - 'documents/**'
+      - '.gitingore'
   pull_request:
     branches:
       - main
+    paths-ignore:
+      - 'README.md'
+      - 'docs/**'
+      - 'files/**'
+      - 'documents/**'
+      - '.gitingore'
   workflow_dispatch:
 
 jobs:
