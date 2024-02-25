@@ -9,10 +9,10 @@ Qdrant cluster. The documents are located in the `documents/` directory.
 
 ## Docker Image
 
-Directory: `terraform/lambda_functions/docker`
-
 The Lambda Function relies on a Docker image stored in ECR. Here are the details of the image 
 employed by Lambda:
+
+Directory: `lambda_functions/docker`
 
 ```docker
 FROM public.ecr.aws/lambda/python:3.12
@@ -45,7 +45,7 @@ The dependencies are installed into a directory provided by the base image as we
 required. The CMD is set to call the `main.py` module and its entrypoint function `lambda_handle(event, context)`.
 The `lambda_handler(event, context)` function call the `create_vectorstore(...)` from `create_vector_store` module.
 
-Directory: `terraform/lambda_functions/src`
+Directory: `lambda_functions/src`
 
 ```python
 import json
@@ -85,7 +85,7 @@ def lambda_handler(event, context):
 
 The `create_vectorstore(...)` function initiates the get_documents_from_pdf function, which, in turn, downloads the uploaded PDF file from S3 to the Lambda `/tmp` directory—the exclusive location with write permissions. Subsequently, it divides the document into smaller sections, referred to as chunks, converts these chunks into a vector representation, also known as embedding, and uploads the resulting data to Qdrant Cloud via Langchain.
 
-Directory: `terraform/lambda_functions/src`
+Directory: `lambda_functions/src`
 
 ```python
 
