@@ -67,7 +67,7 @@ Muitas pessoas acabam por desistir de ler editais de concursos devidos a diferen
 
 [How to create a vector store with Lambda, s3, Bedrock and Qdrant Cloud](https://github.com/mathewsrc/generativeai-questions-and-answers-app/blob/main/docs/vector_store.md)
 
-[Microservice with ECS details](https://github.com/mathewsrc/generativeai-questions-and-answers-app/blob/main/docs/microservice.md)
+[Microservice with ECS, Docker and FastAPI](https://github.com/mathewsrc/generativeai-questions-and-answers-app/blob/main/docs/microservice.md)
 
 [How to upload the Terraform state file and PDFs](https://github.com/mathewsrc/generativeai-questions-and-answers-app/blob/main/docs/s3.md)
 
